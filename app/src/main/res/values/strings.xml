@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">DanCognitionApp</string>
+
+    <string name="practice_trial_title">Practice</string>
+    <string name="modify_participants_title">Participant Manager</string>
+    <string name="start_trial_title">Start a Trial</string>
 </resources>

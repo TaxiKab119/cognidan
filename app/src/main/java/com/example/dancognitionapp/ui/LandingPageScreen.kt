@@ -1,16 +1,16 @@
 package com.example.dancognitionapp.ui
 
-import android.annotation.SuppressLint
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,12 +38,11 @@ fun LandingPageScreen(modifier: Modifier = Modifier) {
         topBar = {
             DanCognitionTopAppBar(headerResId = R.string.app_name)
         },
-        content = {
-            LandingPageContent(
-                modifier = Modifier.padding(it)
-            )
-        }
-    )
+    ) {
+        LandingPageContent(
+            modifier = Modifier.padding(it)
+        )
+    }
 }
 
 
@@ -54,7 +53,7 @@ fun LandingPageContent(modifier: Modifier = Modifier) {
         modifier = modifier
     ) {
         OptionCard(
-            titleId = R.string.practice_trial_title,
+            titleId = R.string.landing_practice_trial,
             iconId = R.drawable.construction_48,
             onCardClick = {
                 Timber.i("You clicked on Practice")
@@ -62,7 +61,7 @@ fun LandingPageContent(modifier: Modifier = Modifier) {
             modifier = Modifier.weight(1f)
         )
         OptionCard(
-            titleId = R.string.modify_participants_title,
+            titleId = R.string.landing_participant_manager,
             iconId = R.drawable.groups_48,
             onCardClick = {
                 Timber.i("You clicked on Participant Manager")
@@ -70,7 +69,7 @@ fun LandingPageContent(modifier: Modifier = Modifier) {
             modifier = Modifier.weight(1f)
         )
         OptionCard(
-            titleId = R.string.start_trial_title,
+            titleId = R.string.landing_start_trial,
             iconId = R.drawable.science_48,
             onCardClick = {
                 Timber.i("You clicked on Start a Trial")
@@ -90,7 +89,6 @@ fun OptionCard(
 ) {
     Card(
         modifier = modifier
-            .clickable { onCardClick(titleId) }
             .padding(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
@@ -103,35 +101,27 @@ fun OptionCard(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
-                ) {
+                .clickable { onCardClick(titleId) }
+        ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
             ) {
-                Box(
+                Icon(
+                    painter = painterResource(id = iconId),
+                    contentDescription = stringResource(id = titleId),
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier
-                        .weight(1f)
-                ) {
-                    Icon(
-                        painter = painterResource(id = iconId),
-                        contentDescription = stringResource(id = titleId),
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(4.dp)
-                    )
-                }
-                Box(modifier = Modifier.weight(3f)) {
-                    Text(
-                        text = stringResource(id = titleId),
-                        style = MaterialTheme.typography.displayMedium,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.padding(start = 12.dp)
-                    )
-                }
-
+                        .padding(4.dp)
+                )
+                Spacer(modifier = Modifier.size(24.dp))
+                Text(
+                    text = stringResource(id = titleId),
+                    style = MaterialTheme.typography.displayMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
             }
         }
     }
@@ -165,7 +155,7 @@ fun DanCognitionTopAppBar(
 fun OptionCardPreview() {
     DanCognitionAppTheme {
         OptionCard(
-            titleId = R.string.practice_trial_title,
+            titleId = R.string.landing_practice_trial,
             onCardClick = {},
             iconId = R.drawable.construction_48
         )

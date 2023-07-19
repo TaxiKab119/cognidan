@@ -9,6 +9,11 @@
 
     <fragment
         android:id="@+id/selection_dest"
-        android:name="com.example.dancognitionapp.assessment.selection.SelectionFragment"/>
+        android:name="com.example.dancognitionapp.assessment.selection.SelectionFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/nback_dest"
+        android:name="com.example.dancognitionapp.assessment.nback.NBackFragment"/>
 
 </navigation>

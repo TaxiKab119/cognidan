@@ -1,4 +1,4 @@
-package com.example.dancognitionapp.assessment.bart
+package com.example.dancognitionapp.assessment.nback
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,7 +9,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import com.example.dancognitionapp.R
 
-class BartFragment: Fragment() {
+class NBackFragment: Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -18,7 +18,7 @@ class BartFragment: Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_compose_host, container, false)
         view.findViewById<ComposeView>(R.id.compose_root).setContent {
-            Text(text = "Put BART screen here")
+            Text(text = "Put N-Back screen here")
         }
         return view
     }

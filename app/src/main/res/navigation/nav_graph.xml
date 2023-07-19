@@ -2,14 +2,13 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    >
+    app:startDestination="@id/selection_dest">
+    <fragment
+        android:id="@+id/bart_dest"
+        android:name="com.example.dancognitionapp.assessment.bart.BartFragment"/>
 
-<!--    <activity-->
-<!--        android:id="@+id/landing_dest"-->
-<!--        android:name="com.example.dancognitionapp.MainActivity" />-->
-
-<!--    <activity-->
-<!--        android:id="@+id/assessment_dest"-->
-<!--        android:name="com.example.dancognitionapp.assessment.AssessmentActivity" />-->
+    <fragment
+        android:id="@+id/selection_dest"
+        android:name="com.example.dancognitionapp.assessment.selection.SelectionFragment"/>
 
 </navigation>

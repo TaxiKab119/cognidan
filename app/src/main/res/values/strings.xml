@@ -4,4 +4,11 @@
     <string name="landing_practice_trial">Practice</string>
     <string name="landing_participant_manager">Participant manager</string>
     <string name="landing_start_trial">Start a trial</string>
+
+    <string name="selection_title">Select Test</string>
+    <string name="selection_pre_dive">Pre-dive</string>
+    <string name="selection_dive">Dive</string>
+    <string name="selection_post_dive">Post-dive</string>
+    <string name="selection_practice_nback">n-back</string>
+    <string name="selection_practice_bart">BART</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.dancognitionapp.assessment
+package com.example.dancognitionapp.assessment.bart
 
 import android.os.Bundle
 import android.view.LayoutInflater

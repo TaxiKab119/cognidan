@@ -4,8 +4,8 @@
     android:layout_height="match_parent">
 
     <androidx.compose.ui.platform.ComposeView
-        android:id="@+id/bart_compose_root"
+        android:id="@+id/selection_compose_root"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 
 </FrameLayout>

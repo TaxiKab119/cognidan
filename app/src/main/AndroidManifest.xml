@@ -26,8 +26,7 @@
         </activity>
         <activity
             android:name=".assessment.AssessmentActivity"
-            android:theme="@style/Theme.DanCognitionApp"
-            android:screenOrientation="landscape"/>
+            android:theme="@style/Theme.DanCognitionApp"/>
     </application>
 
 </manifest>

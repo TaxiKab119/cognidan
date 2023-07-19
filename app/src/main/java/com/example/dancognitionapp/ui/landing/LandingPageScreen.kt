@@ -27,19 +27,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.dancognitionapp.Destination
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
 import timber.log.Timber
 
-enum class LandingDestination {
-    StartTrial,
-    Practice,
-    AddParticipants
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LandingPageScreen(modifier: Modifier = Modifier, onClick: (LandingDestination) -> Unit = {}) {
+fun LandingPageScreen(modifier: Modifier = Modifier, onClick: (Destination) -> Unit = {}) {
     Scaffold(
         topBar = {
             DanCognitionTopAppBar(headerResId = R.string.app_name)
@@ -57,7 +52,7 @@ fun LandingPageScreen(modifier: Modifier = Modifier, onClick: (LandingDestinatio
 
 
 @Composable
-fun LandingPageContent(modifier: Modifier = Modifier, onClick: (LandingDestination) -> Unit = {}) {
+fun LandingPageContent(modifier: Modifier = Modifier, onClick: (Destination) -> Unit = {}) {
     Column(
         verticalArrangement = Arrangement.SpaceEvenly,
         modifier = modifier
@@ -65,25 +60,25 @@ fun LandingPageContent(modifier: Modifier = Modifier, onClick: (LandingDestinati
         OptionCard(
             titleId = R.string.landing_practice_trial,
             iconId = R.drawable.construction_48,
-            destination = LandingDestination.Practice,
+            destination = Destination.Practice,
             onCardClick = {
-                Timber.i("Practice was clicked")
+                onClick(it)
             },
             modifier = Modifier.weight(1f)
         )
         OptionCard(
             titleId = R.string.landing_participant_manager,
             iconId = R.drawable.groups_48,
-            destination = LandingDestination.AddParticipants,
+            destination = Destination.AddParticipants,
             onCardClick = {
-                Timber.i("Participant Manager was clicked")
+                onClick(it)
             },
             modifier = Modifier.weight(1f)
         )
         OptionCard(
             titleId = R.string.landing_start_trial,
             iconId = R.drawable.science_48,
-            destination = LandingDestination.StartTrial,
+            destination = Destination.StartTrial,
             onCardClick = {
                 onClick(it)
             },
@@ -96,11 +91,10 @@ fun LandingPageContent(modifier: Modifier = Modifier, onClick: (LandingDestinati
 @Composable
 fun OptionCard(
     @StringRes titleId: Int,
-    @DrawableRes iconId: Int,
-    destination: LandingDestination,
-    onCardClick: (LandingDestination) -> Unit,
-    modifier: Modifier = Modifier
-) {
+    destination: Destination,
+    onCardClick: (Destination) -> Unit,
+    modifier: Modifier = Modifier,
+    @DrawableRes iconId: Int = 0) {
     Card(
         modifier = modifier
             .padding(12.dp),
@@ -123,13 +117,15 @@ fun OptionCard(
                     .fillMaxWidth()
                     .padding(20.dp)
             ) {
-                Icon(
-                    painter = painterResource(id = iconId),
-                    contentDescription = stringResource(id = titleId),
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier
-                        .padding(4.dp)
-                )
+                if (iconId != 0) {
+                    Icon(
+                        painter = painterResource(id = iconId),
+                        contentDescription = stringResource(id = titleId),
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier
+                            .padding(4.dp)
+                    )
+                }
                 Spacer(modifier = Modifier.size(24.dp))
                 Text(
                     text = stringResource(id = titleId),
@@ -172,7 +168,7 @@ fun OptionCardPreview() {
             titleId = R.string.landing_practice_trial,
             onCardClick = {},
             iconId = R.drawable.construction_48,
-            destination = LandingDestination.Practice
+            destination = Destination.Practice
         )
     }
 }

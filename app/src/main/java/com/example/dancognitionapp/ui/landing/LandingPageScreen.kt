@@ -1,4 +1,4 @@
-package com.example.dancognitionapp.ui
+package com.example.dancognitionapp.ui.landing
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -31,23 +31,33 @@ import com.example.dancognitionapp.R
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
 import timber.log.Timber
 
+enum class LandingDestination {
+    StartTrial,
+    Practice,
+    AddParticipants
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LandingPageScreen(modifier: Modifier = Modifier) {
+fun LandingPageScreen(modifier: Modifier = Modifier, onClick: (LandingDestination) -> Unit = {}) {
     Scaffold(
         topBar = {
             DanCognitionTopAppBar(headerResId = R.string.app_name)
         },
     ) {
         LandingPageContent(
-            modifier = Modifier.padding(it)
+            modifier = Modifier.padding(it),
+            onClick = { titleId ->
+                onClick(titleId)
+                Timber.i("You clicked $titleId")
+            }
         )
     }
 }
 
 
 @Composable
-fun LandingPageContent(modifier: Modifier = Modifier) {
+fun LandingPageContent(modifier: Modifier = Modifier, onClick: (LandingDestination) -> Unit = {}) {
     Column(
         verticalArrangement = Arrangement.SpaceEvenly,
         modifier = modifier
@@ -55,24 +65,27 @@ fun LandingPageContent(modifier: Modifier = Modifier) {
         OptionCard(
             titleId = R.string.landing_practice_trial,
             iconId = R.drawable.construction_48,
+            destination = LandingDestination.Practice,
             onCardClick = {
-                Timber.i("You clicked on Practice")
+                Timber.i("Practice was clicked")
             },
             modifier = Modifier.weight(1f)
         )
         OptionCard(
             titleId = R.string.landing_participant_manager,
             iconId = R.drawable.groups_48,
+            destination = LandingDestination.AddParticipants,
             onCardClick = {
-                Timber.i("You clicked on Participant Manager")
+                Timber.i("Participant Manager was clicked")
             },
             modifier = Modifier.weight(1f)
         )
         OptionCard(
             titleId = R.string.landing_start_trial,
             iconId = R.drawable.science_48,
+            destination = LandingDestination.StartTrial,
             onCardClick = {
-                Timber.i("You clicked on Start a Trial")
+                onClick(it)
             },
             modifier = Modifier
                 .weight(1f)
@@ -84,7 +97,8 @@ fun LandingPageContent(modifier: Modifier = Modifier) {
 fun OptionCard(
     @StringRes titleId: Int,
     @DrawableRes iconId: Int,
-    onCardClick: (Int) -> Unit,
+    destination: LandingDestination,
+    onCardClick: (LandingDestination) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -101,7 +115,7 @@ fun OptionCard(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
-                .clickable { onCardClick(titleId) }
+                .clickable { onCardClick(destination) }
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -157,7 +171,8 @@ fun OptionCardPreview() {
         OptionCard(
             titleId = R.string.landing_practice_trial,
             onCardClick = {},
-            iconId = R.drawable.construction_48
+            iconId = R.drawable.construction_48,
+            destination = LandingDestination.Practice
         )
     }
 }

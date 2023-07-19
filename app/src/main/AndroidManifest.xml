@@ -24,6 +24,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".assessment.AssessmentActivity"
+            android:theme="@style/Theme.DanCognitionApp"
+            android:screenOrientation="landscape"/>
     </application>
 
 </manifest>

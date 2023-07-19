@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.example.dancognitionapp.assessment.AssessmentActivity
+import com.example.dancognitionapp.ui.landing.LandingDestination
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
 import com.example.dancognitionapp.ui.landing.LandingPageScreen
 
@@ -23,14 +24,13 @@ class MainActivity : ComponentActivity() {
                 ) {
                     LandingPageScreen() { destination ->
                         when(destination) {
-                            Destination.StartTrial ->
+                            LandingDestination.StartTrial ->
                                 startActivity(AssessmentActivity.newIntent(this, false))
-                            Destination.Practice ->
+                            LandingDestination.Practice ->
                                 startActivity(AssessmentActivity.newIntent(this, true))
-                            Destination.AddParticipants -> {
+                            LandingDestination.AddParticipants -> {
                                 //TODO - start participants activity
                             }
-                            else -> {}
                         }
                     }
                 }

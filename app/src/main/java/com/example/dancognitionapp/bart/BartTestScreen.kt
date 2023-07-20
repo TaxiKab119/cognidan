@@ -1,98 +1,168 @@
 package com.example.dancognitionapp.bart
 
-import android.content.pm.ActivityInfo
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.example.dancognitionapp.R
-import com.example.dancognitionapp.ui.LockScreenOrientation
+import com.example.dancognitionapp.ui.LandscapePreview
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
+import timber.log.Timber
+
 
 @Composable
-fun BartScreen(
-    modifier: Modifier = Modifier
-) {
-    LockScreenOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+fun BartTestScreen(modifier: Modifier = Modifier) {
 
-    val balloonDimens = getMaxOvalSizeAndIncrements(260, 20)
+    // Replace with ViewModel later
+    var balloonReward: Int by remember { mutableStateOf(1) }
+    var totalEarnings: Int by remember { mutableStateOf(0) }
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
-            .fillMaxSize()
+    BoxWithConstraints(modifier = modifier
+        .padding(12.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.Top,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .padding(start = 12.dp, end = 12.dp, top = 4.dp, bottom = 0.dp)
-                .fillMaxWidth()
-        ) {
-            BartText(R.string.bart_reward_for_balloon, 0)
-            BartText(R.string.bart_total_earnings, 0)
-        }
+        val initialBalloonRadius = (maxWidth.value / 9)
+        var balloonRadius: Float by remember { mutableStateOf(initialBalloonRadius) }
 
-        Row(
-            verticalAlignment = Alignment.Bottom,
-            horizontalArrangement = Arrangement.Center
-        ) {
+        ConstraintLayout(modifier = modifier) {
+
+            val (
+                inflateButton,
+                collectButton,
+                leftHeader,
+                rightHeader,
+                balloon,
+                dollarsLeft,
+                dollarsRight
+            ) = createRefs()
+
+            /**
+             * Setting the guidelines to 0 just shows their uselessness...
+             * I think because of the horizontal chain
+             * can easily get rid of them all.
+             * */
+            val leftGuideline = createGuidelineFromStart(0f)
+            val rightGuideline = createGuidelineFromEnd(0f)
+
+            BartTitleText(
+                textResId = R.string.bart_reward_for_balloon,
+                modifier = Modifier.constrainAs(leftHeader) {
+                    start.linkTo(parent.start)
+                    end.linkTo(leftGuideline)
+                    top.linkTo(parent.top)
+                    width = Dimension.fillToConstraints
+                    centerHorizontallyTo(inflateButton)
+                }
+            )
+            BartTitleText(
+                dollarValue = balloonReward,
+                modifier = Modifier.constrainAs(dollarsLeft) {
+                    centerHorizontallyTo(leftHeader)
+                    top.linkTo(leftHeader.bottom)
+                }
+            )
+            BartTitleText(
+                textResId = R.string.bart_total_earnings,
+                modifier = Modifier.constrainAs(rightHeader) {
+                    start.linkTo(rightGuideline)
+                    end.linkTo(parent.end)
+                    top.linkTo(parent.top)
+                    width = Dimension.fillToConstraints
+                    centerHorizontallyTo(collectButton)
+                }
+            )
+            BartTitleText(
+                dollarValue = totalEarnings,
+                modifier = Modifier.constrainAs(dollarsRight) {
+                    centerHorizontallyTo(rightHeader)
+                    top.linkTo(rightHeader.bottom)
+                }
+            )
+
+            createHorizontalChain(inflateButton, balloon, collectButton)
             BartButton(
                 contentsId = R.string.bart_inflate_button_label,
-                onClick = { /*TODO*/},
-                modifier = Modifier.weight(1f)
+                onClick = {
+                    balloonReward++
+                    balloonRadius *= 1.08f
+                    Timber.i("$balloonReward")
+                },
+                modifier = Modifier.constrainAs(inflateButton) {
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(leftGuideline)
+                    width = Dimension.fillToConstraints
+                }
             )
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                .weight(1.2f)
-            ) {
-            }
+            Balloon(
+                modifier = modifier
+                    .constrainAs(balloon) {
+                        start.linkTo(leftGuideline)
+                        end.linkTo(rightGuideline)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        width = Dimension.fillToConstraints
+                        height = Dimension.fillToConstraints
+                    },
+                radius = balloonRadius
+            )
             BartButton(
                 contentsId = R.string.bart_collect_button_label,
-                onClick = { /*TODO*/ },
-                modifier = Modifier.weight(1f)
+                onClick = {
+                    totalEarnings += balloonReward
+                    balloonReward = 1
+                    balloonRadius = initialBalloonRadius
+                },
+                modifier = Modifier.constrainAs(collectButton) {
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(rightGuideline)
+                    end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
+
+                }
             )
         }
-        
     }
-
 }
 
+/**
+ * Composable for Text in the BART screen
+ * */
 @Composable
-fun BartText(
-    @StringRes textId: Int,
-    money: Int,
+fun BartTitleText(
+    textResId: Int? = null,
+    dollarValue: Int? = null,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-    ) {
+    if (textResId != null) {
         Text(
-            text = stringResource(id = textId),
-            style = MaterialTheme.typography.displaySmall
+            text = stringResource(id = textResId),
+            style = MaterialTheme.typography.displaySmall,
+            modifier = modifier,
+            textAlign = TextAlign.Center
         )
+    }
+    if (dollarValue != null) {
         Text(
-            text = "$${money}.00", // Updated eventually by viewModel
-            style = MaterialTheme.typography.displaySmall
+            text = "$$dollarValue.00",
+            style = MaterialTheme.typography.displaySmall,
+            modifier = modifier
         )
     }
 }
-
 @Composable
 fun BartButton(
     @StringRes contentsId: Int,
@@ -110,13 +180,10 @@ fun BartButton(
     }
 }
 
-@Preview(
-    showBackground = true,
-    device = "spec:width=393dp,height=851dp,orientation=landscape"
-)
+@LandscapePreview
 @Composable
-fun BartScreenPreview() {
+fun BartConstraintLayoutPreview() {
     DanCognitionAppTheme {
-        BartScreen()
+        BartTestScreen(modifier = Modifier.fillMaxSize())
     }
 }

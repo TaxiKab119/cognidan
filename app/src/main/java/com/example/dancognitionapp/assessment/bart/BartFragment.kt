@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.assessment.AssessmentFragment
+import com.example.dancognitionapp.bart.BartTestScreen
+import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
 
 class BartFragment: AssessmentFragment() {
 
@@ -18,7 +21,9 @@ class BartFragment: AssessmentFragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_compose_host, container, false)
         view.findViewById<ComposeView>(R.id.compose_root).setContent {
-            Text(text = "Put BART screen here")
+            DanCognitionAppTheme() {
+                BartTestScreen(Modifier.fillMaxSize())
+            }
         }
         return view
     }

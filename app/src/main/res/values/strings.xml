@@ -5,6 +5,14 @@
     <string name="landing_participant_manager">Participant manager</string>
     <string name="landing_start_trial">Start a trial</string>
 
+    <string name="bart_screen_title">BART</string>
+    <string name="bart_test_instructions">In this task, you will see a series of balloons. For each balloon, you have the choice to either collect the balloon\'s reward to store in your bank or inflate the balloon to increase the reward. Each time you inflate a balloon the reward for that balloon will increase, but if the balloon pops before you can collect the reward you will not be able to claim any reward money for that balloon.</string>
+    <string name="bart_inflate_button_label">Inflate</string>
+    <string name="bart_collect_button_label">Collect \$</string>
+    <string name="bart_reward_for_balloon">Balloon reward:</string>
+    <string name="bart_total_earnings">Total earnings:</string>
+
+
     <string name="selection_title">Select Test</string>
     <string name="selection_pre_dive">Pre-dive</string>
     <string name="selection_dive">Dive</string>

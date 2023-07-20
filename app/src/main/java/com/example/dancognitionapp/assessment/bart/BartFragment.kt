@@ -6,10 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.material3.Text
 import androidx.compose.ui.platform.ComposeView
-import androidx.fragment.app.Fragment
 import com.example.dancognitionapp.R
+import com.example.dancognitionapp.assessment.AssessmentFragment
 
-class BartFragment: Fragment() {
+class BartFragment: AssessmentFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,

@@ -49,6 +49,18 @@ fun BartTestScreen(modifier: Modifier = Modifier) {
                 dollarsRight
             ) = createRefs()
 
+            Balloon(
+                modifier = modifier
+                    .constrainAs(balloon) {
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        width = Dimension.fillToConstraints
+                        height = Dimension.fillToConstraints
+                    },
+                radius = balloonRadius
+            )
+            createHorizontalChain(inflateButton, balloon, collectButton)
+
             BartTitleText(
                 textResId = R.string.bart_reward_for_balloon,
                 modifier = Modifier.constrainAs(leftHeader) {
@@ -81,45 +93,30 @@ fun BartTestScreen(modifier: Modifier = Modifier) {
                     top.linkTo(rightHeader.bottom)
                 }
             )
-
-            createHorizontalChain(inflateButton, balloon, collectButton)
             BartButton(
                 contentsId = R.string.bart_inflate_button_label,
-                onClick = {
-                    balloonReward++
-                    balloonRadius *= 1.08f
-                    Timber.i("$balloonReward")
-                },
                 modifier = Modifier.constrainAs(inflateButton) {
                     bottom.linkTo(parent.bottom)
                     start.linkTo(parent.start)
                     width = Dimension.fillToConstraints
                 }
-            )
-            Balloon(
-                modifier = modifier
-                    .constrainAs(balloon) {
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                        width = Dimension.fillToConstraints
-                        height = Dimension.fillToConstraints
-                    },
-                radius = balloonRadius
-            )
+            ) {
+                balloonReward++
+                balloonRadius *= 1.08f
+                Timber.i("$balloonReward")
+            }
             BartButton(
                 contentsId = R.string.bart_collect_button_label,
-                onClick = {
-                    totalEarnings += balloonReward
-                    balloonReward = 1
-                    balloonRadius = initialBalloonRadius
-                },
                 modifier = Modifier.constrainAs(collectButton) {
                     bottom.linkTo(parent.bottom)
                     end.linkTo(parent.end)
                     width = Dimension.fillToConstraints
-
                 }
-            )
+            ) {
+                totalEarnings += balloonReward
+                balloonReward = 1
+                balloonRadius = initialBalloonRadius
+            }
         }
     }
 }
@@ -152,11 +149,11 @@ fun BartTitleText(
 @Composable
 fun BartButton(
     @StringRes contentsId: Int,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     Button(
-        onClick = { onClick() } ,
+        onClick = onClick,
         modifier = modifier.padding(12.dp)
     ) {
         Text(

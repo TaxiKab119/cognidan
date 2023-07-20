@@ -49,19 +49,10 @@ fun BartTestScreen(modifier: Modifier = Modifier) {
                 dollarsRight
             ) = createRefs()
 
-            /**
-             * Setting the guidelines to 0 just shows their uselessness...
-             * I think because of the horizontal chain
-             * can easily get rid of them all.
-             * */
-            val leftGuideline = createGuidelineFromStart(0f)
-            val rightGuideline = createGuidelineFromEnd(0f)
-
             BartTitleText(
                 textResId = R.string.bart_reward_for_balloon,
                 modifier = Modifier.constrainAs(leftHeader) {
                     start.linkTo(parent.start)
-                    end.linkTo(leftGuideline)
                     top.linkTo(parent.top)
                     width = Dimension.fillToConstraints
                     centerHorizontallyTo(inflateButton)
@@ -77,7 +68,6 @@ fun BartTestScreen(modifier: Modifier = Modifier) {
             BartTitleText(
                 textResId = R.string.bart_total_earnings,
                 modifier = Modifier.constrainAs(rightHeader) {
-                    start.linkTo(rightGuideline)
                     end.linkTo(parent.end)
                     top.linkTo(parent.top)
                     width = Dimension.fillToConstraints
@@ -103,15 +93,12 @@ fun BartTestScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier.constrainAs(inflateButton) {
                     bottom.linkTo(parent.bottom)
                     start.linkTo(parent.start)
-                    end.linkTo(leftGuideline)
                     width = Dimension.fillToConstraints
                 }
             )
             Balloon(
                 modifier = modifier
                     .constrainAs(balloon) {
-                        start.linkTo(leftGuideline)
-                        end.linkTo(rightGuideline)
                         top.linkTo(parent.top)
                         bottom.linkTo(parent.bottom)
                         width = Dimension.fillToConstraints
@@ -128,7 +115,6 @@ fun BartTestScreen(modifier: Modifier = Modifier) {
                 },
                 modifier = Modifier.constrainAs(collectButton) {
                     bottom.linkTo(parent.bottom)
-                    start.linkTo(rightGuideline)
                     end.linkTo(parent.end)
                     width = Dimension.fillToConstraints
 

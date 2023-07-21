@@ -49,7 +49,7 @@ fun BartTestScreen(modifier: Modifier = Modifier) {
                 dollarsRight
             ) = createRefs()
 
-            Balloon(
+            BalloonCanvas(
                 modifier = modifier
                     .constrainAs(balloon) {
                         top.linkTo(parent.top)
@@ -126,9 +126,9 @@ fun BartTestScreen(modifier: Modifier = Modifier) {
  * */
 @Composable
 fun BartTitleText(
+    modifier: Modifier = Modifier,
     textResId: Int? = null,
-    dollarValue: Int? = null,
-    modifier: Modifier = Modifier
+    dollarValue: Int? = null
 ) {
     if (textResId != null) {
         Text(

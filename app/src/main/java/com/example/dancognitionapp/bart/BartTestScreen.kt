@@ -8,6 +8,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,18 +19,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.ui.LandscapePreview
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
-import timber.log.Timber
 
 
 @Composable
 fun BartTestScreen(modifier: Modifier = Modifier) {
 
-    // Replace with ViewModel later
-    var balloonReward: Int by remember { mutableStateOf(1) }
-    var totalEarnings: Int by remember { mutableStateOf(0) }
+    val viewModel: BartViewModel = viewModel()
+    val uiState by viewModel.uiState.collectAsState()
 
     BoxWithConstraints(modifier = modifier
         .padding(12.dp)
@@ -57,7 +57,8 @@ fun BartTestScreen(modifier: Modifier = Modifier) {
                         width = Dimension.fillToConstraints
                         height = Dimension.fillToConstraints
                     },
-                radius = balloonRadius
+                radius = if (uiState.balloonPopped) initialBalloonRadius
+                    else balloonRadius
             )
             createHorizontalChain(inflateButton, balloon, collectButton)
 
@@ -71,7 +72,7 @@ fun BartTestScreen(modifier: Modifier = Modifier) {
                 }
             )
             BartTitleText(
-                dollarValue = balloonReward,
+                dollarValue = uiState.balloonReward,
                 modifier = Modifier.constrainAs(dollarsLeft) {
                     centerHorizontallyTo(leftHeader)
                     top.linkTo(leftHeader.bottom)
@@ -87,7 +88,7 @@ fun BartTestScreen(modifier: Modifier = Modifier) {
                 }
             )
             BartTitleText(
-                dollarValue = totalEarnings,
+                dollarValue = uiState.totalEarnings,
                 modifier = Modifier.constrainAs(dollarsRight) {
                     centerHorizontallyTo(rightHeader)
                     top.linkTo(rightHeader.bottom)
@@ -101,9 +102,15 @@ fun BartTestScreen(modifier: Modifier = Modifier) {
                     width = Dimension.fillToConstraints
                 }
             ) {
-                balloonReward++
-                balloonRadius *= 1.08f
-                Timber.i("$balloonReward")
+                if (uiState.balloonPopped) {
+                    balloonRadius = initialBalloonRadius
+                    viewModel.resetBalloonStatus()
+                    viewModel.inflateBalloon()
+                    balloonRadius *= 1.08f
+                } else {
+                    viewModel.inflateBalloon()
+                    balloonRadius *= 1.08f
+                }
             }
             BartButton(
                 contentsId = R.string.bart_collect_button_label,
@@ -113,8 +120,7 @@ fun BartTestScreen(modifier: Modifier = Modifier) {
                     width = Dimension.fillToConstraints
                 }
             ) {
-                totalEarnings += balloonReward
-                balloonReward = 1
+                viewModel.collectBalloonReward(uiState.balloonReward)
                 balloonRadius = initialBalloonRadius
             }
         }

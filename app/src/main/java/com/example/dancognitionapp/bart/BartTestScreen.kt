@@ -29,7 +29,7 @@ import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
 fun BartTestScreen(modifier: Modifier = Modifier) {
 
     val viewModel: BartViewModel = viewModel()
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState
 
     BoxWithConstraints(modifier = modifier
         .padding(12.dp)
@@ -105,6 +105,8 @@ fun BartTestScreen(modifier: Modifier = Modifier) {
                 if (uiState.balloonPopped) {
                     balloonRadius = initialBalloonRadius
                     viewModel.resetBalloonStatus()
+                    /*TODO*/
+                    // Replace lines below with "Balloon Popped" Dialog
                     viewModel.inflateBalloon()
                     balloonRadius *= 1.08f
                 } else {
@@ -120,7 +122,7 @@ fun BartTestScreen(modifier: Modifier = Modifier) {
                     width = Dimension.fillToConstraints
                 }
             ) {
-                viewModel.collectBalloonReward(uiState.currentReward)
+                viewModel.collectBalloonReward()
                 balloonRadius = initialBalloonRadius
             }
         }

@@ -9,20 +9,15 @@ private const val NUMBER_OF_BALLOONS: Int = 20
 
 class BalloonGenerator {
 
-    var balloons = LinkedList<Balloon>()
+    val balloons = LinkedList<Balloon>()
     init {
-        balloons = getBalloonLinkedList()
+        generateBalloons()
     }
 
-    private fun getBalloonLinkedList(): LinkedList<Balloon> {
-
-        val balloonLinkedList = LinkedList<Balloon>()
-
+    private fun generateBalloons() {
         for (balloonNumber in 1..NUMBER_OF_BALLOONS) {
             val maxInflation = Random.nextInt(MIN_INFLATIONS, MAX_INFLATIONS)
-            balloonLinkedList.add(Balloon(balloonNumber, maxInflation))
+            balloons.add(Balloon(balloonNumber, maxInflation))
         }
-
-        return balloonLinkedList
     }
 }

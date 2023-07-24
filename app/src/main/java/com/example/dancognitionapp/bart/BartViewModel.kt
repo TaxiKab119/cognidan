@@ -25,13 +25,13 @@ class BartViewModel: ViewModel() {
 
     fun inflateBalloon() {
         val canInflate =
-            _uiState.value.currentBalloon.maxInflations > _uiState.value.balloonInflations + 1
+            _uiState.value.currentBalloon.maxInflations > _uiState.value.currentInflationCount + 1
 
         if(canInflate) {
             _uiState.update {
                 it.copy(
-                    balloonInflations = it.balloonInflations.inc(),
-                    balloonReward = it.balloonReward.inc()
+                    currentInflationCount = it.currentInflationCount.inc(),
+                    currentReward = it.currentReward.inc()
                 )
             }
             Timber.i("Balloon Number ${_uiState.value.currentBalloon.listPosition} was inflated!")
@@ -39,12 +39,12 @@ class BartViewModel: ViewModel() {
             Timber.i(
                 "Balloon Number ${_uiState.value.currentBalloon.listPosition} popped!" +
                     " Max Inflation: ${_uiState.value.currentBalloon.maxInflations} " +
-                    " == Number of User Clicks ${_uiState.value.balloonInflations + 1}"
+                    " == Number of User Clicks ${_uiState.value.currentInflationCount + 1}"
             )
             _uiState.update {
                 it.copy(
-                    balloonInflations = 0,
-                    balloonReward = 1,
+                    currentInflationCount = 0,
+                    currentReward = 1,
                     balloonPopped = true
                 )
             }
@@ -64,8 +64,8 @@ class BartViewModel: ViewModel() {
         _uiState.update {
             it.copy(
                 totalEarnings = it.totalEarnings + reward,
-                balloonReward = 1,
-                balloonInflations = 0
+                currentReward = 1,
+                currentInflationCount = 0
             )
         }
         Timber.i("Balloon Number ${_uiState.value.currentBalloon.listPosition} collected!")

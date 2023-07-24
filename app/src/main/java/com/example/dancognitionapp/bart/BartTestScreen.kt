@@ -72,7 +72,7 @@ fun BartTestScreen(modifier: Modifier = Modifier) {
                 }
             )
             BartTitleText(
-                dollarValue = uiState.balloonReward,
+                dollarValue = uiState.currentReward,
                 modifier = Modifier.constrainAs(dollarsLeft) {
                     centerHorizontallyTo(leftHeader)
                     top.linkTo(leftHeader.bottom)
@@ -120,7 +120,7 @@ fun BartTestScreen(modifier: Modifier = Modifier) {
                     width = Dimension.fillToConstraints
                 }
             ) {
-                viewModel.collectBalloonReward(uiState.balloonReward)
+                viewModel.collectBalloonReward(uiState.currentReward)
                 balloonRadius = initialBalloonRadius
             }
         }

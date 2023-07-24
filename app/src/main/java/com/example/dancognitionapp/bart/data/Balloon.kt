@@ -1,4 +1,4 @@
-package com.example.dancognitionapp.bart.model
+package com.example.dancognitionapp.bart.data
 
 data class Balloon(
     val listPosition: Int,

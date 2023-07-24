@@ -10,7 +10,7 @@ import timber.log.Timber
 
 class BartViewModel: ViewModel() {
 
-    private var balloonList = BalloonGenerator().getBalloonLinkedList()
+    private var balloonList = BalloonGenerator().balloons
 
     /**
      * This first block sets up the ui state to be mutable and initializes the BalloonList

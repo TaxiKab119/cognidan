@@ -16,28 +16,26 @@ class BartViewModel: ViewModel() {
      * */
     private val _uiState = mutableStateOf(
         BartUiState(
-            balloonList = balloonList,
-            currentBalloon = balloonList.first
+            balloonList = balloonList
         )
     )
     val uiState: State<BartUiState> = _uiState
     private val currentState: BartUiState
         get() = _uiState.value
     fun inflateBalloon() {
-        val isListEmpty: Boolean = balloonList.isEmpty()
-        if (isListEmpty) {
-            Timber.i("BART completed!")
-            return
-        }
+//        val isListEmpty: Boolean = balloonList.isEmpty()
+//        if (isListEmpty) {
+//            Timber.i("BART completed!")
+//            return
+//        }
         val canInflate =
             currentState.currentBalloon.maxInflations > currentState.currentInflationCount
 
         if (canInflate) {
-            val updatedState = currentState.copy(
+            _uiState.value = currentState.copy(
                 currentInflationCount = currentState.currentInflationCount.inc(),
                 currentReward = currentState.currentReward.inc()
             )
-            _uiState.value = updatedState
             Timber.i("Balloon Number ${currentState.currentBalloon.listPosition} was inflated!")
             Timber.d("\nInflations: ${currentState.currentInflationCount}" +
                     "\nmaxInflationCount: ${currentState.currentBalloon.maxInflations}" +
@@ -48,42 +46,39 @@ class BartViewModel: ViewModel() {
                     " Max Inflation: ${currentState.currentBalloon.maxInflations} " +
                     " == Number of User Clicks ${currentState.currentInflationCount + 1}"
             )
-            val updatedState = currentState.copy(
+            _uiState.value = currentState.copy(
                 currentInflationCount = 0,
                 currentReward = 1,
                 balloonPopped = true
             )
-            _uiState.value = updatedState
             toNextBalloon()
         }
     }
 
     fun resetBalloonStatus() {
-        val updatedState = currentState.copy(
+        _uiState.value = currentState.copy(
             balloonPopped = false
         )
-        _uiState.value = updatedState
         Timber.i("balloonPopped: ${_uiState.value.balloonPopped}")
     }
 
     fun collectBalloonReward() {
-        val isListEmpty: Boolean = balloonList.isEmpty()
-        if (isListEmpty) {
-            Timber.i("BART completed!")
-            return
-        }
-        val updatedState = currentState.copy(
+//        val isListEmpty: Boolean = balloonList.isEmpty()
+//        if (isListEmpty) {
+//            Timber.i("BART completed!")
+//            return
+//        }
+        _uiState.value = currentState.copy(
             totalEarnings = currentState.totalEarnings + currentState.currentReward,
             currentReward = 1,
             currentInflationCount = 0
         )
-        _uiState.value = updatedState
         Timber.i("Balloon Number ${currentState.currentBalloon.listPosition} collected!")
         toNextBalloon()
     }
 
     private fun toNextBalloon() {
-        val isLastBalloon: Boolean = currentState.balloonList.size == 1
+        val isLastBalloon: Boolean = currentState.balloonList.size == 0
 
         if (isLastBalloon) {
             /*TODO*/
@@ -91,10 +86,9 @@ class BartViewModel: ViewModel() {
             // disable buttons or go to completed screen?
             Timber.i("BART completed!")
         } else {
-            currentState.balloonList.removeFirst()
             _uiState.value = currentState.copy(
                 balloonList = balloonList,
-                currentBalloon = balloonList.first
+                currentBalloon = balloonList.pop()
             )
         }
     }

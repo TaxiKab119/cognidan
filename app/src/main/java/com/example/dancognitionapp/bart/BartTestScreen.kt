@@ -23,6 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.ui.LandscapePreview
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
+import timber.log.Timber
 
 
 @Composable
@@ -107,7 +108,11 @@ fun BartTestScreen(modifier: Modifier = Modifier) {
                     viewModel.resetBalloonStatus()
                     /*TODO*/
                     // Replace lines below with "Balloon Popped" Dialog
-                    viewModel.inflateBalloon()
+                    viewModel.inflateBalloon(
+                        onBalloonPopped = { /*TODO - Callback to show dialog */ }
+                    ) {
+                        Timber.i("BART test completed via inflate (popping)")
+                    }
                     balloonRadius *= 1.08f
                 } else {
                     viewModel.inflateBalloon()
@@ -122,7 +127,9 @@ fun BartTestScreen(modifier: Modifier = Modifier) {
                     width = Dimension.fillToConstraints
                 }
             ) {
-                viewModel.collectBalloonReward()
+                viewModel.collectBalloonReward() {
+                    Timber.i("BART test completed via collect")
+                }
                 balloonRadius = initialBalloonRadius
             }
         }

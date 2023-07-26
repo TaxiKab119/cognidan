@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.example.dancognitionapp.bart.data.BalloonGenerator
 import com.example.dancognitionapp.bart.data.BartUiState
 import timber.log.Timber
+import java.util.NoSuchElementException
 
 class BartViewModel: ViewModel() {
 
@@ -22,12 +23,10 @@ class BartViewModel: ViewModel() {
     val uiState: State<BartUiState> = _uiState
     private val currentState: BartUiState
         get() = _uiState.value
-    fun inflateBalloon() {
-//        val isListEmpty: Boolean = balloonList.isEmpty()
-//        if (isListEmpty) {
-//            Timber.i("BART completed!")
-//            return
-//        }
+    fun inflateBalloon(
+        onBalloonPopped:() -> Unit = {},
+        onTestCompleted:() -> Unit = {}
+    ) {
         val canInflate =
             currentState.currentBalloon.maxInflations > currentState.currentInflationCount
 
@@ -51,7 +50,7 @@ class BartViewModel: ViewModel() {
                 currentReward = 1,
                 balloonPopped = true
             )
-            toNextBalloon()
+            toNextBalloon(onTestCompleted)
         }
     }
 
@@ -62,34 +61,27 @@ class BartViewModel: ViewModel() {
         Timber.i("balloonPopped: ${_uiState.value.balloonPopped}")
     }
 
-    fun collectBalloonReward() {
-//        val isListEmpty: Boolean = balloonList.isEmpty()
-//        if (isListEmpty) {
-//            Timber.i("BART completed!")
-//            return
-//        }
+    fun collectBalloonReward(onTestCompleted: () -> Unit) {
         _uiState.value = currentState.copy(
             totalEarnings = currentState.totalEarnings + currentState.currentReward,
             currentReward = 1,
             currentInflationCount = 0
         )
         Timber.i("Balloon Number ${currentState.currentBalloon.listPosition} collected!")
-        toNextBalloon()
+        toNextBalloon(onTestCompleted)
     }
 
-    private fun toNextBalloon() {
-        val isLastBalloon: Boolean = currentState.balloonList.size == 0
-
-        if (isLastBalloon) {
-            /*TODO*/
-            // have something to show test is complete
-            // disable buttons or go to completed screen?
-            Timber.i("BART completed!")
-        } else {
+    private fun toNextBalloon(onTestCompleted: () -> Unit = {}) {
+        if (balloonList.isEmpty()) {
+            onTestCompleted()
+        }
+        try {
             _uiState.value = currentState.copy(
                 balloonList = balloonList,
                 currentBalloon = balloonList.pop()
             )
+        } catch (e:NoSuchElementException) {
+            Timber.i("Test completed or something")
         }
     }
 }

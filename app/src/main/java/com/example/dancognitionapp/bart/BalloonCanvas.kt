@@ -5,8 +5,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -15,13 +13,11 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.example.dancognitionapp.ui.LandscapePreview
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
 
 @Composable
-fun Balloon(
+fun BalloonCanvas(
     radius: Float,
     modifier: Modifier = Modifier
 ) {
@@ -98,6 +94,6 @@ fun Balloon(
 @Composable
 fun BalloonPreview() {
     DanCognitionAppTheme {
-        Balloon(radius = 200f, modifier = Modifier.fillMaxSize())
+        BalloonCanvas(radius = 200f, modifier = Modifier.fillMaxSize())
     }
 }

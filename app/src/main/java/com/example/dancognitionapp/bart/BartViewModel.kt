@@ -50,6 +50,7 @@ class BartViewModel: ViewModel() {
                 currentReward = 1,
                 balloonPopped = true
             )
+            onBalloonPopped()
             toNextBalloon(onTestCompleted)
         }
     }
@@ -58,7 +59,6 @@ class BartViewModel: ViewModel() {
         _uiState.value = currentState.copy(
             balloonPopped = false
         )
-        Timber.i("balloonPopped: ${_uiState.value.balloonPopped}")
     }
 
     fun collectBalloonReward(onTestCompleted: () -> Unit) {

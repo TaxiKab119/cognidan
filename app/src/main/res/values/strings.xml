@@ -19,4 +19,8 @@
     <string name="selection_post_dive">Post-dive</string>
     <string name="selection_practice_nback">n-back</string>
     <string name="selection_practice_bart">BART</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="balloon_popped_dialog_message">Balloon popped!</string>
+    <string name="click_elsewhere_to_dismiss">Click elsewhere to dismiss</string>
 </resources>

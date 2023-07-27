@@ -22,7 +22,9 @@ class BartFragment: AssessmentFragment() {
         val view = inflater.inflate(R.layout.fragment_compose_host, container, false)
         view.findViewById<ComposeView>(R.id.compose_root).setContent {
             DanCognitionAppTheme() {
-                BartTestScreen(Modifier.fillMaxSize())
+                BartTestScreen(Modifier.fillMaxSize()) {
+                    BartDialogFragment.newInstance(R.string.hello_blank_fragment).show(childFragmentManager, "")
+                }
             }
         }
         return view

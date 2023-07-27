@@ -8,10 +8,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -27,7 +26,7 @@ import timber.log.Timber
 
 
 @Composable
-fun BartTestScreen(modifier: Modifier = Modifier) {
+fun BartTestScreen(modifier: Modifier = Modifier, showDialog: () -> Unit) {
 
     val viewModel: BartViewModel = viewModel()
     val uiState by viewModel.uiState
@@ -36,7 +35,7 @@ fun BartTestScreen(modifier: Modifier = Modifier) {
         .padding(12.dp)
     ) {
         val initialBalloonRadius = (maxWidth.value / 9)
-        var balloonRadius: Float by remember { mutableStateOf(initialBalloonRadius) }
+        var balloonRadius: Float by rememberSaveable { mutableStateOf(initialBalloonRadius) }
 
         ConstraintLayout(modifier = modifier) {
 
@@ -103,19 +102,27 @@ fun BartTestScreen(modifier: Modifier = Modifier) {
                     width = Dimension.fillToConstraints
                 }
             ) {
+                /**
+                 * This `if` block is needed to reset [balloonRadius] when starting a new balloon
+                 *  as balloonRadius is set based on the size of this composable initially it
+                 *  can't be updated outside of the UI layer.
+                 *  Think of balloonPopped as balloonJustPopped
+                */
                 if (uiState.balloonPopped) {
                     balloonRadius = initialBalloonRadius
                     viewModel.resetBalloonStatus()
-                    /*TODO*/
-                    // Replace lines below with "Balloon Popped" Dialog
-                    viewModel.inflateBalloon(
-                        onBalloonPopped = { /*TODO - Callback to show dialog */ }
-                    ) {
-                        Timber.i("BART test completed via inflate (popping)")
-                    }
+                    viewModel.inflateBalloon()
                     balloonRadius *= 1.08f
                 } else {
-                    viewModel.inflateBalloon()
+                    viewModel.inflateBalloon(
+                        onBalloonPopped = {
+                            showDialog()
+                            Timber.i("Balloon Popped: ${uiState.currentBalloon.listPosition}")
+                        }
+                    ) {
+                        showDialog()
+                        Timber.i("BART completed via inflate (popping)")
+                    }
                     balloonRadius *= 1.08f
                 }
             }
@@ -128,6 +135,7 @@ fun BartTestScreen(modifier: Modifier = Modifier) {
                 }
             ) {
                 viewModel.collectBalloonReward() {
+                    showDialog()
                     Timber.i("BART test completed via collect")
                 }
                 balloonRadius = initialBalloonRadius
@@ -182,6 +190,6 @@ fun BartButton(
 @Composable
 fun BartConstraintLayoutPreview() {
     DanCognitionAppTheme {
-        BartTestScreen(modifier = Modifier.fillMaxSize())
+        BartTestScreen(modifier = Modifier.fillMaxSize()) {}
     }
 }

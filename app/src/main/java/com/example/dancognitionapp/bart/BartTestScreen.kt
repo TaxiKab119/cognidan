@@ -120,7 +120,7 @@ fun BartTestScreen(modifier: Modifier = Modifier, showDialog: () -> Unit) {
                             Timber.i("Balloon Popped: ${uiState.currentBalloon.listPosition}")
                         }
                     ) {
-                        showDialog()
+                        showDialog() // need to make this compose
                         Timber.i("BART completed via inflate (popping)")
                     }
                     balloonRadius *= 1.08f

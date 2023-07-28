@@ -21,12 +21,16 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.ui.LandscapePreview
+import com.example.dancognitionapp.ui.landing.LandingDestination
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
+import com.example.dancognitionapp.ui.widget.navigateTo
+import kotlinx.coroutines.NonDisposableHandle.parent
 import timber.log.Timber
+import kotlin.math.roundToInt
 
 
 @Composable
-fun BartTestScreen(modifier: Modifier = Modifier, showDialog: () -> Unit) {
+fun BartTestScreen(modifier: Modifier = Modifier, onTestFinished: (Int) -> Unit) {
 
     val viewModel: BartViewModel = viewModel()
     val uiState by viewModel.uiState
@@ -36,6 +40,16 @@ fun BartTestScreen(modifier: Modifier = Modifier, showDialog: () -> Unit) {
     ) {
         val initialBalloonRadius = (maxWidth.value / 9)
         var balloonRadius: Float by rememberSaveable { mutableStateOf(initialBalloonRadius) }
+
+        BartDialog(
+            showDialog = uiState.showDialog,
+            titleResId = if (uiState.balloonList.size != 0) R.string.balloon_popped_dialog_message
+            else R.string.end_of_test_dialog_message,
+            isTestComplete = uiState.balloonList.size == 0,
+            onDismiss = { viewModel.hideDialog() }
+        ) { dest ->
+            onTestFinished(dest)
+        }
 
         ConstraintLayout(modifier = modifier) {
 
@@ -114,15 +128,7 @@ fun BartTestScreen(modifier: Modifier = Modifier, showDialog: () -> Unit) {
                     viewModel.inflateBalloon()
                     balloonRadius *= 1.08f
                 } else {
-                    viewModel.inflateBalloon(
-                        onBalloonPopped = {
-                            showDialog()
-                            Timber.i("Balloon Popped: ${uiState.currentBalloon.listPosition}")
-                        }
-                    ) {
-                        showDialog() // need to make this compose
-                        Timber.i("BART completed via inflate (popping)")
-                    }
+                    viewModel.inflateBalloon()
                     balloonRadius *= 1.08f
                 }
             }
@@ -134,10 +140,7 @@ fun BartTestScreen(modifier: Modifier = Modifier, showDialog: () -> Unit) {
                     width = Dimension.fillToConstraints
                 }
             ) {
-                viewModel.collectBalloonReward() {
-                    showDialog()
-                    Timber.i("BART test completed via collect")
-                }
+                viewModel.collectBalloonReward()
                 balloonRadius = initialBalloonRadius
             }
         }
@@ -190,6 +193,6 @@ fun BartButton(
 @Composable
 fun BartConstraintLayoutPreview() {
     DanCognitionAppTheme {
-        BartTestScreen(modifier = Modifier.fillMaxSize()) {}
+        BartTestScreen(modifier = Modifier.fillMaxSize(), {})
     }
 }

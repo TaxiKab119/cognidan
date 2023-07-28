@@ -23,4 +23,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="balloon_popped_dialog_message">Balloon popped!</string>
     <string name="click_elsewhere_to_dismiss">Click elsewhere to dismiss</string>
+    <string name="end_of_test_dialog_message">End of test</string>
+    <string name="click_to_leave">Click to leave</string>
 </resources>

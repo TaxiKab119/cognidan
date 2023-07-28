@@ -23,10 +23,7 @@ class BartViewModel: ViewModel() {
     val uiState: State<BartUiState> = _uiState
     private val currentState: BartUiState
         get() = _uiState.value
-    fun inflateBalloon(
-        onBalloonPopped:() -> Unit = {},
-        onTestCompleted:() -> Unit = {}
-    ) {
+    fun inflateBalloon() {
         val canInflate =
             currentState.currentBalloon.maxInflations > currentState.currentInflationCount
 
@@ -48,10 +45,10 @@ class BartViewModel: ViewModel() {
             _uiState.value = currentState.copy(
                 currentInflationCount = 0,
                 currentReward = 1,
-                balloonPopped = true
+                balloonPopped = true,
+                showDialog = true
             )
-            onBalloonPopped()
-            toNextBalloon(onTestCompleted)
+            toNextBalloon()
         }
     }
 
@@ -61,19 +58,27 @@ class BartViewModel: ViewModel() {
         )
     }
 
-    fun collectBalloonReward(onTestCompleted: () -> Unit) {
+    fun hideDialog() {
+        _uiState.value = currentState.copy(
+            showDialog = false
+        )
+    }
+
+    fun collectBalloonReward() {
         _uiState.value = currentState.copy(
             totalEarnings = currentState.totalEarnings + currentState.currentReward,
             currentReward = 1,
             currentInflationCount = 0
         )
         Timber.i("Balloon Number ${currentState.currentBalloon.listPosition} collected!")
-        toNextBalloon(onTestCompleted)
+        toNextBalloon()
     }
 
-    private fun toNextBalloon(onTestCompleted: () -> Unit = {}) {
+    private fun toNextBalloon() {
         if (balloonList.isEmpty()) {
-            onTestCompleted()
+            _uiState.value = currentState.copy(
+                showDialog = true
+            )
         }
         try {
             _uiState.value = currentState.copy(

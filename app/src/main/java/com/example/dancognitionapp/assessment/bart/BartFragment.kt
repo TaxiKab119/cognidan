@@ -24,7 +24,7 @@ class BartFragment: AssessmentFragment() {
         view.findViewById<ComposeView>(R.id.compose_root).setContent {
             DanCognitionAppTheme() {
                 BartTestScreen(Modifier.fillMaxSize()) { destination ->
-                    findNavController().navigate(destination)
+                    findNavController().popBackStack(destination, inclusive = false)
                 }
             }
         }

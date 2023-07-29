@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import com.example.dancognitionapp.bart.data.BalloonGenerator
 import com.example.dancognitionapp.bart.data.BartUiState
 import timber.log.Timber
-import java.util.NoSuchElementException
 
 class BartViewModel: ViewModel() {
 
@@ -23,17 +22,15 @@ class BartViewModel: ViewModel() {
     val uiState: State<BartUiState> = _uiState
     private val currentState: BartUiState
         get() = _uiState.value
-    fun inflateBalloon(
-        onBalloonPopped:() -> Unit = {},
-        onTestCompleted:() -> Unit = {}
-    ) {
+    fun inflateBalloon() {
         val canInflate =
             currentState.currentBalloon.maxInflations > currentState.currentInflationCount
 
         if (canInflate) {
             _uiState.value = currentState.copy(
                 currentInflationCount = currentState.currentInflationCount.inc(),
-                currentReward = currentState.currentReward.inc()
+                currentReward = currentState.currentReward.inc(),
+                isBalloonPopped = false
             )
             Timber.i("Balloon Number ${currentState.currentBalloon.listPosition} was inflated!")
             Timber.d("\nInflations: ${currentState.currentInflationCount}" +
@@ -48,40 +45,45 @@ class BartViewModel: ViewModel() {
             _uiState.value = currentState.copy(
                 currentInflationCount = 0,
                 currentReward = 1,
-                balloonPopped = true
+                isBalloonPopped = true
             )
-            toNextBalloon(onTestCompleted)
+            toNextBalloon()
         }
     }
 
     fun resetBalloonStatus() {
         _uiState.value = currentState.copy(
-            balloonPopped = false
+            isBalloonPopped = false
         )
-        Timber.i("balloonPopped: ${_uiState.value.balloonPopped}")
     }
 
-    fun collectBalloonReward(onTestCompleted: () -> Unit) {
+    fun hideDialog() {
+        _uiState.value = currentState.copy(
+            isBalloonPopped = false,
+            isTestComplete = false
+        )
+    }
+
+    fun collectBalloonReward() {
         _uiState.value = currentState.copy(
             totalEarnings = currentState.totalEarnings + currentState.currentReward,
             currentReward = 1,
             currentInflationCount = 0
         )
         Timber.i("Balloon Number ${currentState.currentBalloon.listPosition} collected!")
-        toNextBalloon(onTestCompleted)
+        toNextBalloon()
     }
 
-    private fun toNextBalloon(onTestCompleted: () -> Unit = {}) {
+    private fun toNextBalloon() {
         if (balloonList.isEmpty()) {
-            onTestCompleted()
-        }
-        try {
             _uiState.value = currentState.copy(
-                balloonList = balloonList,
-                currentBalloon = balloonList.pop()
+                isTestComplete = true
             )
-        } catch (e:NoSuchElementException) {
-            Timber.i("Test completed or something")
+            return
         }
+        _uiState.value = currentState.copy(
+            balloonList = balloonList,
+            currentBalloon = balloonList.pop()
+        )
     }
 }

@@ -8,5 +8,6 @@ data class BartUiState(
     val currentInflationCount: Int = 0,
     val currentReward: Int = 1,
     val totalEarnings: Int = 0,
-    val balloonPopped: Boolean = false
+    val isBalloonPopped: Boolean = false,
+    val isTestComplete: Boolean = false
 )

@@ -30,7 +30,6 @@ import com.example.dancognitionapp.ui.widget.navigateTo
 
 @Composable
 fun BartDialog(
-    showDialog: Boolean,
     isTestComplete: Boolean,
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit,
@@ -74,37 +73,35 @@ fun BartDialog(
         }
 
     } else {
-        if (showDialog) {
-            Dialog(onDismissRequest = onDismiss) {
-                Box(
+        Dialog(onDismissRequest = onDismiss) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
+                        .background(color = MaterialTheme.colorScheme.error)
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(12.dp))
                 ) {
-                    Column(
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
+                    Text(
+                        text = stringResource(id = R.string.balloon_popped_dialog_message),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.displaySmall,
+                        color = MaterialTheme.colorScheme.onError,
                         modifier = Modifier
-                            .background(color = MaterialTheme.colorScheme.error)
-                            .fillMaxWidth()
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.balloon_popped_dialog_message),
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.displaySmall,
-                            color = MaterialTheme.colorScheme.onError,
-                            modifier = Modifier
-                                .padding(top = 24.dp, start = 24.dp, end = 24.dp)
-                        )
-                        Text(
-                            text = stringResource(id = R.string.click_elsewhere_to_dismiss),
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = MaterialTheme.colorScheme.onErrorContainer,
-                            modifier = Modifier
-                                .padding(36.dp)
-                        )
-                    }
+                            .padding(top = 24.dp, start = 24.dp, end = 24.dp)
+                    )
+                    Text(
+                        text = stringResource(id = R.string.click_elsewhere_to_dismiss),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                        modifier = Modifier
+                            .padding(36.dp)
+                    )
                 }
             }
         }
@@ -116,7 +113,7 @@ fun BartDialog(
 fun DialogPreview() {
     DanCognitionAppTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
-            BartDialog(showDialog = true, isTestComplete = true, onDismiss = {}) {}
+            BartDialog(isTestComplete = true, onDismiss = {}) {}
         }
     }
 }

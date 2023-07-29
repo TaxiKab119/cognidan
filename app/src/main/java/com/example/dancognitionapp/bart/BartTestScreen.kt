@@ -1,6 +1,7 @@
 package com.example.dancognitionapp.bart
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -48,12 +49,13 @@ fun BartTestScreen(modifier: Modifier = Modifier, onTestFinished: (Int) -> Unit)
                 dollarsRight
             ) = createRefs()
 
-            BartDialog(
-                showDialog = uiState.showDialog,
-                isTestComplete = uiState.balloonList.size == 0,
-                onDismiss = { viewModel.hideDialog() }
-            ) { dest ->
-                onTestFinished(dest)
+            if (uiState.showDialog) {
+                BartDialog(
+                    isTestComplete = uiState.balloonList.size == 0,
+                    onDismiss = { viewModel.hideDialog() }
+                ) { dest ->
+                    onTestFinished(dest)
+                }
             }
 
             BalloonCanvas(

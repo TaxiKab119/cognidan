@@ -1,4 +1,11 @@
 package com.example.dancognitionapp.nback
 
-class nbackGenerator {
+import java.util.LinkedList
+
+class NBackGenerator {
+
+    private fun generateNBackPresentationOrder(n: Int): LinkedList<NBackItem> {
+
+
+    }
 }

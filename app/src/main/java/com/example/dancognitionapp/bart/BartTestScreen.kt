@@ -1,7 +1,6 @@
 package com.example.dancognitionapp.bart
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -11,7 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -35,7 +34,7 @@ fun BartTestScreen(modifier: Modifier = Modifier, onTestFinished: (Int) -> Unit)
         .padding(12.dp)
     ) {
         val initialBalloonRadius = (maxWidth.value / 9)
-        var balloonRadius: Float by rememberSaveable { mutableStateOf(initialBalloonRadius) }
+        var balloonRadius: Float by remember { mutableStateOf(initialBalloonRadius) }
 
         ConstraintLayout(modifier = modifier) {
 

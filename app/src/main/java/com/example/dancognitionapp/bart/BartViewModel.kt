@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import com.example.dancognitionapp.bart.data.BalloonGenerator
 import com.example.dancognitionapp.bart.data.BartUiState
 import timber.log.Timber
-import java.util.NoSuchElementException
 
 class BartViewModel: ViewModel() {
 
@@ -30,7 +29,8 @@ class BartViewModel: ViewModel() {
         if (canInflate) {
             _uiState.value = currentState.copy(
                 currentInflationCount = currentState.currentInflationCount.inc(),
-                currentReward = currentState.currentReward.inc()
+                currentReward = currentState.currentReward.inc(),
+                isBalloonPopped = false
             )
             Timber.i("Balloon Number ${currentState.currentBalloon.listPosition} was inflated!")
             Timber.d("\nInflations: ${currentState.currentInflationCount}" +
@@ -45,8 +45,7 @@ class BartViewModel: ViewModel() {
             _uiState.value = currentState.copy(
                 currentInflationCount = 0,
                 currentReward = 1,
-                balloonPopped = true,
-                showDialog = true
+                isBalloonPopped = true
             )
             toNextBalloon()
         }
@@ -54,13 +53,14 @@ class BartViewModel: ViewModel() {
 
     fun resetBalloonStatus() {
         _uiState.value = currentState.copy(
-            balloonPopped = false
+            isBalloonPopped = false
         )
     }
 
     fun hideDialog() {
         _uiState.value = currentState.copy(
-            showDialog = false
+            isBalloonPopped = false,
+            isTestComplete = false
         )
     }
 
@@ -77,16 +77,13 @@ class BartViewModel: ViewModel() {
     private fun toNextBalloon() {
         if (balloonList.isEmpty()) {
             _uiState.value = currentState.copy(
-                showDialog = true
+                isTestComplete = true
             )
+            return
         }
-        try {
-            _uiState.value = currentState.copy(
-                balloonList = balloonList,
-                currentBalloon = balloonList.pop()
-            )
-        } catch (e:NoSuchElementException) {
-            Timber.i("Test completed or something")
-        }
+        _uiState.value = currentState.copy(
+            balloonList = balloonList,
+            currentBalloon = balloonList.pop()
+        )
     }
 }

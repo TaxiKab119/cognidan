@@ -1,4 +1,4 @@
-package com.example.dancognitionapp.bart
+package com.example.dancognitionapp.ui.bart
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -20,12 +20,14 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dancognitionapp.R
+import com.example.dancognitionapp.bart.BartViewModel
 import com.example.dancognitionapp.ui.LandscapePreview
+import com.example.dancognitionapp.ui.landing.BartDialog
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
 
 
 @Composable
-fun BartTestScreen(modifier: Modifier = Modifier, onTestFinished: (Int) -> Unit) {
+fun BartTestScreen(modifier: Modifier = Modifier, navigateTo: (Int) -> Unit) {
 
     val viewModel: BartViewModel = viewModel()
     val uiState by viewModel.uiState
@@ -35,6 +37,7 @@ fun BartTestScreen(modifier: Modifier = Modifier, onTestFinished: (Int) -> Unit)
     ) {
         val initialBalloonRadius = (maxWidth.value / 9)
         var balloonRadius: Float by remember { mutableStateOf(initialBalloonRadius) }
+        var showDialog by remember { mutableStateOf(false) }
 
         ConstraintLayout(modifier = modifier) {
 
@@ -47,14 +50,21 @@ fun BartTestScreen(modifier: Modifier = Modifier, onTestFinished: (Int) -> Unit)
                 dollarsLeft,
                 dollarsRight
             ) = createRefs()
-
-            if (uiState.showDialog) {
+            if (uiState.isBalloonPopped || uiState.isTestComplete) {
+                showDialog = true
                 BartDialog(
-                    isTestComplete = uiState.balloonList.size == 0,
-                    onDismiss = { viewModel.hideDialog() }
-                ) { dest ->
-                    onTestFinished(dest)
-                }
+                    isTestComplete = uiState.isTestComplete,
+                    onDismiss = {
+                        if (uiState.isTestComplete) {
+                            navigateTo(R.id.selection_dest)
+                        } else {
+                            viewModel.hideDialog()
+                            showDialog = false
+                            balloonRadius = initialBalloonRadius
+                            viewModel.resetBalloonStatus()
+                        }
+                    }
+                )
             }
 
             BalloonCanvas(
@@ -65,7 +75,7 @@ fun BartTestScreen(modifier: Modifier = Modifier, onTestFinished: (Int) -> Unit)
                         width = Dimension.fillToConstraints
                         height = Dimension.fillToConstraints
                     },
-                radius = if (uiState.balloonPopped) initialBalloonRadius
+                radius = if (uiState.isBalloonPopped) initialBalloonRadius
                     else balloonRadius
             )
             createHorizontalChain(inflateButton, balloon, collectButton)
@@ -110,18 +120,7 @@ fun BartTestScreen(modifier: Modifier = Modifier, onTestFinished: (Int) -> Unit)
                     width = Dimension.fillToConstraints
                 }
             ) {
-                /**
-                 * This `if` block is needed to reset [balloonRadius] when starting a new balloon
-                 *  as balloonRadius is set based on the size of this composable initially it
-                 *  can't be updated outside of the UI layer.
-                 *  Think of balloonPopped as balloonJustPopped
-                */
-                if (uiState.balloonPopped) {
-                    balloonRadius = initialBalloonRadius
-                    viewModel.resetBalloonStatus()
-                    viewModel.inflateBalloon()
-                    balloonRadius *= 1.08f
-                } else {
+                if (!showDialog) {
                     viewModel.inflateBalloon()
                     balloonRadius *= 1.08f
                 }
@@ -134,8 +133,10 @@ fun BartTestScreen(modifier: Modifier = Modifier, onTestFinished: (Int) -> Unit)
                     width = Dimension.fillToConstraints
                 }
             ) {
-                viewModel.collectBalloonReward()
-                balloonRadius = initialBalloonRadius
+                if (!showDialog) {
+                    viewModel.collectBalloonReward()
+                    balloonRadius = initialBalloonRadius
+                }
             }
         }
     }

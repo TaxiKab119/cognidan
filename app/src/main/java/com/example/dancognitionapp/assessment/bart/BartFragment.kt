@@ -10,7 +10,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.navigation.fragment.findNavController
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.assessment.AssessmentFragment
-import com.example.dancognitionapp.bart.BartTestScreen
+import com.example.dancognitionapp.ui.bart.BartTestScreen
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
 
 class BartFragment: AssessmentFragment() {

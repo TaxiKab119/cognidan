@@ -1,4 +1,4 @@
-package com.example.dancognitionapp.bart
+package com.example.dancognitionapp.ui.bart
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState

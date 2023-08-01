@@ -9,10 +9,10 @@ private const val NUMBER_OF_PRESENTATIONS = 12
 class NBackGenerator(private val testType: NBackType) {
 
     val items = LinkedList<NBackItem>()
-    var validityRatio: Double? = null
+    var targetFoilRatio: Double? = null
     init {
         generateNBackPresentationOrder()
-        getValidityRatio()
+        getTargetFoilRatio()
     }
 
     private fun generateValidChars(): CharArray {
@@ -22,7 +22,7 @@ class NBackGenerator(private val testType: NBackType) {
         val n = testType.value
         val random = Random(System.currentTimeMillis())
 
-        /**This block places targets and "target buddies" randomly throughout presentation order.
+        /**This block places targets and "target buddies (key)" randomly throughout presentation order.
          * This ensures there are exactly [targetNumber] targets.
          * */
         val excludedValues = mutableListOf<Int>()
@@ -88,14 +88,14 @@ class NBackGenerator(private val testType: NBackType) {
         }
     }
 
-    private fun getValidityRatio() {
+    private fun getTargetFoilRatio() {
         var counter = 0.0
         for (item in items) {
-            if (item.isValid()) {
+            if (item.isTarget()) {
                 counter++
             }
         }
-        validityRatio = counter / items.size
+        targetFoilRatio = counter / items.size
     }
 
 }
@@ -108,15 +108,15 @@ enum class NBackType(val value: Int) {
 
 fun main() {
     val oneBack = NBackGenerator(NBackType.N_1)
-    println("Validity: ${oneBack.validityRatio}")
+    println("Validity: ${oneBack.targetFoilRatio}")
     println("------------------------------------")
     println("")
 
     val twoBack = NBackGenerator(NBackType.N_2)
-    println("Validity: ${twoBack.validityRatio}")
+    println("Validity: ${twoBack.targetFoilRatio}")
     println("------------------------------------")
     println("")
 
     val threeBack = NBackGenerator(NBackType.N_3)
-    println("Validity: ${threeBack.validityRatio}")
+    println("Validity: ${threeBack.targetFoilRatio}")
 }

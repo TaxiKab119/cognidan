@@ -9,7 +9,7 @@ data class NBackItem(
     val key: Char? = null
 
 ) {
-    fun isValid() = letter == key
+    fun isTarget() = letter == key
 }
 
 

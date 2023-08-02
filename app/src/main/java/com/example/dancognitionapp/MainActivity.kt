@@ -11,6 +11,8 @@ import com.example.dancognitionapp.assessment.AssessmentActivity
 import com.example.dancognitionapp.ui.landing.LandingDestination
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
 import com.example.dancognitionapp.ui.landing.LandingPageScreen
+import com.example.dancognitionapp.participants.ParticipantsActivity
+import android.content.Intent
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,7 +31,7 @@ class MainActivity : ComponentActivity() {
                             LandingDestination.Practice ->
                                 startActivity(AssessmentActivity.newIntent(this, true))
                             LandingDestination.AddParticipants -> {
-                                //TODO - start participants activity
+                                startActivity(Intent(this, ParticipantsActivity::class.java))
                             }
                         }
                     }

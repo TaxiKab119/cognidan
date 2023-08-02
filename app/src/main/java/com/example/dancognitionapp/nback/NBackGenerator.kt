@@ -16,7 +16,7 @@ class NBackGenerator(private val testType: NBackType) {
     }
 
     private fun generateValidChars(): CharArray {
-        val stimuli = listOf('A', 'B', 'C', 'D', 'E')
+        val stimuli = listOf('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H')
         val chars = CharArray(NUMBER_OF_PRESENTATIONS) {'Z'} // Z is a placeholder (never used as a stimuli)
         val targetNumber = NUMBER_OF_PRESENTATIONS / 3
         val n = testType.value
@@ -25,19 +25,20 @@ class NBackGenerator(private val testType: NBackType) {
         /**This block places targets and "target buddies (key)" randomly throughout presentation order.
          * This ensures there are exactly [targetNumber] targets.
          * */
-        val excludedValues = mutableListOf<Int>()
+        val excludedIndices = mutableListOf<Int>()
         for (i in 1..targetNumber) {
             var targetValue = stimuli.random(random)
+            println("Excluded Indices: $excludedIndices")
             if (i == 1) {
-                // targetIndex can be as low as n so that the target-buddy can still be placed
+                // targetIndex can be as low as n + 1 so that the target-buddy can still be placed along with pre-lure
                 val targetIndex = Random.nextInt(n until NUMBER_OF_PRESENTATIONS)
                 chars[targetIndex] = targetValue
                 chars[targetIndex - n] = targetValue
-                excludedValues.addAll(listOf(targetIndex, targetIndex - n, targetIndex + n))
+                excludedIndices.addAll(listOf(targetIndex, targetIndex - n, targetIndex + n))
             } else {
-                val possibleValues = (n until NUMBER_OF_PRESENTATIONS)
-                    .filterNot { it in excludedValues }
-                val targetIndex = possibleValues.random(random)
+                val possibleIndices = (n until NUMBER_OF_PRESENTATIONS)
+                    .filterNot { it in excludedIndices }
+                val targetIndex = possibleIndices.random(random)
 
                 // resolve bug of repeating a letter and creating more targets than desired
                 val repeatedLetter = targetValue == chars[targetIndex] + n
@@ -49,7 +50,8 @@ class NBackGenerator(private val testType: NBackType) {
                 }
                 chars[targetIndex] = targetValue
                 chars[targetIndex - n] = targetValue
-                excludedValues.addAll(listOf(targetIndex, targetIndex - n, targetIndex + n))
+                excludedIndices.addAll(listOf(targetIndex, targetIndex - n, targetIndex + n))
+                println("Working model of Chars: ${chars.contentToString()}")
             }
         }
         println("Chars before replacing Zs: ${chars.contentToString()}")

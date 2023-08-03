@@ -16,9 +16,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -29,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,7 +55,7 @@ fun ParticipantManagerScreen(
             DanCognitionTopAppBar(headerResId = R.string.landing_participant_manager)
         },
         floatingActionButton = {
-            FloatingActionButton(
+            LargeFloatingActionButton(
                 onClick = {
                     if (selectedParticipantId != null) {
                         onClickParticipant(selectedParticipantId)
@@ -61,8 +63,7 @@ fun ParticipantManagerScreen(
                         onAdd()
                     }
                 },
-                containerColor = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.size(76.dp)
+                containerColor = MaterialTheme.colorScheme.secondary
             ) {
                 if (selectedParticipantId != null) {
                     Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit")
@@ -107,26 +108,32 @@ fun ParticipantCard(
 ) {
     val color by animateColorAsState(
         targetValue = if (isSelected) MaterialTheme.colorScheme.tertiaryContainer
-        else MaterialTheme.colorScheme.primaryContainer
+            else MaterialTheme.colorScheme.primaryContainer
     )
-    Card(modifier = modifier.height(82.dp)) {
-        Column(modifier = Modifier
-            .background(color = color)
-            .fillMaxSize()
+    Card(
+        colors = CardDefaults.cardColors(containerColor = color),
+        modifier = modifier
+            .height(82.dp)
             .clickable { onClick(participant.id) }
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
+            ParticipantIcon()
+            Text(
+                text = participant.name,
+                style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            ) {
-                ParticipantIcon()
-                ParticipantInformation(participant.name)
-            }
+                    .padding(8.dp),
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }
+
 
 @Composable
 fun ParticipantIcon(modifier: Modifier = Modifier) {
@@ -138,22 +145,6 @@ fun ParticipantIcon(modifier: Modifier = Modifier) {
             .padding(8.dp)
     )
 }
-
-@Composable
-fun ParticipantInformation(
-    participantName: String,
-    modifier: Modifier = Modifier
-) {
-    Text(
-        text = participantName,
-        style = MaterialTheme.typography.headlineMedium,
-        modifier = Modifier
-            .padding(8.dp),
-        overflow = TextOverflow.Ellipsis
-    )
-}
-
-
 
 
 @Preview(showBackground = true)

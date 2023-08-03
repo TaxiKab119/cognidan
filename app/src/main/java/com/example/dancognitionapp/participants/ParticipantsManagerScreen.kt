@@ -1,11 +1,8 @@
 package com.example.dancognitionapp.participants
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -30,7 +27,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,10 +42,9 @@ import timber.log.Timber
 @Composable
 fun ParticipantManagerScreen(
     modifier: Modifier = Modifier,
-    onClickParticipant: (Int?) -> Unit = {},
-    onAdd: () -> Unit = {}
+    onFabClick: (Participant?) -> Unit = {}
 ) {
-    var selectedParticipantId: Int? by remember { mutableStateOf(null) }
+    var selectedParticipant: Participant? by remember { mutableStateOf(null) }
     Scaffold(
         topBar = {
             DanCognitionTopAppBar(headerResId = R.string.landing_participant_manager)
@@ -57,15 +52,11 @@ fun ParticipantManagerScreen(
         floatingActionButton = {
             LargeFloatingActionButton(
                 onClick = {
-                    if (selectedParticipantId != null) {
-                        onClickParticipant(selectedParticipantId)
-                    } else {
-                        onAdd()
-                    }
+                    onFabClick(selectedParticipant)
                 },
                 containerColor = MaterialTheme.colorScheme.secondary
             ) {
-                if (selectedParticipantId != null) {
+                if (selectedParticipant != null) {
                     Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit")
                 } else {
                     Text(
@@ -78,19 +69,18 @@ fun ParticipantManagerScreen(
     ) { it ->
         LazyColumn(contentPadding = it) {
             items(participants) {participant ->
-                val isSelected = selectedParticipantId == participant.id
+                val isSelected = selectedParticipant == participant
                 ParticipantCard(
                     participant = participant,
                     modifier = Modifier.padding(8.dp),
                     isSelected = isSelected
-                ) { participantId ->
+                ) {
                     if (isSelected) {
                         /**Allow for deselection*/
                         Timber.i("Participant $participant de-selected")
-                        selectedParticipantId = null
+                        selectedParticipant = null
                     } else {
-                        selectedParticipantId = participantId
-                        onClickParticipant(participantId)
+                        selectedParticipant = participant
                         Timber.i("Participant $participant selected")
                     }
                 }
@@ -104,7 +94,7 @@ fun ParticipantCard(
     participant: Participant,
     modifier: Modifier = Modifier,
     isSelected: Boolean = false,
-    onClick: (Int?) -> Unit = {}
+    onClick: (Participant) -> Unit = {}
 ) {
     val color by animateColorAsState(
         targetValue = if (isSelected) MaterialTheme.colorScheme.tertiaryContainer
@@ -114,7 +104,7 @@ fun ParticipantCard(
         colors = CardDefaults.cardColors(containerColor = color),
         modifier = modifier
             .height(82.dp)
-            .clickable { onClick(participant.id) }
+            .clickable { onClick(participant) }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

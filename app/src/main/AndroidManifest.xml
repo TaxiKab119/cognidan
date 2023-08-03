@@ -30,7 +30,8 @@
             android:theme="@style/Theme.DanCognitionApp"/>
         <activity
             android:name=".participants.ParticipantsActivity"
-            android:theme="@style/Theme.DanCognitionApp"/>
+            android:theme="@style/Theme.DanCognitionApp"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

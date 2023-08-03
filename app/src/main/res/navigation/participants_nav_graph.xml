@@ -6,5 +6,7 @@
     <fragment
         android:id="@+id/participants_view_dest"
         android:name="com.example.dancognitionapp.participants.ParticipantsViewFragment"/>
-
+    <fragment
+        android:id="@+id/participants_add_modify"
+        android:name="com.example.dancognitionapp.participants.AddModifyParticipantsFragment"/>
 </navigation>

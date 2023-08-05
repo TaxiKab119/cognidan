@@ -1,4 +1,4 @@
-package com.example.dancognitionapp.ui.landing
+package com.example.dancognitionapp.ui.bart
 
 
 import androidx.compose.foundation.background

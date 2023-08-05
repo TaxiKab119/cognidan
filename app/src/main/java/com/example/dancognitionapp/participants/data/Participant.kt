@@ -4,17 +4,21 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class Participant(
-    val id: Int,
-    val name: String
+    val id: String,
+    val name: String,
+    val notes: String = ""
 )  : Parcelable {
+    val internalId: Int get() = hashCode()
     constructor(parcel: Parcel) : this(
-        parcel.readInt(),
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
         parcel.readString() ?: ""
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeInt(id)
+        parcel.writeString(id)
         parcel.writeString(name)
+        parcel.writeString(notes)
     }
 
     override fun describeContents(): Int {
@@ -33,13 +37,13 @@ data class Participant(
 }
 
 val participants = listOf<Participant>(
-    Participant(1, "Alex Balan"),
-    Participant(2, "Santa Claus"),
-    Participant(3, "Grant Dong"),
-    Participant(4, "Frauke Tillmans"),
-    Participant(5, "King Kong"),
-    Participant(6, "Rhiannon Brenner"),
-    Participant(7, "Ana Rumpl"),
-    Participant(8, "John Doe"),
-    Participant(9, "Jacques Cousteau")
+    Participant("ABC", "Alex Balan"),
+    Participant("002", "Santa Claus"),
+    Participant("121", "Grant Dong"),
+    Participant("662", "Frauke Tillmans"),
+    Participant("515", "King Kong"),
+    Participant("800", "Rhiannon Brenner"),
+    Participant("10", "Ana Rumpl"),
+    Participant("177", "John Doe"),
+    Participant("A16", "Jacques Cousteau")
 )

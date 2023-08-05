@@ -22,7 +22,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.bart.BartViewModel
 import com.example.dancognitionapp.ui.LandscapePreview
-import com.example.dancognitionapp.ui.landing.BartDialog
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
 
 

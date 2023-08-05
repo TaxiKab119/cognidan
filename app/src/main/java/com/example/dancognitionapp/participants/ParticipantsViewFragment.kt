@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
 
@@ -19,12 +18,7 @@ class ParticipantsViewFragment: Fragment() {
         val view = inflater.inflate(R.layout.fragment_compose_host, container, false)
         view.findViewById<ComposeView>(R.id.compose_root).setContent {
             DanCognitionAppTheme() {
-                ParticipantManagerScreen() { participant ->
-                    val bundle = Bundle().apply {
-                        putParcelable("selectedParticipant", participant)
-                    }
-                    findNavController().navigate(R.id.participants_add_modify, bundle)
-                }
+                ParticipantManagerScreen()
             }
         }
         return view

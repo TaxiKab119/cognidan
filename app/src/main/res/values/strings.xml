@@ -12,7 +12,7 @@
     <string name="bart_reward_for_balloon">Balloon reward:</string>
     <string name="bart_total_earnings">Total earnings:</string>
     <string name="bart_dialog_popped_message">Balloon popped!</string>
-    <string name="bart_dialog_popped_instructions">Click to dismiss</string>
+    <string name="bart_dialog_popped_instructions">Click here to dismiss</string>
     <string name="bart_dialog_end_message">End of test</string>
     <string name="bart_dialog_end_instructions">Click to leave</string>
 

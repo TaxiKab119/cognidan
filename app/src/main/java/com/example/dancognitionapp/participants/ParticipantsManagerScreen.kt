@@ -95,7 +95,7 @@ fun ParticipantManagerScreen(
             }
         }
         if (showAddEdit) {
-            ShowAddEditScreen(
+            AddEditScreen(
                 participant = uiState.selectedParticipant,
                 onParticipantIdChanged =  { viewModel.addOrUpdateParticipantInfo(id = it) },
                 onParticipantNameChanged = { viewModel.addOrUpdateParticipantInfo(name = it) },
@@ -168,77 +168,6 @@ fun ParticipantIcon(modifier: Modifier = Modifier) {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ShowAddEditScreen(
-    modifier: Modifier = Modifier,
-    participant: Participant?,
-    currentParticipantId: String = "",
-    currentParticipantName: String = "",
-    currentParticipantNotes: String = "",
-    onParticipantIdChanged: (String) -> Unit = {},
-    onParticipantNameChanged: (String) -> Unit = {},
-    onParticipantNotesChanged: (String) -> Unit = {},
-    onSaveClick: () -> Unit = {},
-    onDismiss: () -> Unit = {}
-) {
-    Dialog(
-        onDismissRequest = { onDismiss() },
-    ) {
-        Card(
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer
-            ),
-            modifier = modifier
-                .fillMaxWidth()
-                .wrapContentHeight(Alignment.CenterVertically)
-        ) {
-            Column(modifier = Modifier
-                .padding(vertical = 8.dp, horizontal = 16.dp)
-            ) {
-                Text(
-                    text = if (participant == null) "Add participant" else "Modify participant",
-                    modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.headlineMedium
-                )
-                OutlinedTextField(
-                    value = currentParticipantName,
-                    onValueChange = { onParticipantNameChanged(it) },
-                    label = { Text(text = "Participant name") },
-                    singleLine = true,
-                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
-                )
-                OutlinedTextField(
-                    value = currentParticipantId,
-                    onValueChange = { onParticipantIdChanged(it) },
-                    label = { Text(text = "Participant id") },
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                    singleLine = true,
-                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
-                )
-                OutlinedTextField(
-                    value = currentParticipantNotes,
-                    onValueChange = { onParticipantNotesChanged(it) },
-                    label = { Text(text = "Notes") },
-                    singleLine = true,
-                    //This is a hack and I don't know how to fix it better
-//                    placeholder = { Text(text = "Notes\n\n\n") },
-//                    maxLines = 3,
-                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
-                )
-                Row(
-                    horizontalArrangement = Arrangement.End,
-                    modifier = Modifier
-                    .padding(end = 16.dp, bottom = 16.dp)
-                    .fillMaxWidth()
-                    .clickable { onSaveClick() }
-                ) { Text(text = "Save") }
-            }
-        }
-    }
-}
-
-
 @Preview(showBackground = true)
 @Composable
 fun ParticipantManagerScreenPreview() {
@@ -252,13 +181,5 @@ fun ParticipantManagerScreenPreview() {
 fun ParticipantCardPreview() {
     DanCognitionAppTheme {
         ParticipantCard(participants.first())
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AddParticipantPreview() {
-    DanCognitionAppTheme {
-        ShowAddEditScreen(participant = participants.first())
     }
 }

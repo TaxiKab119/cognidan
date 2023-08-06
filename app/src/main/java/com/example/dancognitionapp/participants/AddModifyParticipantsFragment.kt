@@ -18,7 +18,6 @@ class AddModifyParticipantsFragment: Fragment() {
         val view = inflater.inflate(R.layout.fragment_compose_host, container, false)
         view.findViewById<ComposeView>(R.id.compose_root).setContent {
             DanCognitionAppTheme {
-                AddModifyParticipantsScreen()
             }
         }
         return view

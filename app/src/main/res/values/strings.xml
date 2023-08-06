@@ -4,6 +4,8 @@
     <string name="landing_practice_trial">Practice</string>
     <string name="landing_participant_manager">Participant manager</string>
     <string name="landing_start_trial">Start a trial</string>
+    <string name="ok_button">OK</string>
+    <string name="cancel_button">Cancel</string>
 
     <string name="bart_screen_title">BART</string>
     <string name="bart_test_instructions">In this task, you will see a series of balloons. For each balloon, you have the choice to either collect the balloon\'s reward to store in your bank or inflate the balloon to increase the reward. Each time you inflate a balloon the reward for that balloon will increase, but if the balloon pops before you can collect the reward you will not be able to claim any reward money for that balloon.</string>
@@ -23,4 +25,16 @@
     <string name="selection_post_dive">Post-dive</string>
     <string name="selection_practice_nback">n-back</string>
     <string name="selection_practice_bart">BART</string>
+
+
+    <string name="participants_delete_participant">Delete participant</string>
+    <string name="participants_notes_label">Notes</string>
+    <string name="participants_participant_id_label">Participant id</string>
+    <string name="participants_participant_name_label">Participant name</string>
+    <string name="participants_add_participant_title">Add participant</string>
+    <string name="participants_modify_participant_title">Modify participant</string>
+    <string name="participants_close_dialog_title">Close and lose changes?</string>
+    <string name="participants_close_dialog_content">If you close this screen without saving you will lose all information added to this participant.</string>
+    <string name="participants_delete_dialog_title">Are you sure you want to delete this participant?</string>
+    <string name="participants_delete_dialog_content">If you click OK you will lose all information from this participant.</string>
 </resources>

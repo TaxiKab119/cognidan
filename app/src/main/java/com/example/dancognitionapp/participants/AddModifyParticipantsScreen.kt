@@ -2,7 +2,6 @@ package com.example.dancognitionapp.participants
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,14 +10,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +22,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,111 +33,47 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dancognitionapp.R
-import com.example.dancognitionapp.participants.data.Participant
-import com.example.dancognitionapp.participants.data.participants
+import com.example.dancognitionapp.participants.data.ParticipantUiState
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun AddEditScreen(
-    modifier: Modifier = Modifier,
-    participant: Participant?,
-    currentParticipantId: String = "",
-    currentParticipantName: String = "",
-    currentParticipantNotes: String = "",
-    onParticipantIdChanged: (String) -> Unit = {},
-    onParticipantNameChanged: (String) -> Unit = {},
-    onParticipantNotesChanged: (String) -> Unit = {},
-    onSaveClick: () -> Unit = {},
-    onDismiss: () -> Unit = {}
-) {
-    Dialog(
-        onDismissRequest = { onDismiss() },
-    ) {
-        Card(
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer
-            ),
-            modifier = modifier
-                .fillMaxWidth()
-                .wrapContentHeight(Alignment.CenterVertically)
-        ) {
-            Column(modifier = Modifier
-                .padding(vertical = 8.dp, horizontal = 16.dp)
-            ) {
-                Text(
-                    text = if (participant == null) "Add participant" else "Modify participant",
-                    modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.headlineMedium
-                )
-                OutlinedTextField(
-                    value = currentParticipantName,
-                    onValueChange = { onParticipantNameChanged(it) },
-                    label = { Text(text = "Participant name") },
-                    singleLine = true,
-                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
-                )
-                OutlinedTextField(
-                    value = currentParticipantId,
-                    onValueChange = { onParticipantIdChanged(it) },
-                    label = { Text(text = "Participant id") },
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                    singleLine = true,
-                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
-                )
-                OutlinedTextField(
-                    value = currentParticipantNotes,
-                    onValueChange = { onParticipantNotesChanged(it) },
-                    label = { Text(text = "Notes") },
-                    singleLine = true,
-                    //This is a hack and I don't know how to fix it better
-//                    placeholder = { Text(text = "Notes\n\n\n") },
-//                    maxLines = 3,
-                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
-                )
-                Row(
-                    horizontalArrangement = Arrangement.End,
-                    modifier = Modifier
-                        .padding(end = 16.dp, bottom = 16.dp)
-                        .fillMaxWidth()
-                        .clickable { onSaveClick() }
-                ) { Text(text = "Save") }
-            }
-        }
-    }
+enum class ParticipantScreenType() {
+    ADD, MODIFY
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddEditFullScreenContent(
-    participant: Participant?,
+fun AddEditParticipantsFullScreen(
     modifier: Modifier = Modifier,
-    currentParticipantId: String = "",
-    currentParticipantName: String = "",
-    currentParticipantNotes: String = "",
-    onParticipantIdChanged: (String) -> Unit = {},
-    onParticipantNameChanged: (String) -> Unit = {},
-    onParticipantNotesChanged: (String) -> Unit = {},
-    onSaveClick: () -> Unit = {},
-    onClose: () -> Unit = {}
+    viewModel: ParticipantsViewModel,
+    uiState: ParticipantUiState,
+    screenType: ParticipantScreenType,
+    returnToManager: () -> Unit = {}
 ) {
     var showDeleteDialog: Boolean by remember { mutableStateOf(false) }
     var showCloseDialog: Boolean by remember { mutableStateOf(false) }
+    val initialUiState: ParticipantUiState by remember { derivedStateOf { uiState } }
 
     if (showCloseDialog) {
         ParticipantDialog(
             title = R.string.participants_close_dialog_title,
             content = R.string.participants_close_dialog_content,
-            onConfirm = { onClose() }
+            onConfirm = {
+                viewModel.clearCurrentParticipantValues()
+                returnToManager()
+            }
         ) { showCloseDialog = false }
     }
     if (showDeleteDialog) {
         ParticipantDialog(
             title = R.string.participants_delete_dialog_title,
             content = R.string.participants_delete_dialog_content,
-            onConfirm = { onSaveClick() }
+            onConfirm = {
+                //TODO - viewModel.deleteParticipant()
+                viewModel.clearCurrentParticipantValues()
+                returnToManager()
+            }
         ) { showDeleteDialog = false }
     }
     Column(
@@ -148,10 +81,22 @@ fun AddEditFullScreenContent(
         modifier = modifier,
     ) {
         AddEditFullScreenHeader(
-            participant = participant,
+            screenType = screenType,
             modifier = Modifier.fillMaxWidth(),
-            onClose = { showCloseDialog = true }
-        ) { onSaveClick() }
+            onClose = {
+                if (initialUiState != uiState) {
+                    showCloseDialog = true
+                } else {
+                    returnToManager()
+                }
+            }
+        ) {
+            when(screenType) {
+                ParticipantScreenType.ADD -> viewModel.appendNewParticipant()
+                ParticipantScreenType.MODIFY -> viewModel.editExistingParticipant()
+            }
+            returnToManager()
+        }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -159,16 +104,16 @@ fun AddEditFullScreenContent(
                 .fillMaxWidth()
         ) {
             OutlinedTextField(
-                value = currentParticipantName,
-                onValueChange = { onParticipantNameChanged(it) },
+                value = uiState.currentParticipantName,
+                onValueChange = { viewModel.addOrUpdateParticipantInfo(name = it) },
                 label = { Text(text = stringResource(R.string.participants_participant_name_label)) },
                 singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth()
             )
             OutlinedTextField(
-                value = currentParticipantId,
-                onValueChange = { onParticipantIdChanged(it) },
+                value = uiState.currentParticipantId,
+                onValueChange = { viewModel.addOrUpdateParticipantInfo(id = it) },
                 label = { Text(text = stringResource(R.string.participants_participant_id_label)) },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 singleLine = true,
@@ -177,8 +122,8 @@ fun AddEditFullScreenContent(
                     .fillMaxWidth()
             )
             OutlinedTextField(
-                value = currentParticipantNotes,
-                onValueChange = { onParticipantNotesChanged(it) },
+                value = uiState.currentParticipantNotes,
+                onValueChange = { viewModel.addOrUpdateParticipantInfo(notes = it) },
                 label = { Text(text = stringResource(R.string.participants_notes_label)) },
                 singleLine = false,
                 maxLines = 4,
@@ -186,7 +131,7 @@ fun AddEditFullScreenContent(
                     .padding(top = 8.dp)
                     .fillMaxWidth()
             )
-            if (participant != null) {
+            if (screenType == ParticipantScreenType.MODIFY) {
                 Spacer(modifier = Modifier.weight(1f))
                 TextButton(
                     onClick = { showDeleteDialog = true },
@@ -205,7 +150,7 @@ fun AddEditFullScreenContent(
 
 @Composable
 fun AddEditFullScreenHeader(
-    participant: Participant?,
+    screenType: ParticipantScreenType,
     modifier: Modifier = Modifier,
     onClose: () -> Unit = {},
     onSave: () -> Unit = {}
@@ -228,8 +173,10 @@ fun AddEditFullScreenHeader(
                 .clickable { onClose() }
         )
         Text(
-            text = if (participant == null) stringResource(R.string.participants_add_participant_title)
-                else stringResource(R.string.participants_modify_participant_title),
+            text = when (screenType) {
+                ParticipantScreenType.ADD -> stringResource(R.string.participants_add_participant_title)
+                ParticipantScreenType.MODIFY -> stringResource(R.string.participants_modify_participant_title)
+            },
             style = MaterialTheme.typography.titleLarge
         )
         Spacer(Modifier.weight(1f))
@@ -275,6 +222,13 @@ fun CloseDialogPreview() {
 @Composable
 fun AddEditParticipantFullScreenPreview() {
     DanCognitionAppTheme {
-        AddEditFullScreenContent(participant = participants.first(), modifier = Modifier.fillMaxSize())
+        val viewModel: ParticipantsViewModel = viewModel()
+        val uiState: ParticipantUiState by viewModel.uiState
+        AddEditParticipantsFullScreen(
+            viewModel = viewModel,
+            uiState = uiState,
+            screenType = ParticipantScreenType.MODIFY,
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }

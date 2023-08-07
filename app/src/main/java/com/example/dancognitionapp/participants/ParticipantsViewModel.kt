@@ -5,28 +5,28 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.dancognitionapp.participants.data.Participant
 import com.example.dancognitionapp.participants.data.ParticipantUiState
-import com.example.dancognitionapp.participants.data.participants
-import java.nio.file.Files.find
+import com.example.dancognitionapp.participants.data.participantList
+import timber.log.Timber
 
 class ParticipantsViewModel(): ViewModel() {
-
     /**
      * This first block sets up the ui state to be mutable initializes participant list
      * */
-    private val _uiState = mutableStateOf(ParticipantUiState(participantList = participants))
+    private val _uiState = mutableStateOf(ParticipantUiState(participantList = participantList))
     val uiState: State<ParticipantUiState> = _uiState
 
     private val currentState: ParticipantUiState
         get() = _uiState.value
-
 
     fun selectParticipant(participant: Participant) {
         _uiState.value = currentState.copy(
             selectedParticipant = participant,
             currentParticipantName = participant.name,
             currentParticipantId = participant.id,
-            currentParticipantNote = participant.notes
+            currentParticipantNotes = participant.notes,
+            isAddOrEdit = ParticipantScreenType.MODIFY
         )
+        Timber.i("$_uiState")
     }
 
     fun addOrUpdateParticipantInfo(
@@ -37,7 +37,7 @@ class ParticipantsViewModel(): ViewModel() {
         _uiState.value = currentState.copy(
             currentParticipantId = id ?: currentState.currentParticipantId,
             currentParticipantName = name ?: currentState.currentParticipantName,
-            currentParticipantNote = notes ?: currentState.currentParticipantNote
+            currentParticipantNotes = notes ?: currentState.currentParticipantNotes
         )
     }
 
@@ -45,33 +45,38 @@ class ParticipantsViewModel(): ViewModel() {
         val newParticipant = Participant(
             currentState.currentParticipantId,
             currentState.currentParticipantName,
-            currentState.currentParticipantNote
+            currentState.currentParticipantNotes
         )
-        val updatedList = currentState.participantList + newParticipant
-        _uiState.value = currentState.copy(participantList = updatedList)
-        clearParticipantValues()
+        participantList = currentState.participantList + newParticipant
+        _uiState.value = currentState.copy(participantList = participantList)
+        clearCurrentParticipantValues()
     }
 
     fun editExistingParticipant() {
-        val updatedParticipants = currentState.participantList.map { participant ->
+        participantList = currentState.participantList.map { participant ->
             if (participant.internalId == currentState.selectedParticipant?.internalId) {
                 participant.copy(
                     id = currentState.currentParticipantId,
                     name = currentState.currentParticipantName,
-                    notes = currentState.currentParticipantNote
+                    notes = currentState.currentParticipantNotes
                 )
             } else {
                 participant
             }
         }
-        _uiState.value = currentState.copy(participantList = updatedParticipants)
+        _uiState.value = currentState.copy(participantList = participantList)
     }
-    fun clearParticipantValues() {
+    fun clearCurrentParticipantValues() {
         _uiState.value = currentState.copy(
             currentParticipantName = "",
             currentParticipantId = "",
-            currentParticipantNote = "",
+            currentParticipantNotes = "",
             selectedParticipant = null
+        )
+    }
+    fun setAddScreen() {
+        _uiState.value = currentState.copy(
+            isAddOrEdit = ParticipantScreenType.ADD
         )
     }
 }

@@ -70,8 +70,7 @@ fun AddEditParticipantsFullScreen(
             title = R.string.participants_delete_dialog_title,
             content = R.string.participants_delete_dialog_content,
             onConfirm = {
-                //TODO - viewModel.deleteParticipant()
-                viewModel.clearCurrentParticipantValues()
+                viewModel.deleteParticipant()
                 returnToManager()
             }
         ) { showDeleteDialog = false }
@@ -87,6 +86,7 @@ fun AddEditParticipantsFullScreen(
                 if (initialUiState != uiState) {
                     showCloseDialog = true
                 } else {
+                    viewModel.clearCurrentParticipantValues()
                     returnToManager()
                 }
             }

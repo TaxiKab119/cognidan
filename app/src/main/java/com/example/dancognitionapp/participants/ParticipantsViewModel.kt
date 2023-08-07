@@ -47,24 +47,26 @@ class ParticipantsViewModel(): ViewModel() {
             currentState.currentParticipantName,
             currentState.currentParticipantNotes
         )
-        participantList = currentState.participantList + newParticipant
+        participantList += newParticipant
         _uiState.value = currentState.copy(participantList = participantList)
         clearCurrentParticipantValues()
     }
 
     fun editExistingParticipant() {
-        participantList = currentState.participantList.map { participant ->
+        val editedParticipant: Participant = currentState.selectedParticipant!!.copy(
+            id = currentState.currentParticipantId,
+            name = currentState.currentParticipantName,
+            notes = currentState.currentParticipantNotes
+        )
+        currentState.participantList.replaceAll { participant ->
             if (participant.internalId == currentState.selectedParticipant?.internalId) {
-                participant.copy(
-                    id = currentState.currentParticipantId,
-                    name = currentState.currentParticipantName,
-                    notes = currentState.currentParticipantNotes
-                )
+                editedParticipant
             } else {
                 participant
             }
         }
         _uiState.value = currentState.copy(participantList = participantList)
+        clearCurrentParticipantValues()
     }
     fun clearCurrentParticipantValues() {
         _uiState.value = currentState.copy(
@@ -78,5 +80,14 @@ class ParticipantsViewModel(): ViewModel() {
         _uiState.value = currentState.copy(
             isAddOrEdit = ParticipantScreenType.ADD
         )
+    }
+
+    fun deleteParticipant() {
+        val unwantedParticipant = participantList.find { participant ->
+            participant.internalId == currentState.selectedParticipant?.internalId
+        }
+        participantList.remove(unwantedParticipant)
+        _uiState.value = currentState.copy(participantList = participantList)
+        clearCurrentParticipantValues()
     }
 }

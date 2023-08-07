@@ -1,6 +1,6 @@
 package com.example.dancognitionapp.participants.data
 
-var participantList = listOf<Participant>(
+var participantList = mutableListOf<Participant>(
     Participant("ABC", "Alex Balan"),
     Participant("002", "Santa Claus"),
     Participant("121", "Grant Dong"),

@@ -29,14 +29,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.participants.data.Participant
+import com.example.dancognitionapp.participants.data.ParticipantRepository.participantList
 import com.example.dancognitionapp.participants.data.ParticipantUiState
-import com.example.dancognitionapp.participants.data.participants
 import com.example.dancognitionapp.ui.landing.DanCognitionTopAppBar
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
 
@@ -47,10 +49,12 @@ fun ParticipantManagerScreen(
     modifier: Modifier = Modifier,
     viewModel: ParticipantsViewModel,
     uiState: ParticipantUiState,
-    goToAddEditScreen: () -> Unit = {}
+    goToAddScreen: () -> Unit = {},
+    goToEditScreen: (Int) -> Unit = {}
 ) {
     val listState = rememberLazyListState()
     val fabExtended by remember { derivedStateOf { !listState.isScrollInProgress } }
+    val haptic = LocalHapticFeedback.current
     Scaffold(
         topBar = {
             DanCognitionTopAppBar(headerResId = R.string.landing_participant_manager)
@@ -59,8 +63,7 @@ fun ParticipantManagerScreen(
             ExtendedFloatingActionButton(
                 expanded = fabExtended,
                 onClick = {
-                    viewModel.setAddScreen()
-                    goToAddEditScreen()
+                      goToAddScreen()
                 },
                 containerColor = MaterialTheme.colorScheme.secondary,
                 icon = { Icon(imageVector = Icons.Default.Add, contentDescription = "Add") },
@@ -77,10 +80,9 @@ fun ParticipantManagerScreen(
                     participant = participant,
                     modifier = Modifier
                         .padding(8.dp)
-                        .height(82.dp)
                 ) {
-                    viewModel.selectParticipant(it)
-                    goToAddEditScreen()
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    goToEditScreen(it.internalId)
                 }
             }
         }
@@ -156,6 +158,6 @@ fun ParticipantManagerScreenPreview() {
 @Composable
 fun ParticipantCardPreview() {
     DanCognitionAppTheme {
-        ParticipantCard(participants.first())
+        ParticipantCard(participantList.first())
     }
 }

@@ -1,4 +1,4 @@
-package com.example.dancognitionapp.participants
+package com.example.dancognitionapp.participants.edit
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
@@ -35,25 +35,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dancognitionapp.R
+import com.example.dancognitionapp.participants.ParticipantsViewModel
 import com.example.dancognitionapp.participants.data.ParticipantUiState
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
 
 enum class ParticipantScreenType() {
-    ADD, MODIFY
+    ADD, EDIT
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditParticipantsFullScreen(
     modifier: Modifier = Modifier,
-    viewModel: ParticipantsViewModel,
-    uiState: ParticipantUiState,
+    viewModel: AddEditViewModel,
+    uiState: AddEditUiState,
     screenType: ParticipantScreenType,
     returnToManager: () -> Unit = {}
 ) {
     var showDeleteDialog: Boolean by remember { mutableStateOf(false) }
     var showCloseDialog: Boolean by remember { mutableStateOf(false) }
-    val initialUiState: ParticipantUiState by remember { derivedStateOf { uiState } }
+    val initialUiState: AddEditUiState by remember { derivedStateOf { uiState } }
 
     if (showCloseDialog) {
         ParticipantDialog(
@@ -70,7 +71,7 @@ fun AddEditParticipantsFullScreen(
             title = R.string.participants_delete_dialog_title,
             content = R.string.participants_delete_dialog_content,
             onConfirm = {
-                viewModel.deleteParticipant()
+                //TODO - viewModel.deleteParticipant()
                 returnToManager()
             }
         ) { showDeleteDialog = false }
@@ -93,7 +94,7 @@ fun AddEditParticipantsFullScreen(
         ) {
             when(screenType) {
                 ParticipantScreenType.ADD -> viewModel.appendNewParticipant()
-                ParticipantScreenType.MODIFY -> viewModel.editExistingParticipant()
+                ParticipantScreenType.EDIT -> {}//TODO - viewModel.editExistingParticipant()
             }
             returnToManager()
         }
@@ -131,7 +132,7 @@ fun AddEditParticipantsFullScreen(
                     .padding(top = 8.dp)
                     .fillMaxWidth()
             )
-            if (screenType == ParticipantScreenType.MODIFY) {
+            if (screenType == ParticipantScreenType.EDIT) {
                 Spacer(modifier = Modifier.weight(1f))
                 TextButton(
                     onClick = { showDeleteDialog = true },
@@ -175,7 +176,7 @@ fun AddEditFullScreenHeader(
         Text(
             text = when (screenType) {
                 ParticipantScreenType.ADD -> stringResource(R.string.participants_add_participant_title)
-                ParticipantScreenType.MODIFY -> stringResource(R.string.participants_modify_participant_title)
+                ParticipantScreenType.EDIT -> stringResource(R.string.participants_modify_participant_title)
             },
             style = MaterialTheme.typography.titleLarge
         )
@@ -196,12 +197,16 @@ fun ParticipantDialog(
         confirmButton = {
             TextButton(
                 onClick = { onConfirm() }
-            ) { Text(stringResource(R.string.ok_button)) }
+            ) {
+                Text(stringResource(R.string.ok_button))
+            }
         },
         dismissButton = {
             TextButton(
                 onClick = { onCancel() },
-            ) { Text(stringResource(R.string.cancel_button)) }
+            ) {
+                Text(stringResource(R.string.cancel_button))
+            }
         },
         title = { Text(text = stringResource(title))},
         text = { Text(text = stringResource(content))}
@@ -222,12 +227,12 @@ fun CloseDialogPreview() {
 @Composable
 fun AddEditParticipantFullScreenPreview() {
     DanCognitionAppTheme {
-        val viewModel: ParticipantsViewModel = viewModel()
-        val uiState: ParticipantUiState by viewModel.uiState
+        val viewModel: AddEditViewModel = viewModel()
+        val uiState: AddEditUiState by viewModel.uiState
         AddEditParticipantsFullScreen(
             viewModel = viewModel,
             uiState = uiState,
-            screenType = ParticipantScreenType.MODIFY,
+            screenType = ParticipantScreenType.EDIT,
             modifier = Modifier.fillMaxSize()
         )
     }

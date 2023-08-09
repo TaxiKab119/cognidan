@@ -11,7 +11,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.fragment.findNavController
 import com.example.dancognitionapp.R
+import com.example.dancognitionapp.participants.edit.AddEditParticipantsFullScreen
+import com.example.dancognitionapp.participants.edit.ParticipantScreenType
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
 
 class ParticipantsFragment: Fragment() {
@@ -23,20 +26,18 @@ class ParticipantsFragment: Fragment() {
         val view = inflater.inflate(R.layout.fragment_compose_host, container, false)
         view.findViewById<ComposeView>(R.id.compose_root).setContent {
             DanCognitionAppTheme {
-                var showAddModifyScreen by remember { mutableStateOf(false) }
                 val viewModel: ParticipantsViewModel = viewModel()
                 val uiState by viewModel.uiState
-                if (showAddModifyScreen) {
-                    AddEditParticipantsFullScreen(
-                        viewModel = viewModel,
-                        uiState = uiState,
-                        screenType = uiState.isAddOrEdit
-                    ) { showAddModifyScreen = false }
-                } else {
-                    ParticipantManagerScreen(
-                        viewModel = viewModel,
-                        uiState = uiState
-                    ) { showAddModifyScreen = true }
+                ParticipantManagerScreen(
+                    viewModel = viewModel,
+                    uiState = uiState,
+                    goToAddScreen = {
+                        val action = ParticipantsFragmentDirections.actionParticipantsViewDestToAddModifyParticipantsViewDest()
+                        findNavController().navigate(action)
+                    },
+                ) {
+                    val action = ParticipantsFragmentDirections.actionParticipantsViewDestToAddModifyParticipantsViewDest(ParticipantScreenType.EDIT)
+                    findNavController().navigate(action)
                 }
             }
         }

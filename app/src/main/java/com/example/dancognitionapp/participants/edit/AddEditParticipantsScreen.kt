@@ -38,6 +38,7 @@ import com.example.dancognitionapp.R
 import com.example.dancognitionapp.participants.ParticipantsViewModel
 import com.example.dancognitionapp.participants.data.ParticipantUiState
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
+import timber.log.Timber
 
 enum class ParticipantScreenType() {
     ADD, EDIT
@@ -47,11 +48,14 @@ enum class ParticipantScreenType() {
 @Composable
 fun AddEditParticipantsFullScreen(
     modifier: Modifier = Modifier,
-    viewModel: AddEditViewModel,
-    uiState: AddEditUiState,
     screenType: ParticipantScreenType,
+    participantInternalId: Int,
     returnToManager: () -> Unit = {}
 ) {
+    val viewModel: AddEditViewModel = viewModel()
+    val uiState by viewModel.uiState
+    viewModel.populateParticipantFields(participantInternalId)
+
     var showDeleteDialog: Boolean by remember { mutableStateOf(false) }
     var showCloseDialog: Boolean by remember { mutableStateOf(false) }
     val initialUiState: AddEditUiState by remember { derivedStateOf { uiState } }
@@ -61,7 +65,6 @@ fun AddEditParticipantsFullScreen(
             title = R.string.participants_close_dialog_title,
             content = R.string.participants_close_dialog_content,
             onConfirm = {
-                viewModel.clearCurrentParticipantValues()
                 returnToManager()
             }
         ) { showCloseDialog = false }
@@ -87,14 +90,13 @@ fun AddEditParticipantsFullScreen(
                 if (initialUiState != uiState) {
                     showCloseDialog = true
                 } else {
-                    viewModel.clearCurrentParticipantValues()
                     returnToManager()
                 }
             }
         ) {
             when(screenType) {
                 ParticipantScreenType.ADD -> viewModel.appendNewParticipant()
-                ParticipantScreenType.EDIT -> {}//TODO - viewModel.editExistingParticipant()
+                ParticipantScreenType.EDIT -> {/*TODO - viewModel.editExistingParticipant()*/}
             }
             returnToManager()
         }
@@ -106,7 +108,7 @@ fun AddEditParticipantsFullScreen(
         ) {
             OutlinedTextField(
                 value = uiState.currentParticipantName,
-                onValueChange = { viewModel.addOrUpdateParticipantInfo(name = it) },
+                onValueChange = { viewModel.updateParticipantName(it) },
                 label = { Text(text = stringResource(R.string.participants_participant_name_label)) },
                 singleLine = true,
                 modifier = Modifier
@@ -114,7 +116,7 @@ fun AddEditParticipantsFullScreen(
             )
             OutlinedTextField(
                 value = uiState.currentParticipantId,
-                onValueChange = { viewModel.addOrUpdateParticipantInfo(id = it) },
+                onValueChange = { viewModel.updateParticipantId(it) },
                 label = { Text(text = stringResource(R.string.participants_participant_id_label)) },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 singleLine = true,
@@ -124,7 +126,7 @@ fun AddEditParticipantsFullScreen(
             )
             OutlinedTextField(
                 value = uiState.currentParticipantNotes,
-                onValueChange = { viewModel.addOrUpdateParticipantInfo(notes = it) },
+                onValueChange = { viewModel.updateParticipantNotes(it) },
                 label = { Text(text = stringResource(R.string.participants_notes_label)) },
                 singleLine = false,
                 maxLines = 4,
@@ -230,9 +232,8 @@ fun AddEditParticipantFullScreenPreview() {
         val viewModel: AddEditViewModel = viewModel()
         val uiState: AddEditUiState by viewModel.uiState
         AddEditParticipantsFullScreen(
-            viewModel = viewModel,
-            uiState = uiState,
             screenType = ParticipantScreenType.EDIT,
+            participantInternalId = 0,
             modifier = Modifier.fillMaxSize()
         )
     }

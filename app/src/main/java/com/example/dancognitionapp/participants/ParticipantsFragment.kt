@@ -36,7 +36,7 @@ class ParticipantsFragment: Fragment() {
                         findNavController().navigate(action)
                     },
                 ) {
-                    val action = ParticipantsFragmentDirections.actionParticipantsViewDestToAddModifyParticipantsViewDest(ParticipantScreenType.EDIT)
+                    val action = ParticipantsFragmentDirections.actionParticipantsViewDestToAddModifyParticipantsViewDest(ParticipantScreenType.EDIT, participantInternalId = it)
                     findNavController().navigate(action)
                 }
             }

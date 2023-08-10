@@ -1,19 +1,28 @@
 package com.example.dancognitionapp.participants
 
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -41,48 +50,77 @@ import com.example.dancognitionapp.participants.data.ParticipantRepository.parti
 import com.example.dancognitionapp.participants.data.ParticipantUiState
 import com.example.dancognitionapp.ui.landing.DanCognitionTopAppBar
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
+import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ParticipantManagerScreen(
-    modifier: Modifier = Modifier,
     viewModel: ParticipantsViewModel,
     uiState: ParticipantUiState,
     goToAddScreen: () -> Unit = {},
     goToEditScreen: (Int) -> Unit = {}
 ) {
-    val listState = rememberLazyListState()
-    val fabExtended by remember { derivedStateOf { !listState.isScrollInProgress } }
-    val haptic = LocalHapticFeedback.current
-    Scaffold(
-        topBar = {
-            DanCognitionTopAppBar(headerResId = R.string.landing_participant_manager)
+    var selectedParticipantId: Int by remember { mutableStateOf(0) }
+    val scope = rememberCoroutineScope()
+    val scaffoldState = rememberBottomSheetScaffoldState()
+    BottomSheetScaffold(
+        sheetContent = {
+            ParticipantsBottomSheetContent(
+                modifier = Modifier
+                    .fillMaxHeight(0.25f)
+                    .padding(12.dp)
+            ) {
+                goToEditScreen(selectedParticipantId)
+            }
         },
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                expanded = fabExtended,
-                onClick = {
-                      goToAddScreen()
-                },
-                containerColor = MaterialTheme.colorScheme.secondary,
-                icon = { Icon(imageVector = Icons.Default.Add, contentDescription = "Add") },
-                text = { Text(text = "Add participant")}
-            )
-        }
-    ) { padding ->
-        LazyColumn(
-            contentPadding = padding,
-            state = listState
-        ) {
-            items(uiState.participantList) {participant ->
-                ParticipantCard(
-                    participant = participant,
-                    modifier = Modifier
-                        .padding(8.dp)
-                ) {
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                    goToEditScreen(it.internalId)
+        scaffoldState = scaffoldState,
+        sheetPeekHeight = 0.dp,
+    ) {
+        val listState = rememberLazyListState()
+        val fabExtended by remember { derivedStateOf { !listState.isScrollInProgress } }
+        val haptic = LocalHapticFeedback.current
+        Scaffold(
+            topBar = {
+                DanCognitionTopAppBar(headerResId = R.string.landing_participant_manager)
+            },
+            floatingActionButton = {
+                ExtendedFloatingActionButton(
+                    expanded = fabExtended,
+                    onClick = {
+                        goToAddScreen()
+                    },
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    icon = { Icon(imageVector = Icons.Default.Add, contentDescription = "Add") },
+                    text = { Text(text = "Add participant")}
+                )
+            }
+        ) { padding ->
+            LazyColumn(
+                contentPadding = padding,
+                state = listState
+            ) {
+                items(uiState.participantList) {participant ->
+                    ParticipantCard(
+                        participant = participant,
+                        modifier = Modifier
+                            .padding(8.dp)
+                    ) {
+                        selectedParticipantId = participant.internalId
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        scope.launch {
+                            scaffoldState.bottomSheetState.expand()
+                        }
+                    }
                 }
             }
         }
@@ -141,6 +179,41 @@ fun ParticipantIcon(modifier: Modifier = Modifier) {
     )
 }
 
+@ExperimentalMaterial3Api
+@Composable
+fun ParticipantsBottomSheetContent(
+    modifier: Modifier = Modifier,
+    onEditClick: () -> Unit
+) {
+    Column(modifier) {
+        TextButton(
+            onClick = { /*TODO*/ },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
+                .weight(1f),
+            enabled = false
+        ) {
+            Icon(imageVector = Icons.Default.Share, contentDescription = "Export to .csv")
+            Spacer(Modifier.width(12.dp))
+            Text(text = "Export to .csv")
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        TextButton(
+            onClick = { onEditClick() },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
+                .weight(1f)
+        ) {
+            Icon(imageVector = Icons.Default.Edit, contentDescription = "Export to .csv")
+            Spacer(Modifier.width(12.dp))
+            Text(text = "Edit Participant")
+        }
+    }
+
+}
+
 @Preview(showBackground = true)
 @Composable
 fun ParticipantManagerScreenPreview() {
@@ -159,5 +232,13 @@ fun ParticipantManagerScreenPreview() {
 fun ParticipantCardPreview() {
     DanCognitionAppTheme {
         ParticipantCard(participantList.first())
+    }
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true)
+@Composable
+fun ParticipantsBottomSheetPreview() {
+    DanCognitionAppTheme {
+        ParticipantsBottomSheetContent(modifier = Modifier.fillMaxWidth(), {})
     }
 }

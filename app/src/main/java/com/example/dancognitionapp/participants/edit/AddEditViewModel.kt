@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.dancognitionapp.participants.data.Participant
 import com.example.dancognitionapp.participants.data.ParticipantRepository
+import timber.log.Timber
 
 class AddEditViewModel(): ViewModel() {
 
@@ -20,26 +21,43 @@ class AddEditViewModel(): ViewModel() {
         get() = _uiState.value
 
 
-//    fun selectParticipant(participant: Participant) {
-//        _uiState.value = currentState.copy(
-//            selectedParticipant = participant,
-//            currentParticipantName = participant.name,
-//            currentParticipantId = participant.id,
-//            currentParticipantNotes = participant.notes,
-//            isAddOrEdit = ParticipantScreenType.MODIFY
-//        )
-//        Timber.i("$_uiState")
-//    }
-//
-    fun addOrUpdateParticipantInfo(
-        id: String? = null,
-        name: String? = null,
-        notes: String? = null
-    ) {
+    fun storeParticipantValues(participantInternalId: Int) {
+        for (participant in ParticipantRepository.participantList) {
+            Timber.i("Passed ID: $participantInternalId | List Id: ${participant.internalId} ")
+            if (participant.internalId == participantInternalId) {
+                _uiState.value = currentState.copy(
+                    currentParticipantName = participant.name,
+                    currentParticipantId = participant.id,
+                    currentParticipantNotes = participant.notes,
+                )
+                break
+            }
+        }
+    }
+    fun populateParticipantFields(participantInternalId: Int) {
+        val participant = ParticipantRepository.participantList.find { it.internalId == participantInternalId }
         _uiState.value = currentState.copy(
-            currentParticipantId = id ?: currentState.currentParticipantId,
-            currentParticipantName = name ?: currentState.currentParticipantName,
-            currentParticipantNotes = notes ?: currentState.currentParticipantNotes
+            currentParticipantName = participant?.name ?: "",
+            currentParticipantId = participant?.id ?: "",
+            currentParticipantNotes = participant?.notes ?: "",
+        )
+    }
+    fun updateParticipantName(name: String) {
+        _uiState.value = currentState.copy(
+            currentParticipantName = name
+        )
+        Timber.i("${_uiState.value}")
+    }
+
+    fun updateParticipantId(id: String) {
+        _uiState.value = currentState.copy(
+            currentParticipantId = id
+        )
+    }
+
+    fun updateParticipantNotes(notes: String) {
+        _uiState.value = currentState.copy(
+            currentParticipantNotes = notes
         )
     }
 
@@ -50,11 +68,10 @@ class AddEditViewModel(): ViewModel() {
             currentState.currentParticipantNotes
         )
         ParticipantRepository.participantList += newParticipant
-        clearCurrentParticipantValues()
     }
-//
+
 //    fun editExistingParticipant() {
-//        val editedParticipant: Participant = currentState.selectedParticipant!!.copy(
+//        val editedParticipant: Participant = currentState.copy(
 //            id = currentState.currentParticipantId,
 //            name = currentState.currentParticipantName,
 //            notes = currentState.currentParticipantNotes
@@ -69,13 +86,6 @@ class AddEditViewModel(): ViewModel() {
 //        _uiState.value = currentState.copy(participantList = ParticipantRepository.participantList)
 //        clearCurrentParticipantValues()
 //    }
-    fun clearCurrentParticipantValues() {
-        _uiState.value = currentState.copy(
-            currentParticipantName = "",
-            currentParticipantId = "",
-            currentParticipantNotes = "",
-        )
-    }
 //
 //    fun deleteParticipant() {
 //        val unwantedParticipant = ParticipantRepository.participantList.find { participant ->

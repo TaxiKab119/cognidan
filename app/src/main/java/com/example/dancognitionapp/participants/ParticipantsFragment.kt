@@ -29,7 +29,6 @@ class ParticipantsFragment: Fragment() {
                 val viewModel: ParticipantsViewModel = viewModel()
                 val uiState by viewModel.uiState
                 ParticipantManagerScreen(
-                    viewModel = viewModel,
                     uiState = uiState,
                     goToAddScreen = {
                         val action = ParticipantsFragmentDirections.actionParticipantsViewDestToAddModifyParticipantsViewDest()

@@ -1,15 +1,13 @@
 package com.example.dancognitionapp.participants
 
 
-import androidx.activity.compose.BackHandler
+import android.view.MotionEvent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,12 +16,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,13 +30,22 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,29 +57,28 @@ import com.example.dancognitionapp.participants.data.ParticipantRepository.parti
 import com.example.dancognitionapp.participants.data.ParticipantUiState
 import com.example.dancognitionapp.ui.landing.DanCognitionTopAppBar
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
-import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetState
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ParticipantManagerScreen(
-    viewModel: ParticipantsViewModel,
     uiState: ParticipantUiState,
     goToAddScreen: () -> Unit = {},
     goToEditScreen: (Int) -> Unit = {}
 ) {
     var selectedParticipantId: Int by remember { mutableStateOf(0) }
     val scope = rememberCoroutineScope()
-    val scaffoldState = rememberBottomSheetScaffoldState()
+    val scaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = rememberStandardBottomSheetState(skipHiddenState = false)
+    )
+
+    var isBottomSheetExpanded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(key1 = Unit) {
+        scaffoldState.bottomSheetState.hide()
+    }
     BottomSheetScaffold(
         sheetContent = {
             ParticipantsBottomSheetContent(
@@ -88,7 +94,9 @@ fun ParticipantManagerScreen(
     ) {
         val listState = rememberLazyListState()
         val fabExtended by remember { derivedStateOf { !listState.isScrollInProgress } }
+        val hideBottomSheet by remember { derivedStateOf { listState.isScrollInProgress }}
         val haptic = LocalHapticFeedback.current
+
         Scaffold(
             topBar = {
                 DanCognitionTopAppBar(headerResId = R.string.landing_participant_manager)
@@ -109,16 +117,34 @@ fun ParticipantManagerScreen(
                 contentPadding = padding,
                 state = listState
             ) {
+                if (hideBottomSheet) {
+                    scope.launch {
+                        scaffoldState.bottomSheetState.hide()
+                        isBottomSheetExpanded = false
+                    }
+                }
                 items(uiState.participantList) {participant ->
                     ParticipantCard(
                         participant = participant,
                         modifier = Modifier
-                            .padding(8.dp)
+                            .padding(8.dp),
+                        onClick = {
+                            if (isBottomSheetExpanded) {
+                                scope.launch {
+                                    scaffoldState.bottomSheetState.hide()
+                                    isBottomSheetExpanded = false
+                                }
+                            }
+
+                        }
                     ) {
                         selectedParticipantId = participant.internalId
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        scope.launch {
-                            scaffoldState.bottomSheetState.expand()
+                        if (!isBottomSheetExpanded) {
+                            scope.launch {
+                                scaffoldState.bottomSheetState.expand()
+                                isBottomSheetExpanded = true
+                            }
                         }
                     }
                 }
@@ -132,6 +158,7 @@ fun ParticipantManagerScreen(
 fun ParticipantCard(
     participant: Participant,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
     onLongClick: (Participant) -> Unit = {}
 ) {
     Card(
@@ -139,7 +166,7 @@ fun ParticipantCard(
             .cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
         modifier = modifier
             .combinedClickable(
-                onClick = {},
+                onClick = { onClick() },
                 onLongClick = { onLongClick(participant) }
             )
     ) {
@@ -221,7 +248,6 @@ fun ParticipantManagerScreenPreview() {
         val viewModel: ParticipantsViewModel = viewModel()
         val uiState: ParticipantUiState by viewModel.uiState
         ParticipantManagerScreen(
-            viewModel = viewModel,
             uiState = uiState
         )
     }

@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -33,12 +32,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dancognitionapp.R
-import com.example.dancognitionapp.participants.ParticipantsViewModel
-import com.example.dancognitionapp.participants.data.ParticipantUiState
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
-import timber.log.Timber
 
 enum class ParticipantScreenType() {
     ADD, EDIT
@@ -49,12 +44,10 @@ enum class ParticipantScreenType() {
 fun AddEditParticipantsFullScreen(
     modifier: Modifier = Modifier,
     screenType: ParticipantScreenType,
-    participantInternalId: Int,
+    viewModel: AddEditViewModel,
+    uiState: AddEditUiState,
     returnToManager: () -> Unit = {}
 ) {
-    val viewModel: AddEditViewModel = viewModel()
-    val uiState by viewModel.uiState
-    viewModel.populateParticipantFields(participantInternalId)
 
     var showDeleteDialog: Boolean by remember { mutableStateOf(false) }
     var showCloseDialog: Boolean by remember { mutableStateOf(false) }
@@ -106,8 +99,11 @@ fun AddEditParticipantsFullScreen(
                 .padding(24.dp)
                 .fillMaxWidth()
         ) {
+            val updatedState by remember(uiState) {
+                mutableStateOf(uiState)
+            }
             OutlinedTextField(
-                value = uiState.currentParticipantName,
+                value = updatedState.currentParticipantName,
                 onValueChange = { viewModel.updateParticipantName(it) },
                 label = { Text(text = stringResource(R.string.participants_participant_name_label)) },
                 singleLine = true,
@@ -115,7 +111,7 @@ fun AddEditParticipantsFullScreen(
                     .fillMaxWidth()
             )
             OutlinedTextField(
-                value = uiState.currentParticipantId,
+                value = updatedState.currentParticipantId,
                 onValueChange = { viewModel.updateParticipantId(it) },
                 label = { Text(text = stringResource(R.string.participants_participant_id_label)) },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
@@ -125,7 +121,7 @@ fun AddEditParticipantsFullScreen(
                     .fillMaxWidth()
             )
             OutlinedTextField(
-                value = uiState.currentParticipantNotes,
+                value = updatedState.currentParticipantNotes,
                 onValueChange = { viewModel.updateParticipantNotes(it) },
                 label = { Text(text = stringResource(R.string.participants_notes_label)) },
                 singleLine = false,
@@ -221,20 +217,6 @@ fun CloseDialogPreview() {
         ParticipantDialog(
             title = R.string.participants_close_dialog_title,
             content = R.string.participants_close_dialog_content
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AddEditParticipantFullScreenPreview() {
-    DanCognitionAppTheme {
-        val viewModel: AddEditViewModel = viewModel()
-        val uiState: AddEditUiState by viewModel.uiState
-        AddEditParticipantsFullScreen(
-            screenType = ParticipantScreenType.EDIT,
-            participantInternalId = 0,
-            modifier = Modifier.fillMaxSize()
         )
     }
 }

@@ -7,7 +7,7 @@ import com.example.dancognitionapp.participants.data.Participant
 import com.example.dancognitionapp.participants.data.ParticipantRepository
 import timber.log.Timber
 
-class AddEditViewModel(): ViewModel() {
+class AddEditViewModel(private val participantRepository: ParticipantRepository): ViewModel() {
 
     /**
      * This first block sets up the ui state to be mutable initializes participant list
@@ -20,27 +20,15 @@ class AddEditViewModel(): ViewModel() {
     private val currentState: AddEditUiState
         get() = _uiState.value
 
-
-    fun storeParticipantValues(participantInternalId: Int) {
-        for (participant in ParticipantRepository.participantList) {
-            Timber.i("Passed ID: $participantInternalId | List Id: ${participant.internalId} ")
-            if (participant.internalId == participantInternalId) {
-                _uiState.value = currentState.copy(
-                    currentParticipantName = participant.name,
-                    currentParticipantId = participant.id,
-                    currentParticipantNotes = participant.notes,
-                )
-                break
-            }
-        }
-    }
     fun populateParticipantFields(participantInternalId: Int) {
-        val participant = ParticipantRepository.participantList.find { it.internalId == participantInternalId }
-        _uiState.value = currentState.copy(
-            currentParticipantName = participant?.name ?: "",
-            currentParticipantId = participant?.id ?: "",
-            currentParticipantNotes = participant?.notes ?: "",
-        )
+        if (participantInternalId != 0) {
+            val participant = participantRepository.participantList.find { it.internalId == participantInternalId }
+            _uiState.value = currentState.copy(
+                currentParticipantName = participant?.name ?: "",
+                currentParticipantId = participant?.id ?: "",
+                currentParticipantNotes = participant?.notes ?: "",
+            )
+        }
     }
     fun updateParticipantName(name: String) {
         _uiState.value = currentState.copy(
@@ -69,6 +57,9 @@ class AddEditViewModel(): ViewModel() {
         )
         ParticipantRepository.participantList += newParticipant
     }
+
+    fun saveParticipant() {}
+    fun deleteParticipant() {}
 
 //    fun editExistingParticipant() {
 //        val editedParticipant: Participant = currentState.copy(

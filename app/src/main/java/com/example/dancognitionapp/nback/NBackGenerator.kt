@@ -1,6 +1,7 @@
 package com.example.dancognitionapp.nback
 
 import timber.log.Timber
+import java.lang.IndexOutOfBoundsException
 import java.util.LinkedList
 import kotlin.random.Random
 import kotlin.random.nextInt
@@ -10,9 +11,10 @@ class NBackGenerator(private val testType: NBackType) {
 
     val items = LinkedList<NBackItem>()
     var targetFoilRatio: Double? = null
+    var numberOfCharsWithLures: Int? = null
     init {
         generateNBackPresentationOrder()
-        getTargetFoilRatio()
+        checkPresentationOrderValidity()
     }
 
     private fun generateValidChars(): CharArray {
@@ -27,9 +29,9 @@ class NBackGenerator(private val testType: NBackType) {
          * */
         val excludedIndices = mutableListOf<Int>()
         for (i in 1..targetNumber) {
-            var targetValue = stimuli.random(random)
             println("Excluded Indices: $excludedIndices")
             if (i == 1) {
+                val targetValue = stimuli.random(random)
                 // targetIndex can be as low as n + 1 so that the target-buddy can still be placed along with pre-lure
                 val targetIndex = Random.nextInt(n until NUMBER_OF_PRESENTATIONS)
                 chars[targetIndex] = targetValue
@@ -39,6 +41,7 @@ class NBackGenerator(private val testType: NBackType) {
                 val possibleIndices = (n until NUMBER_OF_PRESENTATIONS)
                     .filterNot { it in excludedIndices }
                 val targetIndex = possibleIndices.random(random)
+                var targetValue = stimuli.random(random)
 
                 // resolve bug of repeating a letter and creating more targets than desired
                 val repeatedLetter = targetValue == chars[targetIndex] + n
@@ -80,24 +83,57 @@ class NBackGenerator(private val testType: NBackType) {
         val endLoop = chars.size - 1
 
         for (i in 0..endLoop) {
+            val plusChar = try {
+                chars[i - (testType.value + 1)]
+            } catch (e: IndexOutOfBoundsException) {
+                null
+            }
+            val minusChar = try {
+                if (testType.value == 1) {
+                    null
+                } else {
+                    chars[i - (testType.value - 1)]
+                }
+            } catch (e: IndexOutOfBoundsException) {
+                null
+            }
             if (i >= testType.value) {
                 items.add(
-                    NBackItem(position = i + 1, letter = chars[i], key = chars[i - testType.value])
+                    NBackItem(
+                        position = i + 1,
+                        letter = chars[i],
+                        key = chars[i - testType.value],
+                        plusLurePositionChar = plusChar,
+                        minusLurePositionChar = minusChar
+                    )
                 )
             } else {
-                items.add(NBackItem(position = i + 1, letter = chars[i]))
+                items.add(
+                    NBackItem(
+                        position = i + 1,
+                        letter = chars[i],
+                        plusLurePositionChar = plusChar,
+                        minusLurePositionChar = minusChar
+                    )
+                )
             }
         }
     }
 
-    private fun getTargetFoilRatio() {
-        var counter = 0.0
+    private fun checkPresentationOrderValidity() {
+        var counterTargetFoil = 0.0
+        var lureCounter = 0
         for (item in items) {
             if (item.isTarget()) {
-                counter++
+                counterTargetFoil++
+            }
+            if (item.hasLure()) {
+                println(item.position)
+                lureCounter++
             }
         }
-        targetFoilRatio = counter / items.size
+        targetFoilRatio = counterTargetFoil / items.size
+        numberOfCharsWithLures = lureCounter
     }
 
 }
@@ -110,15 +146,15 @@ enum class NBackType(val value: Int) {
 
 fun main() {
     val oneBack = NBackGenerator(NBackType.N_1)
-    println("Validity: ${oneBack.targetFoilRatio}")
+    println("Validity: ${oneBack.targetFoilRatio}, Number of Chars with lures: ${oneBack.numberOfCharsWithLures}")
     println("------------------------------------")
     println("")
 
     val twoBack = NBackGenerator(NBackType.N_2)
-    println("Validity: ${twoBack.targetFoilRatio}")
+    println("Validity: ${twoBack.targetFoilRatio}, Number of Chars with lures: ${twoBack.numberOfCharsWithLures}")
     println("------------------------------------")
     println("")
 
     val threeBack = NBackGenerator(NBackType.N_3)
-    println("Validity: ${threeBack.targetFoilRatio}")
+    println("Validity: ${threeBack.targetFoilRatio}, Number of Chars with lures: ${threeBack.numberOfCharsWithLures}")
 }

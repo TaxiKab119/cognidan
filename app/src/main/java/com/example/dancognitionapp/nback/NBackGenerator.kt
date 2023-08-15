@@ -1,22 +1,31 @@
 package com.example.dancognitionapp.nback
 
-import timber.log.Timber
-import java.lang.IndexOutOfBoundsException
 import java.util.LinkedList
 import kotlin.random.Random
 import kotlin.random.nextInt
 
-private const val NUMBER_OF_PRESENTATIONS = 12
+private const val NUMBER_OF_PRESENTATIONS = 30
 class NBackGenerator(private val testType: NBackType) {
 
     val items = LinkedList<NBackItem>()
     var targetFoilRatio: Double? = null
     var numberOfCharsWithLures: Int? = null
+    private val cannotBeCharHashMap: HashMap<Char, MutableList<Int>> = HashMap()
     init {
+        generateExcludedValuesHashMap()
         generateNBackPresentationOrder()
         checkPresentationOrderValidity()
     }
+    private fun generateExcludedValuesHashMap() {
+        val keys = listOf('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H')
+        for (key in keys) {
+            cannotBeCharHashMap[key] = mutableListOf<Int>()
+        }
+    }
 
+    //    private fun addToKeyList(key: Char, index: Int) {
+//        cannotBeCharHashMap[key]?.add(index)
+//    }
     private fun generateValidChars(): CharArray {
         val stimuli = listOf('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H')
         val chars = CharArray(NUMBER_OF_PRESENTATIONS) {'Z'} // Z is a placeholder (never used as a stimuli)
@@ -32,46 +41,80 @@ class NBackGenerator(private val testType: NBackType) {
             println("Excluded Indices: $excludedIndices")
             if (i == 1) {
                 val targetValue = stimuli.random(random)
-                // targetIndex can be as low as n + 1 so that the target-buddy can still be placed along with pre-lure
+                // targetIndex can be as low as n + 1 so that the target-buddy can still be placed
                 val targetIndex = Random.nextInt(n until NUMBER_OF_PRESENTATIONS)
-                chars[targetIndex] = targetValue
-                chars[targetIndex - n] = targetValue
-                excludedIndices.addAll(listOf(targetIndex, targetIndex - n, targetIndex + n))
-            } else {
-                val possibleIndices = (n until NUMBER_OF_PRESENTATIONS)
-                    .filterNot { it in excludedIndices }
-                val targetIndex = possibleIndices.random(random)
-                var targetValue = stimuli.random(random)
+                val buddyIndex = targetIndex - n
 
-                // resolve bug of repeating a letter and creating more targets than desired
-                val repeatedLetter = targetValue == chars[targetIndex] + n
-                        || targetValue == chars[targetIndex - (n - 1)]
-                if (repeatedLetter) {
-                    val modifiedStimuli = stimuli.toMutableList()
-                    modifiedStimuli.remove(targetValue)
-                    targetValue = modifiedStimuli.random(random)
-                }
                 chars[targetIndex] = targetValue
-                chars[targetIndex - n] = targetValue
-                excludedIndices.addAll(listOf(targetIndex, targetIndex - n, targetIndex + n))
+                chars[buddyIndex] = targetValue
+
+                excludedIndices.addAll(listOf(targetIndex, buddyIndex, targetIndex + n))
+
+                val cannotBeCharIndices = (buddyIndex - (n + 1))..(targetIndex + (n + 1))
+
+                for (index in cannotBeCharIndices) {
+                    if (index in 0 until NUMBER_OF_PRESENTATIONS &&
+                        cannotBeCharHashMap[targetValue]?.contains(index) == false) {
+                        cannotBeCharHashMap[targetValue]?.add(index)
+                    }
+                }
+                println("Cannot be $targetValue indices = ${cannotBeCharHashMap[targetValue]}")
+            } else {
+                /**Ensure both target and buddy can be placed without ruining order*/
+                var targetIndex: Int
+                var buddyIndex: Int
+                do {
+                    val possibleIndices = (n until NUMBER_OF_PRESENTATIONS)
+                        .filterNot { it in excludedIndices }
+                    targetIndex = possibleIndices.random(random)
+                    buddyIndex = targetIndex - n
+                } while (buddyIndex in excludedIndices)
+
+                /**Change targetValue until it is a Char that can be placed in the desired index*/
+                var targetValue: Char
+                // TODO - Add counter to ensure if more than 8 to restart
+                do {
+                    targetValue = stimuli.random(random)
+                } while (cannotBeCharHashMap[targetValue]?.contains(targetIndex) == true ||
+                            cannotBeCharHashMap[targetValue]?.contains(buddyIndex) == true)
+
+                chars[targetIndex] = targetValue
+                chars[buddyIndex] = targetValue
+                excludedIndices.addAll(listOf(targetIndex, buddyIndex, targetIndex + n))
+
+                val cannotBeCharIndices = (buddyIndex - (n + 1))..(targetIndex + (n + 1))
+
+                for (index in cannotBeCharIndices) {
+                    if (index in 0 until NUMBER_OF_PRESENTATIONS &&
+                        cannotBeCharHashMap[targetValue]?.contains(index) == false) {
+                        cannotBeCharHashMap[targetValue]?.add(index)
+                    }
+                }
+                println("Cannot be $targetValue indices = ${cannotBeCharHashMap[targetValue]}")
                 println("Working model of Chars: ${chars.contentToString()}")
             }
         }
         println("Chars before replacing Zs: ${chars.contentToString()}")
+        println(cannotBeCharHashMap)
 
-        /**This code checks to see if a given index is empty. Then it chooses a letter.
-         * If the letter it wants to place is adjacent (will mess up the # of targets)
-         * it chooses a different letter.
-         *
-         * The end goal of this block is to ensure all spots are filled with stimuli in the presentation order
-         * */
+        /**Replaces placeholders with a Char that will not ruin the presentation order.*/
         val endLoop = chars.size - 1
         for (i in 0..endLoop) {
             if (chars[i] == 'Z') {
-                val adjacentChars = (i - n..i + n).mapNotNull() { chars.getOrNull(it) }
-                println("Adjacent Chars: $adjacentChars")
-                val foilOptions = stimuli.filterNot { it in adjacentChars }
-                chars[i] = foilOptions.random(random)
+                var foil: Char
+                do {
+                    foil = stimuli.random(random)
+                } while (cannotBeCharHashMap[foil]?.contains(i) == true)
+                chars[i] = foil
+
+                val cantBeCharIndices = listOf(i + (n - 1), i + n, i + (n + 1))
+
+                for (index in cantBeCharIndices) {
+                    if (index in 0 until NUMBER_OF_PRESENTATIONS &&
+                        cannotBeCharHashMap[foil]?.contains(index) == false) {
+                        cannotBeCharHashMap[foil]?.add(index)
+                    }
+                }
             }
         }
         println("Final Chars List: ${chars.contentToString()}")

@@ -29,6 +29,7 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberBottomSheetScaffoldState
@@ -45,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextOverflow
@@ -70,11 +72,26 @@ fun ParticipantManagerScreen(
 ) {
     var selectedParticipantId: Int by remember { mutableStateOf(0) }
     val scope = rememberCoroutineScope()
-    val scaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = rememberStandardBottomSheetState(skipHiddenState = false)
-    )
-
     var isBottomSheetExpanded by remember { mutableStateOf(false) }
+
+    val scaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = rememberStandardBottomSheetState(
+            skipHiddenState = false,
+            confirmValueChange =  {
+                when(it) {
+                    SheetValue.Expanded -> {
+                        isBottomSheetExpanded = true
+                        true
+                    }
+                    SheetValue.Hidden -> {
+                        isBottomSheetExpanded = false
+                        true
+                    }
+                    else -> true
+                }
+            }
+        ),
+    )
 
     LaunchedEffect(key1 = Unit) {
         scaffoldState.bottomSheetState.hide()

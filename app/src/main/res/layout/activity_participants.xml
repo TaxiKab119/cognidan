@@ -15,6 +15,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
 
         app:defaultNavHost="true"
-        app:navGraph="@navigation/assessment_nav_graph" />
+        app:navGraph="@navigation/participants_nav_graph" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

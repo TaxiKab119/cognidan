@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/participants_nav_graph"
+    app:startDestination="@id/participants_view_dest">
+    <fragment
+        android:id="@+id/participants_view_dest"
+        android:name="com.example.dancognitionapp.participants.ParticipantsFragment">
+        <action
+            android:id="@+id/action_participants_view_dest_to_add_modify_participants_view_dest"
+            app:destination="@id/add_modify_participants_view_dest" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/add_modify_participants_view_dest"
+        android:name="com.example.dancognitionapp.participants.edit.AddEditParticipantsFragment">
+        <action
+            android:id="@+id/action_add_modify_participants_view_dest_to_participants_view_dest"
+            app:destination="@id/participants_view_dest" />
+        <argument
+            android:name="screenType"
+            app:argType="com.example.dancognitionapp.participants.edit.ParticipantScreenType"
+            android:defaultValue="ADD" />
+        <argument
+            android:name="participantInternalId"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+</navigation>

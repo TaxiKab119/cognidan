@@ -12,7 +12,6 @@ class NBackGenerator(private val testType: NBackType) {
     var numberOfCharsWithLures: Int? = null
     private val cannotBeCharHashMap: HashMap<Char, MutableList<Int>> = HashMap()
     init {
-        generateExcludedValuesHashMap()
         generateNBackPresentationOrder()
         checkPresentationOrderValidity()
     }
@@ -23,15 +22,22 @@ class NBackGenerator(private val testType: NBackType) {
         }
     }
 
-    //    private fun addToKeyList(key: Char, index: Int) {
-//        cannotBeCharHashMap[key]?.add(index)
-//    }
+    private fun addToHashMap(key: Char, index: Int) {
+        cannotBeCharHashMap[key]?.add(index)
+    }
+    /**Recursive call to generateValidChars when current charArray would create infinite loop*/
+    private fun restartCharGeneration(): CharArray {
+        return generateValidChars()
+    }
     private fun generateValidChars(): CharArray {
         val stimuli = listOf('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H')
         val chars = CharArray(NUMBER_OF_PRESENTATIONS) {'Z'} // Z is a placeholder (never used as a stimuli)
         val targetNumber = NUMBER_OF_PRESENTATIONS / 3
         val n = testType.value
         val random = Random(System.currentTimeMillis())
+
+        /**Create HashMap to store excluded indices for each char stimuli*/
+        generateExcludedValuesHashMap()
 
         /**This block places targets and "target buddies (key)" randomly throughout presentation order.
          * This ensures there are exactly [targetNumber] targets.
@@ -40,7 +46,7 @@ class NBackGenerator(private val testType: NBackType) {
         for (i in 1..targetNumber) {
             println("Excluded Indices: $excludedIndices")
 
-            var targetValue: Char
+            var targetValue = 'A'
             var targetIndex: Int
             var buddyIndex: Int
 
@@ -51,19 +57,31 @@ class NBackGenerator(private val testType: NBackType) {
                 buddyIndex = targetIndex - n
             } else {
                 /**Ensure both target and buddy can be placed without ruining order*/
+                var targetPlacementAttempts = 0
                 do {
                     val possibleIndices = (n until NUMBER_OF_PRESENTATIONS)
                         .filterNot { it in excludedIndices }
                     targetIndex = possibleIndices.random(random)
                     buddyIndex = targetIndex - n
-                } while (buddyIndex in excludedIndices)
+                    targetPlacementAttempts++
+                } while (buddyIndex in excludedIndices && targetPlacementAttempts < 30)
+                if (targetPlacementAttempts >= 30) {
+                    return restartCharGeneration()
+                }
 
                 /**Change targetValue until it is a Char that can be placed in the desired index*/
-                // TODO - Add counter to ensure if more than 8 to restart
-                do {
+                var targetValueAttempts = 0 // Max of 9 (stimuli.size + 1) would mean you cycled through all Chars
+                var cannotPlaceCharAsTarget = true
+                var cannotPlaceCharAsBuddy = true
+                while ((cannotPlaceCharAsTarget || cannotPlaceCharAsBuddy) && targetValueAttempts < 9) {
                     targetValue = stimuli.random(random)
-                } while (cannotBeCharHashMap[targetValue]?.contains(targetIndex) == true ||
-                            cannotBeCharHashMap[targetValue]?.contains(buddyIndex) == true)
+                    cannotPlaceCharAsTarget = cannotBeCharHashMap[targetValue]?.contains(targetIndex) == true
+                    cannotPlaceCharAsBuddy = cannotBeCharHashMap[targetValue]?.contains(buddyIndex) == true
+                    targetValueAttempts++
+                }
+                if (targetValueAttempts >= 9) {
+                    return restartCharGeneration()
+                }
             }
             chars[targetIndex] = targetValue
             chars[buddyIndex] = targetValue
@@ -74,7 +92,7 @@ class NBackGenerator(private val testType: NBackType) {
             for (index in cannotBeCharIndices) {
                 if (index in 0 until NUMBER_OF_PRESENTATIONS &&
                     cannotBeCharHashMap[targetValue]?.contains(index) == false) {
-                    cannotBeCharHashMap[targetValue]?.add(index)
+                    addToHashMap(targetValue, index)
                 }
             }
 
@@ -89,17 +107,22 @@ class NBackGenerator(private val testType: NBackType) {
         for (i in 0..endLoop) {
             if (chars[i] == 'Z') {
                 var foil: Char
+                var foilValueAttempts = 0
                 do {
                     foil = stimuli.random(random)
-                } while (cannotBeCharHashMap[foil]?.contains(i) == true)
-                chars[i] = foil
+                    foilValueAttempts++
+                } while (cannotBeCharHashMap[foil]?.contains(i) == true && foilValueAttempts < 9)
+                if (foilValueAttempts >= 9) {
+                    return restartCharGeneration()
+                }
 
+                chars[i] = foil
                 val cantBeCharIndices = listOf(i + (n - 1), i + n, i + (n + 1))
 
                 for (index in cantBeCharIndices) {
                     if (index in 0 until NUMBER_OF_PRESENTATIONS &&
                         cannotBeCharHashMap[foil]?.contains(index) == false) {
-                        cannotBeCharHashMap[foil]?.add(index)
+                        addToHashMap(foil, index)
                     }
                 }
             }

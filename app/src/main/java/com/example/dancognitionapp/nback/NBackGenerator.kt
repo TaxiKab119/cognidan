@@ -39,30 +39,18 @@ class NBackGenerator(private val testType: NBackType) {
         val excludedIndices = mutableListOf<Int>()
         for (i in 1..targetNumber) {
             println("Excluded Indices: $excludedIndices")
+
+            var targetValue: Char
+            var targetIndex: Int
+            var buddyIndex: Int
+
             if (i == 1) {
-                val targetValue = stimuli.random(random)
+                targetValue = stimuli.random(random)
                 // targetIndex can be as low as n + 1 so that the target-buddy can still be placed
-                val targetIndex = Random.nextInt(n until NUMBER_OF_PRESENTATIONS)
-                val buddyIndex = targetIndex - n
-
-                chars[targetIndex] = targetValue
-                chars[buddyIndex] = targetValue
-
-                excludedIndices.addAll(listOf(targetIndex, buddyIndex, targetIndex + n))
-
-                val cannotBeCharIndices = (buddyIndex - (n + 1))..(targetIndex + (n + 1))
-
-                for (index in cannotBeCharIndices) {
-                    if (index in 0 until NUMBER_OF_PRESENTATIONS &&
-                        cannotBeCharHashMap[targetValue]?.contains(index) == false) {
-                        cannotBeCharHashMap[targetValue]?.add(index)
-                    }
-                }
-                println("Cannot be $targetValue indices = ${cannotBeCharHashMap[targetValue]}")
+                targetIndex = Random.nextInt(n until NUMBER_OF_PRESENTATIONS)
+                buddyIndex = targetIndex - n
             } else {
                 /**Ensure both target and buddy can be placed without ruining order*/
-                var targetIndex: Int
-                var buddyIndex: Int
                 do {
                     val possibleIndices = (n until NUMBER_OF_PRESENTATIONS)
                         .filterNot { it in excludedIndices }
@@ -71,28 +59,27 @@ class NBackGenerator(private val testType: NBackType) {
                 } while (buddyIndex in excludedIndices)
 
                 /**Change targetValue until it is a Char that can be placed in the desired index*/
-                var targetValue: Char
                 // TODO - Add counter to ensure if more than 8 to restart
                 do {
                     targetValue = stimuli.random(random)
                 } while (cannotBeCharHashMap[targetValue]?.contains(targetIndex) == true ||
                             cannotBeCharHashMap[targetValue]?.contains(buddyIndex) == true)
-
-                chars[targetIndex] = targetValue
-                chars[buddyIndex] = targetValue
-                excludedIndices.addAll(listOf(targetIndex, buddyIndex, targetIndex + n))
-
-                val cannotBeCharIndices = (buddyIndex - (n + 1))..(targetIndex + (n + 1))
-
-                for (index in cannotBeCharIndices) {
-                    if (index in 0 until NUMBER_OF_PRESENTATIONS &&
-                        cannotBeCharHashMap[targetValue]?.contains(index) == false) {
-                        cannotBeCharHashMap[targetValue]?.add(index)
-                    }
-                }
-                println("Cannot be $targetValue indices = ${cannotBeCharHashMap[targetValue]}")
-                println("Working model of Chars: ${chars.contentToString()}")
             }
+            chars[targetIndex] = targetValue
+            chars[buddyIndex] = targetValue
+            excludedIndices.addAll(listOf(targetIndex, buddyIndex, targetIndex + n))
+
+            val cannotBeCharIndices = (buddyIndex - (n + 1))..(targetIndex + (n + 1))
+
+            for (index in cannotBeCharIndices) {
+                if (index in 0 until NUMBER_OF_PRESENTATIONS &&
+                    cannotBeCharHashMap[targetValue]?.contains(index) == false) {
+                    cannotBeCharHashMap[targetValue]?.add(index)
+                }
+            }
+
+            println("Cannot be $targetValue indices = ${cannotBeCharHashMap[targetValue]}")
+            println("Working model of Chars: ${chars.contentToString()}")
         }
         println("Chars before replacing Zs: ${chars.contentToString()}")
         println(cannotBeCharHashMap)

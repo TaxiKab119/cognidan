@@ -50,7 +50,6 @@ class NBackGenerator(private val testType: NBackType) {
          * */
         val excludedIndices = mutableListOf<Int>()
         for (i in 1..targetNumber) {
-            println("Excluded Indices: $excludedIndices")
 
             var targetValue = 'A'
             var targetIndex: Int
@@ -96,13 +95,7 @@ class NBackGenerator(private val testType: NBackType) {
             val cannotBeCharRange = (buddyIndex - (n + 1))..(targetIndex + (n + 1))
             val cannotBeCharIndices = cannotBeCharRange.toList()
             addIndicesToHashMap(cannotBeCharIndices, targetValue)
-
-            println("Cannot be $targetValue indices = ${cannotBeCharHashMap[targetValue]}")
-            println("Working model of Chars: ${chars.contentToString()}")
         }
-        println("Chars before replacing Zs: ${chars.contentToString()}")
-        println(cannotBeCharHashMap)
-
         /**Replaces placeholders with a Char that will not ruin the presentation order.*/
         for (i in chars.indices) {
             if (chars[i] == 'Z') {
@@ -193,18 +186,3 @@ enum class NBackType(val value: Int) {
     N_2(2),
     N_3(3)
 }
-
-//fun main() {
-//    val oneBack = NBackGenerator(NBackType.N_1)
-//    println("Validity: ${oneBack.targetFoilRatio}, Number of Chars with lures: ${oneBack.numberOfCharsWithLures}")
-//    println("------------------------------------")
-//    println("")
-//
-//    val twoBack = NBackGenerator(NBackType.N_2)
-//    println("Validity: ${twoBack.targetFoilRatio}, Number of Chars with lures: ${twoBack.numberOfCharsWithLures}")
-//    println("------------------------------------")
-//    println("")
-//
-//    val threeBack = NBackGenerator(NBackType.N_3)
-//    println("Validity: ${threeBack.targetFoilRatio}, Number of Chars with lures: ${threeBack.numberOfCharsWithLures}")
-//}

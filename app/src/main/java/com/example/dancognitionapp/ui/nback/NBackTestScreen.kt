@@ -12,10 +12,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dancognitionapp.ui.LandscapePreview
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
+import timber.log.Timber
 
 @Composable
 fun NBackScreen() {
@@ -32,6 +38,23 @@ fun NBackScreen() {
 
     val stimuli = listOf('A', 'B', 'C', 'D', 'Z', 'E', 'F', 'G', 'H')
     val interactionSource = remember { MutableInteractionSource() }
+    var showDialog by remember { mutableStateOf(true) }
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { /*DO NOTHING*/ },
+            title = { Text(text = "Click OK to start the Test") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDialog = false
+                        viewModel.startAdvancing()
+                    }
+                ) {
+                    Text(text = "OK")
+                }
+            }
+        )
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -39,9 +62,7 @@ fun NBackScreen() {
             .clickable(
                 interactionSource = interactionSource,
                 indication = null
-            ) {
-                viewModel.toNextItem()
-            },
+            ) { },
         contentAlignment = Alignment.Center
     ) {
         Box(

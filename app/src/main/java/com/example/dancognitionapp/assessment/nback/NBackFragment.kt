@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.platform.ComposeView
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.assessment.AssessmentFragment
+import com.example.dancognitionapp.ui.nback.NBackScreen
 
 class NBackFragment: AssessmentFragment() {
 
@@ -18,7 +19,7 @@ class NBackFragment: AssessmentFragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_compose_host, container, false)
         view.findViewById<ComposeView>(R.id.compose_root).setContent {
-            Text(text = "Put N-Back screen here")
+            NBackScreen()
         }
         return view
     }

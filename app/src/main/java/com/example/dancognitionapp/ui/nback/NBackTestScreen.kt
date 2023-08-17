@@ -3,6 +3,7 @@ package com.example.dancognitionapp.ui.nback
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,25 +15,33 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dancognitionapp.ui.LandscapePreview
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
 
 @Composable
-fun NBackScreen(uiState: Char) {
-    var currentChar by remember { mutableStateOf('A') }
+fun NBackScreen() {
+
+    val viewModel: NBackViewModel = viewModel()
+    val uiState by viewModel.uiState
+
     val stimuli = listOf('A', 'B', 'C', 'D', 'Z', 'E', 'F', 'G', 'H')
+    val interactionSource = remember { MutableInteractionSource() }
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.surface)
-            .clickable { currentChar = stimuli.random() },
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null
+            ) {
+                viewModel.toNextItem()
+            },
         contentAlignment = Alignment.Center
     ) {
         Box(
@@ -44,12 +53,13 @@ fun NBackScreen(uiState: Char) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
                 verticalArrangement = Arrangement.SpaceBetween,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                userScrollEnabled = false
             ) {
                 items(stimuli.size) { index ->
                     val stimulus = stimuli[index]
                     NBackQuadrant(
-                        currentChar = currentChar,
+                        currentChar = uiState.currentItem.letter,
                         quadrantChar = stimulus
                     )
                 }
@@ -81,6 +91,6 @@ fun NBackQuadrant(modifier: Modifier = Modifier, currentChar: Char = 'a', quadra
 @Composable
 fun NBackScreenPreview() {
     DanCognitionAppTheme {
-        NBackScreen('B')
+        NBackScreen()
     }
 }

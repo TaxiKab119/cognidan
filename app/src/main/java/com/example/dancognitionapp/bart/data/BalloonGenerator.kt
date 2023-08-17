@@ -16,7 +16,7 @@ class BalloonGenerator {
 
     private fun generateBalloons() {
         for (balloonNumber in 1..NUMBER_OF_BALLOONS) {
-            val maxInflation = Random.nextInt(MIN_INFLATIONS, MAX_INFLATIONS)
+            val maxInflation = Random.nextInt(MIN_INFLATIONS, MAX_INFLATIONS + 1) // REVIEW
             balloons.add(Balloon(balloonNumber, maxInflation))
         }
     }

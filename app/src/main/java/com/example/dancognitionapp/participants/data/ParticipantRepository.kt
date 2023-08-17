@@ -1,15 +1,15 @@
 package com.example.dancognitionapp.participants.data
 
 object ParticipantRepository {
-    val participantList = mutableListOf<Participant>(
-        Participant("ABC", "Alex Balan"),
-        Participant("002", "Santa Claus"),
-        Participant("121", "Grant Dong"),
-        Participant("662", "Frauke Tillmans"),
-        Participant("515", "King Kong"),
-        Participant("800", "Rhiannon Brenner"),
-        Participant("10", "Ana Rumpl"),
-        Participant("177", "Tony Kazanjian"),
-        Participant("A16", "Jacques Cousteau")
+    val participantModelLists = mutableListOf<ParticipantModel>(
+        ParticipantModel("ABC", "Alex Balan"),
+        ParticipantModel("002", "Santa Claus"),
+        ParticipantModel("121", "Grant Dong"),
+        ParticipantModel("662", "Frauke Tillmans"),
+        ParticipantModel("515", "King Kong"),
+        ParticipantModel("800", "Rhiannon Brenner"),
+        ParticipantModel("10", "Ana Rumpl"),
+        ParticipantModel("177", "Tony Kazanjian"),
+        ParticipantModel("A16", "Jacques Cousteau")
     )
 }

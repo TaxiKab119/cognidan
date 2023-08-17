@@ -44,14 +44,14 @@
     <string name="selection_practice_bart">BART</string>
 
 
-    <string name="participants_delete_participant">Delete participant</string>
+    <string name="participants_delete_participant">Delete participantModel</string>
     <string name="participants_notes_label">Notes</string>
     <string name="participants_participant_id_label">Participant id</string>
     <string name="participants_participant_name_label">Participant name</string>
-    <string name="participants_add_participant_title">Add participant</string>
-    <string name="participants_modify_participant_title">Modify participant</string>
+    <string name="participants_add_participant_title">Add participantModel</string>
+    <string name="participants_modify_participant_title">Modify participantModel</string>
     <string name="participants_close_dialog_title">Close and lose changes?</string>
-    <string name="participants_close_dialog_content">If you close this screen without saving you will lose all information added to this participant.</string>
-    <string name="participants_delete_dialog_title">Are you sure you want to delete this participant?</string>
-    <string name="participants_delete_dialog_content">If you click OK you will lose all information from this participant.</string>
+    <string name="participants_close_dialog_content">If you close this screen without saving you will lose all information added to this participantModel.</string>
+    <string name="participants_delete_dialog_title">Are you sure you want to delete this participantModel?</string>
+    <string name="participants_delete_dialog_content">If you click OK you will lose all information from this participantModel.</string>
 </resources>

@@ -3,7 +3,7 @@ package com.example.dancognitionapp.participants.edit
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.example.dancognitionapp.participants.data.Participant
+import com.example.dancognitionapp.participants.data.ParticipantModel
 import com.example.dancognitionapp.participants.data.ParticipantRepository
 import timber.log.Timber
 
@@ -22,7 +22,7 @@ class AddEditViewModel(private val participantRepository: ParticipantRepository)
 
     fun populateParticipantFields(participantInternalId: Int) {
         if (participantInternalId != 0) {
-            val participant = participantRepository.participantList.find { it.internalId == participantInternalId }
+            val participant = participantRepository.participantModelLists.find { it.internalId == participantInternalId }
             _uiState.value = currentState.copy(
                 currentParticipantName = participant?.name ?: "",
                 currentParticipantId = participant?.id ?: "",
@@ -50,40 +50,40 @@ class AddEditViewModel(private val participantRepository: ParticipantRepository)
     }
 
     fun appendNewParticipant() {
-        val newParticipant = Participant(
+        val newParticipantModel = ParticipantModel(
             currentState.currentParticipantId,
             currentState.currentParticipantName,
             currentState.currentParticipantNotes
         )
-        ParticipantRepository.participantList += newParticipant
+        ParticipantRepository.participantModelLists += newParticipantModel
     }
 
     fun saveParticipant() {}
     fun deleteParticipant() {}
 
 //    fun editExistingParticipant() {
-//        val editedParticipant: Participant = currentState.copy(
+//        val editedParticipant: ParticipantModel = currentState.copy(
 //            id = currentState.currentParticipantId,
 //            name = currentState.currentParticipantName,
 //            notes = currentState.currentParticipantNotes
 //        )
-//        currentState.participantList.replaceAll { participant ->
+//        currentState.participantModelList.replaceAll { participant ->
 //            if (participant.internalId == currentState.selectedParticipant?.internalId) {
 //                editedParticipant
 //            } else {
 //                participant
 //            }
 //        }
-//        _uiState.value = currentState.copy(participantList = ParticipantRepository.participantList)
+//        _uiState.value = currentState.copy(participantModelList = ParticipantRepository.participantModelList)
 //        clearCurrentParticipantValues()
 //    }
 //
 //    fun deleteParticipant() {
-//        val unwantedParticipant = ParticipantRepository.participantList.find { participant ->
+//        val unwantedParticipant = ParticipantRepository.participantModelList.find { participant ->
 //            participant.internalId == currentState.selectedParticipant?.internalId
 //        }
-//        ParticipantRepository.participantList.remove(unwantedParticipant)
-//        _uiState.value = currentState.copy(participantList = ParticipantRepository.participantList)
+//        ParticipantRepository.participantModelList.remove(unwantedParticipant)
+//        _uiState.value = currentState.copy(participantModelList = ParticipantRepository.participantModelList)
 //        clearCurrentParticipantValues()
 //    }
 }

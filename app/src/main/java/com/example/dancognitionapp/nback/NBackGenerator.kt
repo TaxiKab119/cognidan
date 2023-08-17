@@ -194,17 +194,17 @@ enum class NBackType(val value: Int) {
     N_3(3)
 }
 
-fun main() {
-    val oneBack = NBackGenerator(NBackType.N_1)
-    println("Validity: ${oneBack.targetFoilRatio}, Number of Chars with lures: ${oneBack.numberOfCharsWithLures}")
-    println("------------------------------------")
-    println("")
-
-    val twoBack = NBackGenerator(NBackType.N_2)
-    println("Validity: ${twoBack.targetFoilRatio}, Number of Chars with lures: ${twoBack.numberOfCharsWithLures}")
-    println("------------------------------------")
-    println("")
-
-    val threeBack = NBackGenerator(NBackType.N_3)
-    println("Validity: ${threeBack.targetFoilRatio}, Number of Chars with lures: ${threeBack.numberOfCharsWithLures}")
-}
+//fun main() {
+//    val oneBack = NBackGenerator(NBackType.N_1)
+//    println("Validity: ${oneBack.targetFoilRatio}, Number of Chars with lures: ${oneBack.numberOfCharsWithLures}")
+//    println("------------------------------------")
+//    println("")
+//
+//    val twoBack = NBackGenerator(NBackType.N_2)
+//    println("Validity: ${twoBack.targetFoilRatio}, Number of Chars with lures: ${twoBack.numberOfCharsWithLures}")
+//    println("------------------------------------")
+//    println("")
+//
+//    val threeBack = NBackGenerator(NBackType.N_3)
+//    println("Validity: ${threeBack.targetFoilRatio}, Number of Chars with lures: ${threeBack.numberOfCharsWithLures}")
+//}

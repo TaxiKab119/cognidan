@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class Participant(
+data class ParticipantModel(
     val id: String,
     val name: String,
     val notes: String = ""

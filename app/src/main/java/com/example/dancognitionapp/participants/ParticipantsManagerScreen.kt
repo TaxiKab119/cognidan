@@ -1,7 +1,6 @@
 package com.example.dancognitionapp.participants
 
 
-import android.view.MotionEvent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
@@ -43,24 +42,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dancognitionapp.R
-import com.example.dancognitionapp.participants.data.Participant
-import com.example.dancognitionapp.participants.data.ParticipantRepository.participantList
+import com.example.dancognitionapp.participants.data.ParticipantModel
+import com.example.dancognitionapp.participants.data.ParticipantRepository.participantModelLists
 import com.example.dancognitionapp.participants.data.ParticipantUiState
 import com.example.dancognitionapp.ui.landing.DanCognitionTopAppBar
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -140,9 +135,9 @@ fun ParticipantManagerScreen(
                         isBottomSheetExpanded = false
                     }
                 }
-                items(uiState.participantList) {participant ->
+                items(uiState.participantModelList) { participant ->
                     ParticipantCard(
-                        participant = participant,
+                        participantModel = participant,
                         modifier = Modifier
                             .padding(8.dp),
                         onClick = {
@@ -173,10 +168,10 @@ fun ParticipantManagerScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ParticipantCard(
-    participant: Participant,
+    participantModel: ParticipantModel,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
-    onLongClick: (Participant) -> Unit = {}
+    onLongClick: (ParticipantModel) -> Unit = {}
 ) {
     Card(
         colors = CardDefaults
@@ -184,7 +179,7 @@ fun ParticipantCard(
         modifier = modifier
             .combinedClickable(
                 onClick = { onClick() },
-                onLongClick = { onLongClick(participant) }
+                onLongClick = { onLongClick(participantModel) }
             )
     ) {
         Row(
@@ -199,12 +194,12 @@ fun ParticipantCard(
             )
             Column(modifier = Modifier.padding(8.dp)) {
                 Text(
-                    text = participant.name,
+                    text = participantModel.name,
                     style = MaterialTheme.typography.headlineSmall,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "ID: ${participant.id}",
+                    text = "ID: ${participantModel.id}",
                     style = MaterialTheme.typography.titleSmall,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -252,7 +247,7 @@ fun ParticipantsBottomSheetContent(
         ) {
             Icon(imageVector = Icons.Default.Edit, contentDescription = "Export to .csv")
             Spacer(Modifier.width(12.dp))
-            Text(text = "Edit Participant")
+            Text(text = "Edit ParticipantModel")
         }
     }
 
@@ -274,7 +269,7 @@ fun ParticipantManagerScreenPreview() {
 @Composable
 fun ParticipantCardPreview() {
     DanCognitionAppTheme {
-        ParticipantCard(participantList.first())
+        ParticipantCard(participantModelLists.first())
     }
 }
 @OptIn(ExperimentalMaterial3Api::class)

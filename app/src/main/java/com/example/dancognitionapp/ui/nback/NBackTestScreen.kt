@@ -27,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.dancognitionapp.nback.NBackKey
 import com.example.dancognitionapp.ui.LandscapePreview
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
 
@@ -80,7 +79,9 @@ fun NBackScreen() {
                 interactionSource = interactionSource,
                 indication = null
             ) {
-                viewModel.participantClick(uiState.currentItem)
+                if (uiState.isTestScreenClickable) {
+                    viewModel.participantClick(uiState.currentItem)
+                }
             },
         contentAlignment = Alignment.Center
     ) {

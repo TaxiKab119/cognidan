@@ -29,12 +29,14 @@ class NBackViewModel: ViewModel() {
             delay(2000)
             while (!presentationList.isEmpty()) {
                 toNextItem()
+                toggleScreenClickable()
                 Timber.i("Current Char: ${uiState.value.currentItem} and list Size: ${uiState.value.presentationList.size}")
                 delay(1500) // Show Stimulus for 1500ms
                 _uiState.value = currentState.copy(
                     currentItem = NBackItem.intermediateItem,
                     feedbackState = NBackFeedbackState.INTERMEDIATE
                 )
+                toggleScreenClickable()
                 delay(500) // inter-stimulus time (no dot showing)
             }
         }
@@ -44,6 +46,12 @@ class NBackViewModel: ViewModel() {
         _uiState.value = currentState.copy(
             feedbackState = if(currentItem.isTarget()) NBackFeedbackState.HIT
                 else NBackFeedbackState.FALSE_ALARM
+        )
+        Timber.i("User Clicked Screen")
+    }
+    private fun toggleScreenClickable() {
+        _uiState.value = currentState.copy(
+            isTestScreenClickable = !currentState.isTestScreenClickable
         )
     }
 

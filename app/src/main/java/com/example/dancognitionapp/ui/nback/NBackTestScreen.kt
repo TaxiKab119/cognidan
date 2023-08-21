@@ -79,7 +79,7 @@ fun NBackScreen() {
                 interactionSource = interactionSource,
                 indication = null
             ) {
-                if (uiState.isTestScreenClickable) {
+                if (uiState.isTestScreenClickable && !uiState.hasUserClicked) {
                     viewModel.participantClick(uiState.currentItem)
                 }
             },

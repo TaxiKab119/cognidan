@@ -45,13 +45,15 @@ class NBackViewModel: ViewModel() {
     fun participantClick(currentItem: NBackItem) {
         _uiState.value = currentState.copy(
             feedbackState = if(currentItem.isTarget()) NBackFeedbackState.HIT
-                else NBackFeedbackState.FALSE_ALARM
+                else NBackFeedbackState.FALSE_ALARM,
+            hasUserClicked = true
         )
         Timber.i("User Clicked Screen")
     }
     private fun toggleScreenClickable() {
         _uiState.value = currentState.copy(
-            isTestScreenClickable = !currentState.isTestScreenClickable
+            isTestScreenClickable = !currentState.isTestScreenClickable,
+            hasUserClicked = false
         )
     }
 

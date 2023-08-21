@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dancognitionapp.nback.NBackGenerator
+import com.example.dancognitionapp.nback.NBackItem
 import com.example.dancognitionapp.nback.NBackType
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -25,16 +26,20 @@ class NBackViewModel: ViewModel() {
 
     fun startAdvancing() {
         viewModelScope.launch {
-            delay(5000)
+            delay(2000)
             while (!presentationList.isEmpty()) {
-                delay(2000) // Wait for 2 seconds
                 toNextItem()
+                Timber.i("Current Char: ${uiState.value.currentItem} and list Size: ${uiState.value.presentationList.size}")
+                delay(760) // Show Stimulus for 760ms
+                _uiState.value = currentState.copy(
+                    currentItem = NBackItem.intermediateItem
+                )
+                delay(1240) // inter-stimulus time (no dot showing)
             }
         }
     }
 
     private fun toNextItem() {
-        Timber.i("Current Char: ${uiState.value.currentItem} and list Size: ${uiState.value.presentationList.size}")
         if (presentationList.isEmpty()) {
             return
         }

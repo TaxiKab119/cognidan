@@ -15,6 +15,13 @@ data class NBackItem(
         return (plusLurePositionChar != null && plusLurePositionChar == letter) ||
                 (minusLurePositionChar != null && minusLurePositionChar == letter)
     }
+
+    companion object {
+        val intermediateItem = NBackItem(
+            position = -1,
+            letter = '0'
+        )
+    }
 }
 
 

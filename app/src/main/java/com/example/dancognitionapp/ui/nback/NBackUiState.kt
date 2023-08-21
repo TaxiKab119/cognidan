@@ -5,5 +5,5 @@ import java.util.LinkedList
 
 data class NBackUiState(
     val presentationList: LinkedList<NBackItem>,
-    val currentItem: NBackItem = presentationList.pop()
+    val currentItem: NBackItem = NBackItem.intermediateItem
 )

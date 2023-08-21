@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -26,9 +27,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.dancognitionapp.nback.NBackKey
 import com.example.dancognitionapp.ui.LandscapePreview
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
-import timber.log.Timber
+
+enum class NBackFeedbackState {
+    HIT,
+    //    MISS,
+    FALSE_ALARM,
+    //    CORRECT_REJECTION,
+    INTERMEDIATE
+}
+val slyRemarks = listOf<String>(
+    "Wow that was bad!",
+    "Trigger happy much?",
+    "I\'d be better with my eyes closed",
+    "Incorrect...Loser",
+    "Consult an optometrist",
+    "Why did you click that one?"
+)
 
 @Composable
 fun NBackScreen() {
@@ -62,9 +79,15 @@ fun NBackScreen() {
             .clickable(
                 interactionSource = interactionSource,
                 indication = null
-            ) { },
+            ) {
+                viewModel.participantClick(uiState.currentItem)
+            },
         contentAlignment = Alignment.Center
     ) {
+        NBackFeedback(
+            feedbackState = uiState.feedbackState,
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
         Box(
             modifier = Modifier
                 .fillMaxWidth(0.7f)
@@ -106,6 +129,22 @@ fun NBackQuadrant(modifier: Modifier = Modifier, currentChar: Char = 'a', quadra
             )
         }
     }
+}
+
+@Composable
+fun NBackFeedback(feedbackState: NBackFeedbackState, modifier: Modifier = Modifier) {
+    val (text, color) = when(feedbackState) {
+        NBackFeedbackState.HIT -> "Correct!" to Color.Green
+        NBackFeedbackState.FALSE_ALARM -> slyRemarks.shuffled().first() to Color.Red
+        NBackFeedbackState.INTERMEDIATE -> "" to Color.Black
+    }
+    Text(
+        text = text,
+        modifier = modifier
+            .offset(0.dp, 10.dp),
+        style = MaterialTheme.typography.titleLarge,
+        color = color
+    )
 }
 
 @LandscapePreview

@@ -30,13 +30,21 @@ class NBackViewModel: ViewModel() {
             while (!presentationList.isEmpty()) {
                 toNextItem()
                 Timber.i("Current Char: ${uiState.value.currentItem} and list Size: ${uiState.value.presentationList.size}")
-                delay(760) // Show Stimulus for 760ms
+                delay(1500) // Show Stimulus for 1500ms
                 _uiState.value = currentState.copy(
-                    currentItem = NBackItem.intermediateItem
+                    currentItem = NBackItem.intermediateItem,
+                    feedbackState = NBackFeedbackState.INTERMEDIATE
                 )
-                delay(1240) // inter-stimulus time (no dot showing)
+                delay(500) // inter-stimulus time (no dot showing)
             }
         }
+    }
+
+    fun participantClick(currentItem: NBackItem) {
+        _uiState.value = currentState.copy(
+            feedbackState = if(currentItem.isTarget()) NBackFeedbackState.HIT
+                else NBackFeedbackState.FALSE_ALARM
+        )
     }
 
     private fun toNextItem() {

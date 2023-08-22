@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">DanCognitionApp</string>
+    <string name="app_name">CogniDAN</string>
+    <string name="ok_button">OK</string>
+    <string name="cancel_button">Cancel</string>
 
     <string name="landing_practice_trial">Practice</string>
     <string name="landing_participant_manager">Participant manager</string>
@@ -17,6 +19,10 @@
     <string name="bart_dialog_popped_instructions">Click here to dismiss</string>
     <string name="bart_dialog_end_message">End of test</string>
     <string name="bart_dialog_end_instructions">Click to leave</string>
+
+    <string name="nback_test_instructions">After a 2s pause, you will see a sequence of blue dots. Each dot is shown for a few seconds. You need to decide if you saw the same blue dot %1$d trials ago. If you saw the same dot %1$d trials prior, click ANYWHERE on the screen.</string>
+    <string name="nback_test_instructions_singular">After a 2s pause, you will see a sequence of blue dots. Each dot is shown for a few seconds. You need to decide if you saw the same blue dot %1$d trial ago. If you saw the same dot %1$d trial prior, click ANYWHERE on the screen.</string>
+    <string name="nback_feedback_instructions">During practice, you will receive feedback on your clicks. There will be NO FEEDBACK IN THE REAL TEST</string>
 
 
     <string name="selection_title">Select Test</string>

@@ -8,5 +8,8 @@ data class NBackUiState(
     val currentItem: NBackItem = NBackItem.intermediateItem,
     val feedbackState: NBackFeedbackState = NBackFeedbackState.INTERMEDIATE,
     val isTestScreenClickable: Boolean = false,
-    val hasUserClicked: Boolean = false
+    val hasUserClicked: Boolean = false,
+    val showDialog: Boolean = true,
+    val n: Int = 1,
+    val isEndOfTest: Boolean = false
 )

@@ -6,14 +6,21 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -25,8 +32,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.dancognitionapp.R
 import com.example.dancognitionapp.ui.LandscapePreview
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
 
@@ -37,7 +46,7 @@ enum class NBackFeedbackState {
     //    CORRECT_REJECTION,
     INTERMEDIATE
 }
-val slyRemarks = listOf<String>(
+val slyRemarks = listOf(
     "Wow that was bad!",
     "Trigger happy much?",
     "I\'d be better with my eyes closed",
@@ -46,27 +55,41 @@ val slyRemarks = listOf<String>(
     "Why did you click that one?"
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NBackScreen() {
+fun NBackScreen(isPractice: Boolean, returnToSelect: () -> Unit = {}) {
 
     val viewModel: NBackViewModel = viewModel()
     val uiState by viewModel.uiState
 
     val stimuli = listOf('A', 'B', 'C', 'D', 'Z', 'E', 'F', 'G', 'H')
     val interactionSource = remember { MutableInteractionSource() }
-    var showDialog by remember { mutableStateOf(true) }
-    if (showDialog) {
+    if (uiState.showDialog) {
+        NBackDialog(
+            n = uiState.n,
+            isPractice = isPractice,
+            onCancelClick = { returnToSelect() },
+            modifier = Modifier
+                .wrapContentWidth()
+                .fillMaxWidth()
+        ) {
+            viewModel.startAdvancing()
+        }
+    }
+    if (uiState.isEndOfTest) {
         AlertDialog(
-            onDismissRequest = { /*DO NOTHING*/ },
-            title = { Text(text = "Click OK to start the Test") },
+            onDismissRequest = { /*Do Nothing*/ },
+            title = { Text(text = "Test Complete") },
+            text = {
+                if (isPractice) {
+                    Text(text = "Click OK to leave")
+                }
+            },
             confirmButton = {
-                TextButton(
-                    onClick = {
-                        showDialog = false
-                        viewModel.startAdvancing()
+                if (isPractice) {
+                    TextButton(onClick = { returnToSelect() }) {
+                        Text(text = stringResource(id = R.string.ok_button))
                     }
-                ) {
-                    Text(text = "OK")
                 }
             }
         )
@@ -85,10 +108,12 @@ fun NBackScreen() {
             },
         contentAlignment = Alignment.Center
     ) {
-        NBackFeedback(
-            feedbackState = uiState.feedbackState,
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
+        if (isPractice) {
+            NBackFeedback(
+                feedbackState = uiState.feedbackState,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
+        }
         Box(
             modifier = Modifier
                 .fillMaxWidth(0.7f)
@@ -148,10 +173,55 @@ fun NBackFeedback(feedbackState: NBackFeedbackState, modifier: Modifier = Modifi
     )
 }
 
+@Composable
+fun NBackDialog(
+    n:Int,
+    isPractice: Boolean,
+    modifier: Modifier = Modifier,
+    onCancelClick: () -> Unit = {},
+    onOkClick: () -> Unit = {}
+) {
+    AlertDialog(
+        onDismissRequest = { /*DO NOTHING*/ },
+        title = { Text(text = "Click OK to start the $n-Back Test") },
+        text = {
+            val scrollState = rememberScrollState()
+            Column(modifier = Modifier
+                .verticalScroll(scrollState)
+                .fillMaxWidth()
+            ) {
+                Text(
+                    text = if (n > 1) stringResource(id = R.string.nback_test_instructions, n)
+                    else stringResource(id = R.string.nback_test_instructions_singular, n)
+                )
+                if (isPractice) {
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(text = stringResource(id = R.string.nback_feedback_instructions))
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = { onOkClick() }
+            ) {
+                Text(text = stringResource(id = R.string.ok_button))
+            }
+        },
+        dismissButton = {
+            if (isPractice) {
+                TextButton(onClick = { onCancelClick() }) {
+                    Text(text = stringResource(id = R.string.cancel_button))
+                }
+            }
+        },
+        modifier = modifier
+    )
+}
+
 @LandscapePreview
 @Composable
 fun NBackScreenPreview() {
     DanCognitionAppTheme {
-        NBackScreen()
+        NBackScreen(true)
     }
 }

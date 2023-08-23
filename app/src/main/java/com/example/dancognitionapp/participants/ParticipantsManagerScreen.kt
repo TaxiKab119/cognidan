@@ -35,6 +35,7 @@ import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,7 +52,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.participants.data.ParticipantModel
-import com.example.dancognitionapp.participants.data.ParticipantRepository.participantModelLists
 import com.example.dancognitionapp.participants.data.ParticipantUiState
 import com.example.dancognitionapp.ui.landing.DanCognitionTopAppBar
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
@@ -258,20 +258,20 @@ fun ParticipantsBottomSheetContent(
 fun ParticipantManagerScreenPreview() {
     DanCognitionAppTheme {
         val viewModel: ParticipantsViewModel = viewModel()
-        val uiState: ParticipantUiState by viewModel.uiState
+        val uiState: ParticipantUiState by viewModel.uiState.collectAsState()
         ParticipantManagerScreen(
             uiState = uiState
         )
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun ParticipantCardPreview() {
-    DanCognitionAppTheme {
-        ParticipantCard(participantModelLists.first())
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun ParticipantCardPreview() {
+//    DanCognitionAppTheme {
+//        ParticipantCard(participantModelLists.first())
+//    }
+//}
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable

@@ -4,9 +4,9 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity
+@Entity(tableName = "participants")
 data class Participant(
-    @PrimaryKey val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int,
     @ColumnInfo(name = "user_inputted_id") val userGivenId: String,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "notes") val notes: String

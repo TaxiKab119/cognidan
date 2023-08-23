@@ -1,15 +1,34 @@
 package com.example.dancognitionapp.participants.data
 
-object ParticipantRepository {
-    val participantModelLists = mutableListOf<ParticipantModel>(
-        ParticipantModel("ABC", "Alex Balan"),
-        ParticipantModel("002", "Santa Claus"),
-        ParticipantModel("121", "Grant Dong"),
-        ParticipantModel("662", "Frauke Tillmans"),
-        ParticipantModel("515", "King Kong"),
-        ParticipantModel("800", "Rhiannon Brenner"),
-        ParticipantModel("10", "Ana Rumpl"),
-        ParticipantModel("177", "Tony Kazanjian"),
-        ParticipantModel("A16", "Jacques Cousteau")
-    )
+import com.example.dancognitionapp.participants.db.Participant
+import kotlinx.coroutines.flow.Flow
+
+/**
+ * Repository that provides insert, update, delete, and retrieve of [Participant] from a given data source.
+ */
+interface ParticipantRepository {
+    /**
+     * Retrieve all the Participants from the the given data source.
+     */
+    fun getAllParticipantsStream(): Flow<List<Participant>>
+
+    /**
+     * Retrieve a Participant from the given data source that matches with the [id].
+     */
+    fun getParticipantByIdStream(id: Int): Flow<Participant>
+
+    /**
+     * Insert Participant in the data source
+     */
+    suspend fun insertParticipant(participant: Participant)
+
+    /**
+     * Delete Participant from the data source
+     */
+    suspend fun deleteParticipant(participant: Participant)
+
+    /**
+     * Update Participant in the data source
+     */
+    suspend fun updateParticipant(participant: Participant)
 }

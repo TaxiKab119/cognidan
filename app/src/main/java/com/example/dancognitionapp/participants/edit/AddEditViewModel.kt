@@ -20,16 +20,16 @@ class AddEditViewModel(private val participantRepository: ParticipantRepository)
     private val currentState: AddEditUiState
         get() = _uiState.value
 
-    fun populateParticipantFields(participantInternalId: Int) {
-        if (participantInternalId != 0) {
-            val participant = participantRepository.participantModelLists.find { it.internalId == participantInternalId }
-            _uiState.value = currentState.copy(
-                currentParticipantName = participant?.name ?: "",
-                currentParticipantId = participant?.id ?: "",
-                currentParticipantNotes = participant?.notes ?: "",
-            )
-        }
-    }
+//    fun populateParticipantFields(participantInternalId: Int) {
+//        if (participantInternalId != 0) {
+//            val participant = participantRepository.participantModelLists.find { it.internalId == participantInternalId }
+//            _uiState.value = currentState.copy(
+//                currentParticipantName = participant?.name ?: "",
+//                currentParticipantId = participant?.id ?: "",
+//                currentParticipantNotes = participant?.notes ?: "",
+//            )
+//        }
+//    }
     fun updateParticipantName(name: String) {
         _uiState.value = currentState.copy(
             currentParticipantName = name
@@ -49,14 +49,14 @@ class AddEditViewModel(private val participantRepository: ParticipantRepository)
         )
     }
 
-    fun appendNewParticipant() {
-        val newParticipantModel = ParticipantModel(
-            currentState.currentParticipantId,
-            currentState.currentParticipantName,
-            currentState.currentParticipantNotes
-        )
-        ParticipantRepository.participantModelLists += newParticipantModel
-    }
+//    fun appendNewParticipant() {
+//        val newParticipantModel = ParticipantModel(
+//            currentState.currentParticipantId,
+//            currentState.currentParticipantName,
+//            currentState.currentParticipantNotes
+//        )
+//        ParticipantRepository.participantModelLists += newParticipantModel
+//    }
 
     fun saveParticipant() {}
     fun deleteParticipant() {}

@@ -3,20 +3,36 @@ package com.example.dancognitionapp.participants
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.dancognitionapp.participants.data.ParticipantModel
 import com.example.dancognitionapp.participants.data.ParticipantRepository
 import com.example.dancognitionapp.participants.data.ParticipantUiState
+import com.example.dancognitionapp.participants.db.Participant
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
-class ParticipantsViewModel(
-    private val dataSource: ParticipantRepository = ParticipantRepository
-): ViewModel() {
-    /**
-     * This first block sets up the ui state to be mutable initializes participant list
-     * */
-    private val _uiState = mutableStateOf(
-        ParticipantUiState(participantModelList = dataSource.participantModelLists)
-    )
-    val uiState: State<ParticipantUiState> = _uiState
+class ParticipantsViewModel(participantRepository: ParticipantRepository): ViewModel() {
 
-    private val currentState: ParticipantUiState
-        get() = _uiState.value
+    val uiState: StateFlow<ParticipantUiState> =
+        participantRepository.getAllParticipantsStream().map { dbParticipantList ->
+            val readableParticipantList = mutableListOf<ParticipantModel>()
+            for (participant in dbParticipantList) {
+                val participantModel = participant.toParticipantModel()
+                readableParticipantList.add(participantModel)
+            }
+            ParticipantUiState(readableParticipantList)
+        }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000L),
+                initialValue = ParticipantUiState()
+            )
 }
+
+fun Participant.toParticipantModel(): ParticipantModel = ParticipantModel(
+    id = userGivenId,
+    name = name,
+    notes = notes,
+)

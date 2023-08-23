@@ -88,7 +88,7 @@ fun AddEditParticipantsFullScreen(
             }
         ) {
             when(screenType) {
-                ParticipantScreenType.ADD -> viewModel.appendNewParticipant()
+                ParticipantScreenType.ADD -> {/* TODO - viewModel.appendNewParticipant()*/}
                 ParticipantScreenType.EDIT -> {/*TODO - viewModel.editExistingParticipant()*/}
             }
             returnToManager()

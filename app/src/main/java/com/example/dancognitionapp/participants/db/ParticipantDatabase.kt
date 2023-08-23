@@ -11,7 +11,6 @@ abstract class ParticipantDatabase : RoomDatabase() {
     abstract fun participantDao(): ParticipantDao
 
     companion object {
-
         /**
          * The [Instance] variable keeps a reference to the database when one has been created.
          * This helps maintain a single instance of the database opened at a given time.

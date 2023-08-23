@@ -1,4 +1,4 @@
-package com.example.dancognitionapp.participants
+package com.example.dancognitionapp.participants.home
 
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -35,7 +35,6 @@ import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,10 +48,8 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dancognitionapp.R
-import com.example.dancognitionapp.participants.data.ParticipantModel
-import com.example.dancognitionapp.participants.data.ParticipantUiState
+import com.example.dancognitionapp.participants.db.Participant
 import com.example.dancognitionapp.ui.landing.DanCognitionTopAppBar
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
 import kotlinx.coroutines.launch
@@ -60,8 +57,8 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ParticipantManagerScreen(
-    uiState: ParticipantUiState,
+fun ParticipantsHomeScreen(
+    participantList: List<Participant>,
     goToAddScreen: () -> Unit = {},
     goToEditScreen: (Int) -> Unit = {}
 ) {
@@ -135,9 +132,9 @@ fun ParticipantManagerScreen(
                         isBottomSheetExpanded = false
                     }
                 }
-                items(uiState.participantModelList) { participant ->
+                items(participantList) { participant ->
                     ParticipantCard(
-                        participantModel = participant,
+                        participant = participant,
                         modifier = Modifier
                             .padding(8.dp),
                         onClick = {
@@ -150,7 +147,7 @@ fun ParticipantManagerScreen(
 
                         }
                     ) {
-                        selectedParticipantId = participant.internalId
+                        selectedParticipantId = participant.id
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         if (!isBottomSheetExpanded) {
                             scope.launch {
@@ -168,10 +165,10 @@ fun ParticipantManagerScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ParticipantCard(
-    participantModel: ParticipantModel,
+    participant: Participant,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
-    onLongClick: (ParticipantModel) -> Unit = {}
+    onLongClick: (Participant) -> Unit = {}
 ) {
     Card(
         colors = CardDefaults
@@ -179,7 +176,7 @@ fun ParticipantCard(
         modifier = modifier
             .combinedClickable(
                 onClick = { onClick() },
-                onLongClick = { onLongClick(participantModel) }
+                onLongClick = { onLongClick(participant) }
             )
     ) {
         Row(
@@ -194,12 +191,12 @@ fun ParticipantCard(
             )
             Column(modifier = Modifier.padding(8.dp)) {
                 Text(
-                    text = participantModel.name,
+                    text = participant.name,
                     style = MaterialTheme.typography.headlineSmall,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "ID: ${participantModel.id}",
+                    text = "ID: ${participant.userGivenId}",
                     style = MaterialTheme.typography.titleSmall,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -245,7 +242,7 @@ fun ParticipantsBottomSheetContent(
                 .padding(12.dp)
                 .weight(1f)
         ) {
-            Icon(imageVector = Icons.Default.Edit, contentDescription = "Export to .csv")
+            Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit participant")
             Spacer(Modifier.width(12.dp))
             Text(text = "Edit ParticipantModel")
         }
@@ -253,17 +250,17 @@ fun ParticipantsBottomSheetContent(
 
 }
 
-@Preview(showBackground = true)
-@Composable
-fun ParticipantManagerScreenPreview() {
-    DanCognitionAppTheme {
-        val viewModel: ParticipantsViewModel = viewModel()
-        val uiState: ParticipantUiState by viewModel.uiState.collectAsState()
-        ParticipantManagerScreen(
-            uiState = uiState
-        )
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun ParticipantManagerScreenPreview() {
+//    DanCognitionAppTheme {
+//        val viewModel: ParticipantsViewModel = viewModel()
+//        val uiState: ParticipantUiState by viewModel.uiState.collectAsState()
+//        ParticipantsHomeScreen(
+//            uiState = uiState
+//        )
+//    }
+//}
 
 //@Preview(showBackground = true)
 //@Composable

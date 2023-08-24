@@ -31,14 +31,17 @@ class AddEditViewModel(
     private val currentState: AddEditUiState
         get() = _uiState.value
 
+    var haveFieldsBeenPopulated = false
+        private set
     init {
         viewModelScope.launch {
             _uiState.value = participantRepository.getParticipantByIdStream(participantInternalId)
                 .first()
                 ?.toAddEditUiState() ?: AddEditUiState()
+            Timber.i("Initial Ui State: ${uiState.value}")
+            haveFieldsBeenPopulated = true
         }
     }
-
     private fun Participant.toParticipantDetails(): ParticipantDetails = ParticipantDetails(
         userGivenId = userGivenId,
         name = name,

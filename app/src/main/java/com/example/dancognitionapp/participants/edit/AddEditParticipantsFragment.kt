@@ -34,11 +34,12 @@ class AddEditParticipantsFragment: Fragment() {
         val view = inflater.inflate(R.layout.fragment_compose_host, container, false)
         view.findViewById<ComposeView>(R.id.compose_root).setContent {
             val addEditViewModel: AddEditViewModel = viewModel(factory = AppViewModelProvider.Factory)
+            val uiState: AddEditUiState = addEditViewModel.uiState.value
             DanCognitionAppTheme {
                 AddEditParticipantsFullScreen(
                     screenType = args.screenType,
                     viewModel = addEditViewModel,
-                    uiState = addEditViewModel.uiState.value
+                    uiState = uiState
                 ) {
                     findNavController().popBackStack(R.id.participants_view_dest, false)
                 }

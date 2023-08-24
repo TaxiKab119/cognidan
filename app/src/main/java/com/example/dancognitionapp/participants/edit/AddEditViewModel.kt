@@ -2,13 +2,23 @@ package com.example.dancognitionapp.participants.edit
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.example.dancognitionapp.participants.data.ParticipantModel
+import androidx.lifecycle.viewModelScope
 import com.example.dancognitionapp.participants.data.ParticipantRepository
+import com.example.dancognitionapp.participants.db.Participant
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class AddEditViewModel(private val participantRepository: ParticipantRepository): ViewModel() {
-
+class AddEditViewModel(
+    private val participantRepository: ParticipantRepository
+): ViewModel() {
     /**
      * This first block sets up the ui state to be mutable initializes participant list
      * */
@@ -20,70 +30,66 @@ class AddEditViewModel(private val participantRepository: ParticipantRepository)
     private val currentState: AddEditUiState
         get() = _uiState.value
 
-//    fun populateParticipantFields(participantInternalId: Int) {
-//        if (participantInternalId != 0) {
-//            val participant = participantRepository.participantModelLists.find { it.internalId == participantInternalId }
-//            _uiState.value = currentState.copy(
-//                currentParticipantName = participant?.name ?: "",
-//                currentParticipantId = participant?.id ?: "",
-//                currentParticipantNotes = participant?.notes ?: "",
+//    init {
+//        viewModelScope.launch {
+//            _uiState.value = participantRepository.getParticipantByIdStream(participantInternalId)
+//                .first()
+//                ?.toAddEditUiState() ?: AddEditUiState()
+//        }
+//    }
+
+    private fun Participant.toParticipantDetails(): ParticipantDetails = ParticipantDetails(
+        userGivenId = userGivenId,
+        name = name,
+        notes = notes
+    )
+
+    private fun Participant.toAddEditUiState(): AddEditUiState = AddEditUiState(
+        participantDetails = this.toParticipantDetails()
+    )
+
+    private fun ParticipantDetails.toParticipantEntity(): Participant = Participant(
+        id = hashCode(),
+        userGivenId = userGivenId,
+        name = name,
+        notes = notes
+    )
+
+    fun updateUiState(participantDetails: ParticipantDetails) {
+        _uiState.value = currentState.copy(
+            participantDetails = participantDetails
+        )
+    }
+
+    /**
+     * Checks to see if name and id are empty (required for Database).
+     * Used to verify user input before adding or updating the entity in the db
+     * */
+    private fun validateInput(uiState: ParticipantDetails = currentState.participantDetails): Boolean {
+        return with(uiState) {
+            name.isNotBlank() && userGivenId.isNotBlank()
+        }
+    }
+
+    suspend fun updateParticipant() {
+        if (validateInput()) {
+            participantRepository.insertParticipant(currentState.participantDetails.toParticipantEntity())
+        }
+    }
+
+    suspend fun saveNewParticipant() {
+        if (validateInput()) {
+            participantRepository.insertParticipant((currentState.participantDetails.toParticipantEntity()))
+        }
+    }
+//    suspend fun deleteParticipant() {
+//        participantRepository.deleteParticipant(
+//            Participant(
+//                id = participantInternalId,
+//                name = currentState.participantDetails.name,
+//                userGivenId = currentState.participantDetails.userGivenId,
+//                notes = currentState.participantDetails.notes,
 //            )
-//        }
-//    }
-    fun updateParticipantName(name: String) {
-        _uiState.value = currentState.copy(
-            currentParticipantName = name
-        )
-        Timber.i("${_uiState.value}")
-    }
-
-    fun updateParticipantId(id: String) {
-        _uiState.value = currentState.copy(
-            currentParticipantId = id
-        )
-    }
-
-    fun updateParticipantNotes(notes: String) {
-        _uiState.value = currentState.copy(
-            currentParticipantNotes = notes
-        )
-    }
-
-//    fun appendNewParticipant() {
-//        val newParticipantModel = ParticipantModel(
-//            currentState.currentParticipantId,
-//            currentState.currentParticipantName,
-//            currentState.currentParticipantNotes
 //        )
-//        ParticipantRepository.participantModelLists += newParticipantModel
-//    }
-
-    fun saveParticipant() {}
-    fun deleteParticipant() {}
-
-//    fun editExistingParticipant() {
-//        val editedParticipant: ParticipantModel = currentState.copy(
-//            id = currentState.currentParticipantId,
-//            name = currentState.currentParticipantName,
-//            notes = currentState.currentParticipantNotes
-//        )
-//        currentState.participantModelList.replaceAll { participant ->
-//            if (participant.internalId == currentState.selectedParticipant?.internalId) {
-//                editedParticipant
-//            } else {
-//                participant
-//            }
-//        }
-//        _uiState.value = currentState.copy(participantModelList = ParticipantRepository.participantModelList)
-//        clearCurrentParticipantValues()
-//    }
-//
-//    fun deleteParticipant() {
-//        val unwantedParticipant = ParticipantRepository.participantModelList.find { participant ->
-//            participant.internalId == currentState.selectedParticipant?.internalId
-//        }
-//        ParticipantRepository.participantModelList.remove(unwantedParticipant)
-//        _uiState.value = currentState.copy(participantModelList = ParticipantRepository.participantModelList)
-//        clearCurrentParticipantValues()
 //    }
 }

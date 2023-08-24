@@ -14,7 +14,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -25,6 +24,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,12 +34,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
+import kotlinx.coroutines.launch
 
 enum class ParticipantScreenType() {
     ADD, EDIT
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditParticipantsFullScreen(
     modifier: Modifier = Modifier,
@@ -52,6 +51,7 @@ fun AddEditParticipantsFullScreen(
     var showDeleteDialog: Boolean by remember { mutableStateOf(false) }
     var showCloseDialog: Boolean by remember { mutableStateOf(false) }
     val initialUiState: AddEditUiState by remember { derivedStateOf { uiState } }
+    val coroutineScope = rememberCoroutineScope() // need this to call updateItem() function
 
     if (showCloseDialog) {
         ParticipantDialog(
@@ -67,7 +67,9 @@ fun AddEditParticipantsFullScreen(
             title = R.string.participants_delete_dialog_title,
             content = R.string.participants_delete_dialog_content,
             onConfirm = {
-                //TODO - viewModel.deleteParticipant()
+                coroutineScope.launch {
+//                    TODO - viewModel.deleteParticipant()
+                }
                 returnToManager()
             }
         ) { showDeleteDialog = false }
@@ -88,8 +90,16 @@ fun AddEditParticipantsFullScreen(
             }
         ) {
             when(screenType) {
-                ParticipantScreenType.ADD -> {/* TODO - viewModel.appendNewParticipant()*/}
-                ParticipantScreenType.EDIT -> {/*TODO - viewModel.editExistingParticipant()*/}
+                ParticipantScreenType.ADD -> {
+                    coroutineScope.launch {
+                        viewModel.saveNewParticipant()
+                }
+                }
+                ParticipantScreenType.EDIT -> {
+                    coroutineScope.launch {
+                        viewModel.updateParticipant()
+                    }
+                }
             }
             returnToManager()
         }
@@ -103,16 +113,16 @@ fun AddEditParticipantsFullScreen(
                 mutableStateOf(uiState)
             }
             OutlinedTextField(
-                value = updatedState.currentParticipantName,
-                onValueChange = { viewModel.updateParticipantName(it) },
+                value = uiState.participantDetails.name,
+                onValueChange = { viewModel.updateUiState(participantDetails = uiState.participantDetails.copy(name = it)) },
                 label = { Text(text = stringResource(R.string.participants_participant_name_label)) },
                 singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth()
             )
             OutlinedTextField(
-                value = updatedState.currentParticipantId,
-                onValueChange = { viewModel.updateParticipantId(it) },
+                value = uiState.participantDetails.userGivenId,
+                onValueChange = { viewModel.updateUiState(participantDetails = uiState.participantDetails.copy(userGivenId = it)) },
                 label = { Text(text = stringResource(R.string.participants_participant_id_label)) },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 singleLine = true,
@@ -121,8 +131,8 @@ fun AddEditParticipantsFullScreen(
                     .fillMaxWidth()
             )
             OutlinedTextField(
-                value = updatedState.currentParticipantNotes,
-                onValueChange = { viewModel.updateParticipantNotes(it) },
+                value = uiState.participantDetails.notes,
+                onValueChange = { viewModel.updateUiState(participantDetails = uiState.participantDetails.copy(notes = it)) },
                 label = { Text(text = stringResource(R.string.participants_notes_label)) },
                 singleLine = false,
                 maxLines = 4,

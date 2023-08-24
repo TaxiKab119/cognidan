@@ -2,17 +2,11 @@ package com.example.dancognitionapp.participants.edit
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dancognitionapp.participants.data.ParticipantRepository
 import com.example.dancognitionapp.participants.db.Participant
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.single
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -42,39 +36,11 @@ class AddEditViewModel(
             haveFieldsBeenPopulated = true
         }
     }
-    private fun Participant.toParticipantDetails(): ParticipantDetails = ParticipantDetails(
-        userGivenId = userGivenId,
-        name = name,
-        notes = notes
-    )
-
-    private fun Participant.toAddEditUiState(): AddEditUiState = AddEditUiState(
-        participantDetails = this.toParticipantDetails()
-    )
-
-    private fun ParticipantDetails.toParticipantEntity(): Participant = Participant(
-        id = participantInternalId,
-        userGivenId = userGivenId,
-        name = name,
-        notes = notes
-    )
-
     fun updateUiState(participantDetails: ParticipantDetails) {
         _uiState.value = currentState.copy(
             participantDetails = participantDetails
         )
     }
-
-    /**
-     * Checks to see if name and id are empty (required for Database).
-     * Used to verify user input before adding or updating the entity in the db
-     * */
-    private fun validateInput(uiState: ParticipantDetails = currentState.participantDetails): Boolean {
-        return with(uiState) {
-            name.isNotBlank() && userGivenId.isNotBlank()
-        }
-    }
-
     suspend fun updateParticipant() {
         if (validateInput()) {
             participantRepository.updateParticipant(currentState.participantDetails.toParticipantEntity())
@@ -96,4 +62,30 @@ class AddEditViewModel(
     suspend fun deleteParticipant() {
         participantRepository.deleteParticipant(currentState.participantDetails.toParticipantEntity())
     }
+
+    /**
+     * Checks to see if name and id are empty (required for Database).
+     * Used to verify user input before adding or updating the entity in the db
+     * */
+    private fun validateInput(uiState: ParticipantDetails = currentState.participantDetails): Boolean {
+        return with(uiState) {
+            name.isNotBlank() && userGivenId.isNotBlank()
+        }
+    }
+    private fun Participant.toParticipantDetails(): ParticipantDetails = ParticipantDetails(
+        userGivenId = userGivenId,
+        name = name,
+        notes = notes
+    )
+
+    private fun Participant.toAddEditUiState(): AddEditUiState = AddEditUiState(
+        participantDetails = this.toParticipantDetails()
+    )
+
+    private fun ParticipantDetails.toParticipantEntity(): Participant = Participant(
+        id = participantInternalId,
+        userGivenId = userGivenId,
+        name = name,
+        notes = notes
+    )
 }

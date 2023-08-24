@@ -1,4 +1,4 @@
-package com.example.dancognitionapp.ui.bart
+package com.example.dancognitionapp.assessment.bart.ui.components
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -13,8 +13,8 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
-import com.example.dancognitionapp.ui.LandscapePreview
-import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
+import com.example.dancognitionapp.utils.LandscapePreview
+import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 
 @Composable
 fun BalloonCanvas(

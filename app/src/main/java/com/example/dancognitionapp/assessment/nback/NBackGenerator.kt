@@ -1,4 +1,4 @@
-package com.example.dancognitionapp.nback
+package com.example.dancognitionapp.assessment.nback
 
 import java.util.LinkedList
 import kotlin.random.Random

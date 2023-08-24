@@ -1,6 +1,5 @@
 package com.example.dancognitionapp.assessment.selection
 
-import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,10 +19,10 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.assessment.AssessmentActivity
-import com.example.dancognitionapp.ui.landing.DanCognitionTopAppBar
-import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
-import com.example.dancognitionapp.ui.widget.OptionCard
-import com.example.dancognitionapp.ui.widget.navigateTo
+import com.example.dancognitionapp.landing.DanCognitionTopAppBar
+import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
+import com.example.dancognitionapp.utils.widget.OptionCard
+import com.example.dancognitionapp.utils.widget.navigateTo
 
 class SelectionFragment: Fragment() {
     override fun onCreateView(

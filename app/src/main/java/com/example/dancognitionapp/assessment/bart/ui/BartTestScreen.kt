@@ -1,4 +1,4 @@
-package com.example.dancognitionapp.ui.bart
+package com.example.dancognitionapp.assessment.bart.ui
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -20,9 +20,10 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dancognitionapp.R
-import com.example.dancognitionapp.bart.BartViewModel
-import com.example.dancognitionapp.ui.LandscapePreview
-import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
+import com.example.dancognitionapp.assessment.bart.ui.components.BalloonCanvas
+import com.example.dancognitionapp.assessment.bart.ui.components.BartDialog
+import com.example.dancognitionapp.utils.LandscapePreview
+import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 
 
 @Composable

@@ -68,6 +68,7 @@ fun ParticipantsHomeScreen(
 
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(
+            initialValue = SheetValue.Hidden,
             skipHiddenState = false,
             confirmValueChange =  {
                 when(it) {
@@ -244,7 +245,7 @@ fun ParticipantsBottomSheetContent(
         ) {
             Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit participant")
             Spacer(Modifier.width(12.dp))
-            Text(text = "Edit ParticipantModel")
+            Text(text = "Edit participant")
         }
     }
 

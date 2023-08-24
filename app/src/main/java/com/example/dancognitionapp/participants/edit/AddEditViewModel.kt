@@ -17,7 +17,8 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class AddEditViewModel(
-    private val participantRepository: ParticipantRepository
+    private val participantRepository: ParticipantRepository,
+    private val participantInternalId: Int
 ): ViewModel() {
     /**
      * This first block sets up the ui state to be mutable initializes participant list
@@ -30,13 +31,13 @@ class AddEditViewModel(
     private val currentState: AddEditUiState
         get() = _uiState.value
 
-//    init {
-//        viewModelScope.launch {
-//            _uiState.value = participantRepository.getParticipantByIdStream(participantInternalId)
-//                .first()
-//                ?.toAddEditUiState() ?: AddEditUiState()
-//        }
-//    }
+    init {
+        viewModelScope.launch {
+            _uiState.value = participantRepository.getParticipantByIdStream(participantInternalId)
+                .first()
+                ?.toAddEditUiState() ?: AddEditUiState()
+        }
+    }
 
     private fun Participant.toParticipantDetails(): ParticipantDetails = ParticipantDetails(
         userGivenId = userGivenId,

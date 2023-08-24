@@ -29,6 +29,8 @@ class AddEditParticipantsFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        ParticipantIdManager.setParticipantId(args.participantInternalId)
+        Timber.i("Agrs = participant internal Id: ${args.participantInternalId},Screen Type: ${args.screenType}")
         val view = inflater.inflate(R.layout.fragment_compose_host, container, false)
         view.findViewById<ComposeView>(R.id.compose_root).setContent {
             val addEditViewModel: AddEditViewModel = viewModel(factory = AppViewModelProvider.Factory)
@@ -45,13 +47,16 @@ class AddEditParticipantsFragment: Fragment() {
         return view
     }
 
-    //     Custom ViewModel factory
-//    class AddEditViewModelFactory(
-//        private val participantRepository: ParticipantRepository,
-//        private val participantInternalId: Int
-//    ) : ViewModelProvider.Factory {
-//        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-//            return AddEditViewModel(participantRepository, participantInternalId) as T
-//        }
-//    }
+}
+
+object ParticipantIdManager {
+    private var participantInternalId: Int = 0
+
+    fun setParticipantId(id: Int) {
+        participantInternalId = id
+    }
+
+    fun getParticipantId(): Int {
+        return participantInternalId
+    }
 }

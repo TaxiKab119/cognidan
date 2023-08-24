@@ -13,7 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.dancognitionapp.AppViewModelProvider
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.participants.edit.ParticipantScreenType
-import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
+import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 
 class ParticipantsHomeFragment: Fragment() {
     override fun onCreateView(

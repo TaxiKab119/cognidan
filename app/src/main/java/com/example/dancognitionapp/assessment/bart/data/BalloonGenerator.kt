@@ -1,4 +1,4 @@
-package com.example.dancognitionapp.bart.data
+package com.example.dancognitionapp.assessment.bart.data
 
 import java.util.LinkedList
 import kotlin.random.Random

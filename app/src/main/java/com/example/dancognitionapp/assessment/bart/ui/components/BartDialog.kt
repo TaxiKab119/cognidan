@@ -1,4 +1,4 @@
-package com.example.dancognitionapp.ui.bart
+package com.example.dancognitionapp.assessment.bart.ui.components
 
 
 import androidx.compose.foundation.background
@@ -23,8 +23,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.dancognitionapp.R
-import com.example.dancognitionapp.ui.LandscapePreview
-import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
+import com.example.dancognitionapp.utils.LandscapePreview
+import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 
 
 @Composable

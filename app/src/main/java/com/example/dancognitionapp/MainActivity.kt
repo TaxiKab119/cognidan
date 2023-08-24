@@ -8,9 +8,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.example.dancognitionapp.assessment.AssessmentActivity
-import com.example.dancognitionapp.ui.landing.LandingDestination
-import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
-import com.example.dancognitionapp.ui.landing.LandingPageScreen
+import com.example.dancognitionapp.landing.LandingDestination
+import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
+import com.example.dancognitionapp.landing.LandingPageScreen
 import com.example.dancognitionapp.participants.ParticipantsActivity
 import android.content.Intent
 

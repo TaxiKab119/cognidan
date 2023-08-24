@@ -1,4 +1,4 @@
-package com.example.dancognitionapp.ui.landing
+package com.example.dancognitionapp.landing
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
@@ -15,9 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.dancognitionapp.R
-import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
-import com.example.dancognitionapp.ui.widget.OptionCard
-import com.example.dancognitionapp.ui.widget.navigateTo
+import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
+import com.example.dancognitionapp.utils.widget.OptionCard
+import com.example.dancognitionapp.utils.widget.navigateTo
 import timber.log.Timber
 
 enum class LandingDestination {

@@ -11,7 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.dancognitionapp.AppViewModelProvider
 import com.example.dancognitionapp.R
-import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
+import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 import timber.log.Timber
 
 @Suppress("UNCHECKED_CAST")

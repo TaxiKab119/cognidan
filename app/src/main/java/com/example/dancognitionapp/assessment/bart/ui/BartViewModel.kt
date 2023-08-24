@@ -1,10 +1,10 @@
-package com.example.dancognitionapp.bart
+package com.example.dancognitionapp.assessment.bart.ui
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.example.dancognitionapp.bart.data.BalloonGenerator
-import com.example.dancognitionapp.bart.data.BartUiState
+import com.example.dancognitionapp.assessment.bart.data.BalloonGenerator
+import com.example.dancognitionapp.assessment.bart.data.BartUiState
 import timber.log.Timber
 
 class BartViewModel: ViewModel() {

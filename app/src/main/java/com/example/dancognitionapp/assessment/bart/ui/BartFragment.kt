@@ -1,4 +1,4 @@
-package com.example.dancognitionapp.assessment.bart
+package com.example.dancognitionapp.assessment.bart.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,8 +10,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.navigation.fragment.findNavController
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.assessment.AssessmentFragment
-import com.example.dancognitionapp.ui.bart.BartTestScreen
-import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
+import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 
 class BartFragment: AssessmentFragment() {
 

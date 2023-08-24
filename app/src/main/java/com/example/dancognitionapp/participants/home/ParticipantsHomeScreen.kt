@@ -50,8 +50,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.participants.db.Participant
-import com.example.dancognitionapp.ui.landing.DanCognitionTopAppBar
-import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
+import com.example.dancognitionapp.landing.DanCognitionTopAppBar
+import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 import kotlinx.coroutines.launch
 
 

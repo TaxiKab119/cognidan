@@ -1,4 +1,4 @@
-package com.example.dancognitionapp.ui.theme
+package com.example.dancognitionapp.utils.theme
 
 import androidx.compose.ui.graphics.Color
 

@@ -10,7 +10,7 @@ class ParticipantRepositoryImpl(private val participantDao: ParticipantDao) : Pa
         return participantDao.getAllParticipants()
     }
 
-    override fun getParticipantByIdStream(id: Int): Flow<Participant> {
+    override fun getParticipantByIdStream(id: Int): Flow<Participant?> {
         return participantDao.findParticipantById(id)
     }
 

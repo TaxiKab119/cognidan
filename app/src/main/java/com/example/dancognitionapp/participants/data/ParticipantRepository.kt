@@ -15,7 +15,7 @@ interface ParticipantRepository {
     /**
      * Retrieve a Participant from the given data source that matches with the [id].
      */
-    fun getParticipantByIdStream(id: Int): Flow<Participant>
+    fun getParticipantByIdStream(id: Int): Flow<Participant?>
 
     /**
      * Insert Participant in the data source

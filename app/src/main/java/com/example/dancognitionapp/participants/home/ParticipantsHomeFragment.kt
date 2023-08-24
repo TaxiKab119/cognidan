@@ -29,11 +29,16 @@ class ParticipantsHomeFragment: Fragment() {
                 ParticipantsHomeScreen(
                     participantList = uiState.participantList,
                     goToAddScreen = {
-                        val action = ParticipantsHomeFragmentDirections.actionParticipantsViewDestToAddModifyParticipantsViewDest()
+                        val action = ParticipantsHomeFragmentDirections
+                            .actionParticipantsViewDestToAddModifyParticipantsViewDest()
                         findNavController().navigate(action)
                     },
                 ) {
-                    val action = ParticipantsHomeFragmentDirections.actionParticipantsViewDestToAddModifyParticipantsViewDest(ParticipantScreenType.EDIT, participantInternalId = it)
+                    val action = ParticipantsHomeFragmentDirections
+                        .actionParticipantsViewDestToAddModifyParticipantsViewDest(
+                            ParticipantScreenType.EDIT,
+                            participantInternalId = it,
+                        )
                     findNavController().navigate(action)
                 }
             }

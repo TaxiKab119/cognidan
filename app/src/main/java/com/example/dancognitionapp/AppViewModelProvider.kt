@@ -9,6 +9,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.dancognitionapp.participants.edit.AddEditParticipantsFragment
 import com.example.dancognitionapp.participants.home.ParticipantsHomeViewModel
 import com.example.dancognitionapp.participants.edit.AddEditViewModel
+import com.example.dancognitionapp.participants.edit.ParticipantIdManager
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
@@ -20,7 +21,8 @@ object AppViewModelProvider {
         }
         initializer {
             AddEditViewModel(
-                danCognitionApplication().container.participantRepository
+                danCognitionApplication().container.participantRepository,
+                participantInternalId = ParticipantIdManager.getParticipantId()
             )
         }
     }

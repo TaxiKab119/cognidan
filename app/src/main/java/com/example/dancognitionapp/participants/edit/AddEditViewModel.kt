@@ -50,7 +50,7 @@ class AddEditViewModel(
     )
 
     private fun ParticipantDetails.toParticipantEntity(): Participant = Participant(
-        id = hashCode(),
+        id = participantInternalId,
         userGivenId = userGivenId,
         name = name,
         notes = notes
@@ -74,23 +74,23 @@ class AddEditViewModel(
 
     suspend fun updateParticipant() {
         if (validateInput()) {
-            participantRepository.insertParticipant(currentState.participantDetails.toParticipantEntity())
+            participantRepository.updateParticipant(currentState.participantDetails.toParticipantEntity())
         }
     }
 
     suspend fun saveNewParticipant() {
         if (validateInput()) {
-            participantRepository.insertParticipant((currentState.participantDetails.toParticipantEntity()))
+            participantRepository.insertParticipant(
+                Participant(
+                    id = hashCode(),
+                    userGivenId = currentState.participantDetails.userGivenId,
+                    name = currentState.participantDetails.name,
+                    notes = currentState.participantDetails.notes,
+                )
+            )
         }
     }
-//    suspend fun deleteParticipant() {
-//        participantRepository.deleteParticipant(
-//            Participant(
-//                id = participantInternalId,
-//                name = currentState.participantDetails.name,
-//                userGivenId = currentState.participantDetails.userGivenId,
-//                notes = currentState.participantDetails.notes,
-//            )
-//        )
-//    }
+    suspend fun deleteParticipant() {
+        participantRepository.deleteParticipant(currentState.participantDetails.toParticipantEntity())
+    }
 }

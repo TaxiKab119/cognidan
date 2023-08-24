@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 enum class ParticipantScreenType() {
     ADD, EDIT
@@ -68,7 +69,7 @@ fun AddEditParticipantsFullScreen(
             content = R.string.participants_delete_dialog_content,
             onConfirm = {
                 coroutineScope.launch {
-//                    TODO - viewModel.deleteParticipant()
+                    viewModel.deleteParticipant()
                 }
                 returnToManager()
             }
@@ -83,6 +84,7 @@ fun AddEditParticipantsFullScreen(
             modifier = Modifier.fillMaxWidth(),
             onClose = {
                 if (initialUiState != uiState) {
+                    Timber.i("initialUiState: $initialUiState vs. uiState: $uiState")
                     showCloseDialog = true
                 } else {
                     returnToManager()
@@ -113,7 +115,7 @@ fun AddEditParticipantsFullScreen(
                 mutableStateOf(uiState)
             }
             OutlinedTextField(
-                value = uiState.participantDetails.name,
+                value = updatedState.participantDetails.name,
                 onValueChange = { viewModel.updateUiState(participantDetails = uiState.participantDetails.copy(name = it)) },
                 label = { Text(text = stringResource(R.string.participants_participant_name_label)) },
                 singleLine = true,
@@ -121,7 +123,7 @@ fun AddEditParticipantsFullScreen(
                     .fillMaxWidth()
             )
             OutlinedTextField(
-                value = uiState.participantDetails.userGivenId,
+                value = updatedState.participantDetails.userGivenId,
                 onValueChange = { viewModel.updateUiState(participantDetails = uiState.participantDetails.copy(userGivenId = it)) },
                 label = { Text(text = stringResource(R.string.participants_participant_id_label)) },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
@@ -131,7 +133,7 @@ fun AddEditParticipantsFullScreen(
                     .fillMaxWidth()
             )
             OutlinedTextField(
-                value = uiState.participantDetails.notes,
+                value = updatedState.participantDetails.notes,
                 onValueChange = { viewModel.updateUiState(participantDetails = uiState.participantDetails.copy(notes = it)) },
                 label = { Text(text = stringResource(R.string.participants_notes_label)) },
                 singleLine = false,

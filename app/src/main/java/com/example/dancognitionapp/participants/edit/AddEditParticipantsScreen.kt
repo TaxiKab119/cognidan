@@ -51,8 +51,12 @@ fun AddEditParticipantsFullScreen(
 
     var showDeleteDialog: Boolean by remember { mutableStateOf(false) }
     var showCloseDialog: Boolean by remember { mutableStateOf(false) }
-    val initialUiState: AddEditUiState by remember { derivedStateOf { uiState } }
     val coroutineScope = rememberCoroutineScope() // need this to call updateItem() function
+
+    lateinit var initialUiState: AddEditUiState
+    if (viewModel.haveFieldsBeenPopulated) {
+        initialUiState = remember { uiState }
+    }
 
     if (showCloseDialog) {
         ParticipantDialog(
@@ -83,8 +87,8 @@ fun AddEditParticipantsFullScreen(
             screenType = screenType,
             modifier = Modifier.fillMaxWidth(),
             onClose = {
+                Timber.i("initialUiState: $initialUiState vs. uiState: $uiState")
                 if (initialUiState != uiState) {
-                    Timber.i("initialUiState: $initialUiState vs. uiState: $uiState")
                     showCloseDialog = true
                 } else {
                     returnToManager()
@@ -95,7 +99,7 @@ fun AddEditParticipantsFullScreen(
                 ParticipantScreenType.ADD -> {
                     coroutineScope.launch {
                         viewModel.saveNewParticipant()
-                }
+                    }
                 }
                 ParticipantScreenType.EDIT -> {
                     coroutineScope.launch {

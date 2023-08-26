@@ -1,6 +1,5 @@
 package com.example.dancognitionapp.ui.nback
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,11 +16,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,16 +31,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import com.example.dancognitionapp.R
-import com.example.dancognitionapp.ui.LandscapePreview
-import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
 
 enum class NBackFeedbackState {
     HIT,
@@ -106,12 +100,13 @@ fun NBackScreen(
         if (uiState.showDialog) {
             NBackCustomDialog(
                 isPractice = isPractice,
+                nValue = uiState.nValue.value,
                 onCancelClick = { returnToSelect() }
             ) {
                 viewModel.startAdvancing()
             }
         }
-        if (isPractice) {
+        if (isPractice && !uiState.showDialog) {
             NBackFeedback(
                 feedbackState = uiState.feedbackState,
                 modifier = Modifier.align(Alignment.TopCenter)
@@ -181,7 +176,7 @@ fun NBackFeedback(feedbackState: NBackFeedbackState, modifier: Modifier = Modifi
 private fun ResponsiveText(
     modifier: Modifier = Modifier,
     maxLines: Int = 1,
-    @StringRes textRes: Int,
+    text: String,
     targetTextSize: TextStyle
 ) {
     val typographySizes = listOf<TextStyle>(
@@ -207,7 +202,7 @@ private fun ResponsiveText(
     }
     Text(
         modifier = modifier,
-        text = stringResource(id = textRes),
+        text = text,
         maxLines = maxLines,
         overflow = TextOverflow.Ellipsis,
         onTextLayout = { textLayoutResult: TextLayoutResult ->
@@ -228,10 +223,12 @@ private fun ResponsiveText(
 @Composable
 fun NBackCustomDialog(
     isPractice: Boolean,
+    nValue: Int,
     modifier: Modifier = Modifier,
     onCancelClick: () -> Unit = {},
     onOkClick: () -> Unit = {}
 ) {
+    val context = LocalContext.current
     // Create a transparent background layer that covers the entire screen
     Box(
         modifier = Modifier
@@ -249,20 +246,20 @@ fun NBackCustomDialog(
         ) {
             Column(modifier = Modifier.padding(24.dp)) {
                 Text(
-                    text = stringResource(id = R.string.nback_instructions_dialog_title),
+                    text = stringResource(id = R.string.nback_instructions_dialog_title, nValue),
                     style = MaterialTheme.typography.headlineMedium,
                     textAlign = TextAlign.Center
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 ResponsiveText(
-                    textRes = R.string.nback_test_instructions,
+                    text = context.resources.getQuantityString(R.plurals.nback_test_instructions, nValue, nValue),
                     maxLines = 5,
                     targetTextSize = MaterialTheme.typography.titleSmall
                 )
                 if (isPractice) {
                     Spacer(modifier = Modifier.height(12.dp))
                     ResponsiveText(
-                        textRes = R.string.nback_feedback_instructions,
+                        text = stringResource(R.string.nback_feedback_instructions),
                         maxLines = 3,
                         targetTextSize = MaterialTheme.typography.titleSmall,
                     )
@@ -285,10 +282,10 @@ fun NBackCustomDialog(
     }
 }
 
-@LandscapePreview
-@Composable
-fun NBackScreenPreview() {
-    DanCognitionAppTheme {
-        NBackCustomDialog(isPractice = true)
-    }
-}
+//@LandscapePreview
+//@Composable
+//fun NBackScreenPreview() {
+//    DanCognitionAppTheme {
+//        NBackCustomDialog(isPractice = true)
+//    }
+//}

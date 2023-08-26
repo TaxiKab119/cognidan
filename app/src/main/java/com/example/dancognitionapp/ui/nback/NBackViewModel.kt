@@ -39,13 +39,13 @@ class NBackViewModel(isPractice: Boolean): ViewModel() {
                 toNextItem()
                 toggleScreenClickable()
                 Timber.i("Current Char: ${uiState.value.currentItem} and list Size: ${uiState.value.presentationList.size}")
-                delay(150) // Show Stimulus for 1500ms
+                delay(1500) // Show Stimulus for 1500ms
                 _uiState.value = currentState.copy(
                     currentItem = NBackItem.intermediateItem,
                     feedbackState = NBackFeedbackState.INTERMEDIATE
                 )
                 toggleScreenClickable()
-                delay(50) // inter-stimulus time (no dot showing)
+                delay(500) // inter-stimulus time (no dot showing)
             }
             delay(1000) // add a delay before showing dialog for next type
             toNextList()

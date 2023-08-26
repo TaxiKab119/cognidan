@@ -12,15 +12,15 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.LinkedList
 
-class NBackViewModel: ViewModel() {
+class NBackViewModel(isPractice: Boolean): ViewModel() {
     private val presentationOrders = mutableListOf(
         NBackGenerator(testType = NBackType.N_1).items,
         NBackGenerator(testType = NBackType.N_2).items,
         NBackGenerator(testType = NBackType.N_3).items
     )
-    private var testType = 1
+    private var testType = NBackType.N_1
     private var lifetimePresentations = 0
-    private val maxLifetimePresentations = 3 // number of presentations in a real test would be 9 else 3
+    private val maxLifetimePresentations = if (isPractice) 3 else 9 // number of presentations in a real test would be 9 else 3
     private val _uiState = mutableStateOf(
         NBackUiState(
             presentationList = presentationOrders[0]
@@ -84,20 +84,20 @@ class NBackViewModel: ViewModel() {
 
     private fun toNextList() {
         lifetimePresentations++
-        if (testType == 3 && lifetimePresentations < maxLifetimePresentations) {
+        if (testType.value == 3 && lifetimePresentations < maxLifetimePresentations) {
             regeneratePresentationOrders()
-            testType = 1
+            testType = NBackType.N_1
             _uiState.value = currentState.copy(
                 presentationList = presentationOrders[0],
-                n = testType,
+                nValue = testType,
                 showDialog = true
             )
         } else if (lifetimePresentations < maxLifetimePresentations) {
-            testType += 1
+            testType = NBackType.values()[testType.ordinal + 1]
             _uiState.value = currentState.copy(
-                presentationList = presentationOrders[testType - 1],
+                presentationList = presentationOrders[testType.ordinal],
                 showDialog = true,
-                n = testType
+                nValue = testType,
             )
             Timber.i("${currentState.presentationList}")
         } else {

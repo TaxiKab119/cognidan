@@ -55,18 +55,18 @@ val slyRemarks = listOf(
     "Why did you click that one?"
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NBackScreen(isPractice: Boolean, returnToSelect: () -> Unit = {}) {
-
-    val viewModel: NBackViewModel = viewModel()
-    val uiState by viewModel.uiState
-
+fun NBackScreen(
+    isPractice: Boolean,
+    viewModel: NBackViewModel,
+    uiState: NBackUiState,
+    returnToSelect: () -> Unit = {}
+) {
     val stimuli = listOf('A', 'B', 'C', 'D', 'Z', 'E', 'F', 'G', 'H')
     val interactionSource = remember { MutableInteractionSource() }
     if (uiState.showDialog) {
         NBackDialog(
-            n = uiState.n,
+            n = uiState.nValue.value,
             isPractice = isPractice,
             onCancelClick = { returnToSelect() },
             modifier = Modifier
@@ -149,7 +149,7 @@ fun NBackQuadrant(modifier: Modifier = Modifier, currentChar: Char = 'a', quadra
         if (currentChar == quadrantChar) {
             Box(
                 modifier = Modifier
-                    .size(20.dp)
+                    .size(30.dp)
                     .background(Color.Blue)
                     .align(Alignment.Center)
             )
@@ -218,10 +218,10 @@ fun NBackDialog(
     )
 }
 
-@LandscapePreview
-@Composable
-fun NBackScreenPreview() {
-    DanCognitionAppTheme {
-        NBackScreen(true)
-    }
-}
+//@LandscapePreview
+//@Composable
+//fun NBackScreenPreview() {
+//    DanCognitionAppTheme {
+//        NBackScreen(true)
+//    }
+//}

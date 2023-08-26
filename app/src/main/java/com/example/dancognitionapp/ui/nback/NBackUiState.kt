@@ -1,6 +1,7 @@
 package com.example.dancognitionapp.ui.nback
 
 import com.example.dancognitionapp.nback.NBackItem
+import com.example.dancognitionapp.nback.NBackType
 import java.util.LinkedList
 
 data class NBackUiState(
@@ -10,6 +11,6 @@ data class NBackUiState(
     val isTestScreenClickable: Boolean = false,
     val hasUserClicked: Boolean = false,
     val showDialog: Boolean = true,
-    val n: Int = 1,
+    val nValue: NBackType = NBackType.N_1,
     val isEndOfTest: Boolean = false
 )

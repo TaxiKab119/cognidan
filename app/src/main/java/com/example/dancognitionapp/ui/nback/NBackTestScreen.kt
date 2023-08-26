@@ -1,5 +1,6 @@
 package com.example.dancognitionapp.ui.nback
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -7,11 +8,13 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -20,7 +23,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -31,10 +33,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.window.Dialog
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.ui.LandscapePreview
 import com.example.dancognitionapp.ui.theme.DanCognitionAppTheme
@@ -64,18 +71,6 @@ fun NBackScreen(
 ) {
     val stimuli = listOf('A', 'B', 'C', 'D', 'Z', 'E', 'F', 'G', 'H')
     val interactionSource = remember { MutableInteractionSource() }
-    if (uiState.showDialog) {
-        NBackDialog(
-            n = uiState.nValue.value,
-            isPractice = isPractice,
-            onCancelClick = { returnToSelect() },
-            modifier = Modifier
-                .wrapContentWidth()
-                .fillMaxWidth()
-        ) {
-            viewModel.startAdvancing()
-        }
-    }
     if (uiState.isEndOfTest) {
         AlertDialog(
             onDismissRequest = { /*Do Nothing*/ },
@@ -108,6 +103,14 @@ fun NBackScreen(
             },
         contentAlignment = Alignment.Center
     ) {
+        if (uiState.showDialog) {
+            NBackCustomDialog(
+                isPractice = isPractice,
+                onCancelClick = { returnToSelect() }
+            ) {
+                viewModel.startAdvancing()
+            }
+        }
         if (isPractice) {
             NBackFeedback(
                 feedbackState = uiState.feedbackState,
@@ -120,18 +123,20 @@ fun NBackScreen(
                 .wrapContentSize(Alignment.Center)
                 .border(8.dp, color = MaterialTheme.colorScheme.surface)
         ) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                verticalArrangement = Arrangement.SpaceBetween,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                userScrollEnabled = false
-            ) {
-                items(stimuli.size) { index ->
-                    val stimulus = stimuli[index]
-                    NBackQuadrant(
-                        currentChar = uiState.currentItem.letter,
-                        quadrantChar = stimulus
-                    )
+            if (!uiState.showDialog) {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    verticalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    userScrollEnabled = false
+                ) {
+                    items(stimuli.size) { index ->
+                        val stimulus = stimuli[index]
+                        NBackQuadrant(
+                            currentChar = uiState.currentItem.letter,
+                            quadrantChar = stimulus
+                        )
+                    }
                 }
             }
         }
@@ -149,7 +154,7 @@ fun NBackQuadrant(modifier: Modifier = Modifier, currentChar: Char = 'a', quadra
         if (currentChar == quadrantChar) {
             Box(
                 modifier = Modifier
-                    .size(30.dp)
+                    .size(40.dp)
                     .background(Color.Blue)
                     .align(Alignment.Center)
             )
@@ -172,56 +177,118 @@ fun NBackFeedback(feedbackState: NBackFeedbackState, modifier: Modifier = Modifi
         color = color
     )
 }
+@Composable
+private fun ResponsiveText(
+    modifier: Modifier = Modifier,
+    maxLines: Int = 1,
+    @StringRes textRes: Int,
+    targetTextSize: TextStyle
+) {
+    val typographySizes = listOf<TextStyle>(
+        MaterialTheme.typography.displayLarge,
+        MaterialTheme.typography.displayMedium,
+        MaterialTheme.typography.displaySmall,
+        MaterialTheme.typography.headlineLarge,
+        MaterialTheme.typography.headlineMedium,
+        MaterialTheme.typography.headlineSmall,
+        MaterialTheme.typography.titleLarge,
+        MaterialTheme.typography.titleMedium,
+        MaterialTheme.typography.titleSmall,
+        MaterialTheme.typography.bodyLarge,
+        MaterialTheme.typography.bodyMedium,
+        MaterialTheme.typography.bodySmall,
+        MaterialTheme.typography.labelLarge,
+        MaterialTheme.typography.labelMedium,
+        MaterialTheme.typography.labelSmall,
+    )
+
+    var typographySizeIndex: Int by remember {
+        mutableStateOf(typographySizes.indexOfFirst {it == targetTextSize})
+    }
+    Text(
+        modifier = modifier,
+        text = stringResource(id = textRes),
+        maxLines = maxLines,
+        overflow = TextOverflow.Ellipsis,
+        onTextLayout = { textLayoutResult: TextLayoutResult ->
+            val currentMaxLineIndex = textLayoutResult.lineCount - 1
+
+            if (textLayoutResult.isLineEllipsized(currentMaxLineIndex)) {
+                typographySizeIndex--
+            }
+        },
+        style = try {
+            typographySizes[typographySizeIndex]
+        } catch (e: IndexOutOfBoundsException) {
+            MaterialTheme.typography.labelSmall
+        }
+    )
+}
 
 @Composable
-fun NBackDialog(
-    n:Int,
+fun NBackCustomDialog(
     isPractice: Boolean,
     modifier: Modifier = Modifier,
     onCancelClick: () -> Unit = {},
     onOkClick: () -> Unit = {}
 ) {
-    AlertDialog(
-        onDismissRequest = { /*DO NOTHING*/ },
-        title = { Text(text = "Click OK to start the $n-Back Test") },
-        text = {
-            val scrollState = rememberScrollState()
-            Column(modifier = Modifier
-                .verticalScroll(scrollState)
-                .fillMaxWidth()
-            ) {
+    // Create a transparent background layer that covers the entire screen
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.5f)),
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            modifier = modifier
+                .wrapContentSize()
+                .fillMaxWidth(0.75f)
+                .padding(16.dp)
+                .clip(shape = MaterialTheme.shapes.medium)
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            Column(modifier = Modifier.padding(24.dp)) {
                 Text(
-                    text = if (n > 1) stringResource(id = R.string.nback_test_instructions, n)
-                    else stringResource(id = R.string.nback_test_instructions_singular, n)
+                    text = stringResource(id = R.string.nback_instructions_dialog_title),
+                    style = MaterialTheme.typography.headlineMedium,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                ResponsiveText(
+                    textRes = R.string.nback_test_instructions,
+                    maxLines = 5,
+                    targetTextSize = MaterialTheme.typography.titleSmall
                 )
                 if (isPractice) {
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Text(text = stringResource(id = R.string.nback_feedback_instructions))
+                    Spacer(modifier = Modifier.height(12.dp))
+                    ResponsiveText(
+                        textRes = R.string.nback_feedback_instructions,
+                        maxLines = 3,
+                        targetTextSize = MaterialTheme.typography.titleSmall,
+                    )
+                }
+                Row {
+                    Spacer(modifier = Modifier.weight(1f))
+                    if (isPractice) {
+                        TextButton(onClick = { onCancelClick() }) {
+                            Text(text = stringResource(id = R.string.cancel_button))
+                        }
+                    }
+                    TextButton(
+                        onClick = { onOkClick() }
+                    ) {
+                        Text(text = stringResource(id = R.string.ok_button))
+                    }
                 }
             }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = { onOkClick() }
-            ) {
-                Text(text = stringResource(id = R.string.ok_button))
-            }
-        },
-        dismissButton = {
-            if (isPractice) {
-                TextButton(onClick = { onCancelClick() }) {
-                    Text(text = stringResource(id = R.string.cancel_button))
-                }
-            }
-        },
-        modifier = modifier
-    )
+        }
+    }
 }
 
-//@LandscapePreview
-//@Composable
-//fun NBackScreenPreview() {
-//    DanCognitionAppTheme {
-//        NBackScreen(true)
-//    }
-//}
+@LandscapePreview
+@Composable
+fun NBackScreenPreview() {
+    DanCognitionAppTheme {
+        NBackCustomDialog(isPractice = true)
+    }
+}

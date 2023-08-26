@@ -21,6 +21,7 @@
     <string name="nback_test_instructions">After a 2s pause, you will see a sequence of blue dots. Each dot is shown for a few seconds. You need to decide if you saw the same blue dot %1$d trials ago. If you saw the same dot %1$d trials prior, click ANYWHERE on the screen.</string>
     <string name="nback_test_instructions_singular">After a 2s pause, you will see a sequence of blue dots. Each dot is shown for a few seconds. You need to decide if you saw the same blue dot %1$d trial ago. If you saw the same dot %1$d trial prior, click ANYWHERE on the screen.</string>
     <string name="nback_feedback_instructions">During practice, you will receive feedback on your clicks. There will be NO FEEDBACK IN THE REAL TEST</string>
+    <string name="nback_instructions_dialog_title">Click OK to start 1-Back</string>
 
 
     <string name="selection_title">Select Test</string>

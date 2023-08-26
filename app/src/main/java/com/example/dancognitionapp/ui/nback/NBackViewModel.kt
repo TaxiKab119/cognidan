@@ -47,6 +47,7 @@ class NBackViewModel(isPractice: Boolean): ViewModel() {
                 toggleScreenClickable()
                 delay(50) // inter-stimulus time (no dot showing)
             }
+            delay(1000) // add a delay before showing dialog for next type
             toNextList()
         }
     }

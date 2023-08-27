@@ -1,5 +1,6 @@
-package com.example.dancognitionapp.assessment.bart.data
+package com.example.dancognitionapp.assessment.bart.ui
 
+import com.example.dancognitionapp.assessment.bart.data.Balloon
 import java.util.LinkedList
 
 data class BartUiState(

@@ -1,4 +1,4 @@
-package com.example.dancognitionapp.participants.edit
+package com.example.dancognitionapp.participants.data
 
 data class ParticipantDetails(
     val userGivenId: String = "",

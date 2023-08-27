@@ -1,4 +1,4 @@
-package com.example.dancognitionapp.assessment.nback
+package com.example.dancognitionapp.assessment.nback.data
 
 import java.util.UUID
 

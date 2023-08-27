@@ -24,7 +24,7 @@ class ParticipantsHomeFragment: Fragment() {
         val view = inflater.inflate(R.layout.fragment_compose_host, container, false)
         view.findViewById<ComposeView>(R.id.compose_root).setContent {
             DanCognitionAppTheme {
-                val viewModel: ParticipantsHomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
+                val viewModel: ParticipantsHomeViewModel = viewModel(factory = AppViewModelProvider.factory)
                 val uiState by viewModel.uiState.collectAsState()
                 ParticipantsHomeScreen(
                     participantList = uiState.participantList,

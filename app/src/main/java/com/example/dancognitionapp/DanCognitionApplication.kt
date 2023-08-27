@@ -1,6 +1,8 @@
 package com.example.dancognitionapp
 
 import android.app.Application
+import com.example.dancognitionapp.di.AppContainer
+import com.example.dancognitionapp.di.AppDataContainer
 import timber.log.Timber
 
 class DanCognitionApplication : Application() {

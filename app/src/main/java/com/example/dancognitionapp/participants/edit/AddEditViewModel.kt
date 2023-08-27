@@ -4,8 +4,11 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.dancognitionapp.participants.data.ParticipantDetails
 import com.example.dancognitionapp.participants.data.ParticipantRepository
 import com.example.dancognitionapp.participants.db.Participant
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -17,10 +20,10 @@ class AddEditViewModel(
     /**
      * This first block sets up the ui state to be mutable initializes participant list
      * */
-    private val _uiState = mutableStateOf(
+    private val _uiState = MutableStateFlow(
         AddEditUiState()
     )
-    val uiState: State<AddEditUiState> = _uiState
+    val uiState: StateFlow<AddEditUiState> = _uiState
 
     private val currentState: AddEditUiState
         get() = _uiState.value

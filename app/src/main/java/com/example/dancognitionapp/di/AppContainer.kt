@@ -1,4 +1,4 @@
-package com.example.dancognitionapp
+package com.example.dancognitionapp.di
 
 import android.content.Context
 import com.example.dancognitionapp.participants.data.ParticipantRepository

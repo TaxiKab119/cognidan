@@ -5,7 +5,7 @@
     app:startDestination="@id/selection_dest">
     <fragment
         android:id="@+id/bart_dest"
-        android:name="com.example.dancognitionapp.assessment.bart.BartFragment"/>
+        android:name="com.example.dancognitionapp.assessment.bart.ui.BartFragment"/>
 
     <fragment
         android:id="@+id/selection_dest"

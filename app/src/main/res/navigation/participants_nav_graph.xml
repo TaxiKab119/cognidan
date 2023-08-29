@@ -5,7 +5,7 @@
     app:startDestination="@id/participants_view_dest">
     <fragment
         android:id="@+id/participants_view_dest"
-        android:name="com.example.dancognitionapp.participants.ParticipantsFragment">
+        android:name="com.example.dancognitionapp.participants.home.ParticipantsHomeFragment">
         <action
             android:id="@+id/action_participants_view_dest_to_add_modify_participants_view_dest"
             app:destination="@id/add_modify_participants_view_dest" />

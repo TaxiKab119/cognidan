@@ -54,7 +54,6 @@ class AddEditViewModel(
         if (validateInput()) {
             participantRepository.insertParticipant(
                 Participant(
-                    id = hashCode(),
                     userGivenId = currentState.participantDetails.userGivenId,
                     name = currentState.participantDetails.name,
                     notes = currentState.participantDetails.notes,

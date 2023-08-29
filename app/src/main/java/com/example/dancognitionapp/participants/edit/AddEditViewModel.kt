@@ -14,8 +14,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class AddEditViewModel(
-    private val participantRepository: ParticipantRepository,
-    private val participantInternalId: Int
+    private val participantRepository: ParticipantRepository
 ): ViewModel() {
     /**
      * This first block sets up the ui state to be mutable initializes participant list
@@ -28,16 +27,12 @@ class AddEditViewModel(
     private val currentState: AddEditUiState
         get() = _uiState.value
 
-    var haveFieldsBeenPopulated = false
-        private set
-    init {
-        viewModelScope.launch {
-            _uiState.value = participantRepository.getParticipantByIdStream(participantInternalId)
-                .first()
-                ?.toAddEditUiState() ?: AddEditUiState()
-            Timber.i("Initial Ui State: ${uiState.value}")
-            haveFieldsBeenPopulated = true
-        }
+    suspend fun populateParticipantFields(participantInternalId: Int) {
+        _uiState.value = participantRepository.getParticipantByIdStream(participantInternalId)
+            .first()
+            ?.toAddEditUiState(participantInternalId) ?: AddEditUiState(participantInternalId = participantInternalId)
+        Timber.i("Initial Ui State: ${uiState.value}")
+        _uiState.value = currentState.copy(haveFieldsBeenPopulated = true)
     }
     fun updateUiState(participantDetails: ParticipantDetails) {
         _uiState.value = currentState.copy(
@@ -80,12 +75,13 @@ class AddEditViewModel(
         notes = notes
     )
 
-    private fun Participant.toAddEditUiState(): AddEditUiState = AddEditUiState(
-        participantDetails = this.toParticipantDetails()
+    private fun Participant.toAddEditUiState(participantInternalId: Int): AddEditUiState = AddEditUiState(
+        participantDetails = this.toParticipantDetails(),
+        participantInternalId = participantInternalId
     )
 
     private fun ParticipantDetails.toParticipantEntity(): Participant = Participant(
-        id = participantInternalId,
+        id = currentState.participantInternalId,
         userGivenId = userGivenId,
         name = name,
         notes = notes

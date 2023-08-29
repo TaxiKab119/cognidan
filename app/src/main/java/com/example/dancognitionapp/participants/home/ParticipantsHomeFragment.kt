@@ -8,7 +8,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.dancognitionapp.AppViewModelProvider
 import com.example.dancognitionapp.R
@@ -21,11 +22,11 @@ class ParticipantsHomeFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val viewModel: ParticipantsHomeViewModel by viewModels { AppViewModelProvider.factory }
         val view = inflater.inflate(R.layout.fragment_compose_host, container, false)
         view.findViewById<ComposeView>(R.id.compose_root).setContent {
             DanCognitionAppTheme {
-                val viewModel: ParticipantsHomeViewModel = viewModel(factory = AppViewModelProvider.factory)
-                val uiState by viewModel.uiState.collectAsState()
+                val uiState by viewModel.uiState.collectAsState(context = lifecycleScope.coroutineContext)
                 ParticipantsHomeScreen(
                     participantList = uiState.participantList,
                     goToAddScreen = {

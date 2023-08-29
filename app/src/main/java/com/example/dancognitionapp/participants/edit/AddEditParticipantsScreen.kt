@@ -52,9 +52,10 @@ fun AddEditParticipantsFullScreen(
     var showCloseDialog: Boolean by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope() // need this to call updateItem() function
 
-    lateinit var initialUiState: AddEditUiState
-    if (viewModel.haveFieldsBeenPopulated) {
+    lateinit var initialUiState: AddEditUiState // This only gets initialized if haveFieldsBeenPopulated is a uiState
+    if (uiState.haveFieldsBeenPopulated) {
         initialUiState = remember { uiState }
+        Timber.i("InitialUiState updated to: $initialUiState")
     }
 
     if (showCloseDialog) {

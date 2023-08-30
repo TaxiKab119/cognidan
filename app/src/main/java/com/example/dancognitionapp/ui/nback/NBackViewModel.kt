@@ -4,13 +4,12 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dancognitionapp.nback.NBackGenerator
-import com.example.dancognitionapp.nback.NBackItem
-import com.example.dancognitionapp.nback.NBackType
+import com.example.dancognitionapp.assessment.nback.data.NBackGenerator
+import com.example.dancognitionapp.assessment.nback.data.NBackItem
+import com.example.dancognitionapp.assessment.nback.data.NBackType
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.LinkedList
 
 class NBackViewModel(isPractice: Boolean): ViewModel() {
     private val presentationOrders = mutableListOf(

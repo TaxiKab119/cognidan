@@ -1,5 +1,6 @@
 package com.example.dancognitionapp
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,10 +10,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.example.dancognitionapp.assessment.AssessmentActivity
 import com.example.dancognitionapp.landing.LandingDestination
-import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 import com.example.dancognitionapp.landing.LandingPageScreen
 import com.example.dancognitionapp.participants.ParticipantsActivity
-import android.content.Intent
+import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

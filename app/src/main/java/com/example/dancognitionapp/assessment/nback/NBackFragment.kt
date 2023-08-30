@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.ViewModel
@@ -14,9 +13,6 @@ import androidx.navigation.fragment.findNavController
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.assessment.AssessmentActivity
 import com.example.dancognitionapp.assessment.AssessmentFragment
-import com.example.dancognitionapp.bart.BartViewModel
-import com.example.dancognitionapp.participants.data.ParticipantRepository
-import com.example.dancognitionapp.participants.edit.AddEditViewModel
 import com.example.dancognitionapp.ui.nback.NBackScreen
 import com.example.dancognitionapp.ui.nback.NBackUiState
 import com.example.dancognitionapp.ui.nback.NBackViewModel

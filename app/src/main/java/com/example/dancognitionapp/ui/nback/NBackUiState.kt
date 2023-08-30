@@ -1,7 +1,7 @@
 package com.example.dancognitionapp.ui.nback
 
-import com.example.dancognitionapp.nback.NBackItem
-import com.example.dancognitionapp.nback.NBackType
+import com.example.dancognitionapp.assessment.nback.data.NBackItem
+import com.example.dancognitionapp.assessment.nback.data.NBackType
 import java.util.LinkedList
 
 data class NBackUiState(

@@ -36,12 +36,18 @@
     <string name="nback_instructions_dialog_title">Click OK to start %1$d-Back</string>
 
 
-    <string name="selection_title">Select Test</string>
+    <string name="selection_title">Select test</string>
     <string name="selection_pre_dive">Pre-dive</string>
     <string name="selection_dive">Dive</string>
     <string name="selection_post_dive">Post-dive</string>
     <string name="selection_practice_nback">n-back</string>
     <string name="selection_practice_bart">BART</string>
+    <string name="selection_select_participant">Select participant</string>
+    <string name="selection_select_trial_day">Select day</string>
+    <string name="selection_select_trial_time">Select time</string>
+    <string name="selection_trial_day_label">Trial day</string>
+    <string name="selection_trial_time_label">Trial time</string>
+    <string name="selection_trial_details_header">Select trial details</string>
 
 
     <string name="participants_delete_participant">Delete participant</string>

@@ -14,19 +14,24 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.dancognitionapp.AppViewModelProvider
 import com.example.dancognitionapp.R
+import com.example.dancognitionapp.assessment.AssessmentActivity
 import com.example.dancognitionapp.assessment.AssessmentFragment
 import com.example.dancognitionapp.assessment.TrialDay
 import com.example.dancognitionapp.assessment.TrialTime
 import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 
 class BartFragment: AssessmentFragment() {
-
+    private val isPractice = requireActivity().intent.getBooleanExtra(AssessmentActivity.IS_PRACTICE, false)
     private val viewModel: BartViewModel by viewModels { AppViewModelProvider.factory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // pass participant id via navArgs
-        viewModel.initBart(1, TrialDay.DAY_2, TrialTime.PRE_DIVE)
+        // If isPractice then initBart won't do anything except inform viewModel that isPractice == true
+        if (isPractice) {
+            viewModel.initBart(0, TrialDay.DAY_1, TrialTime.PRE_DIVE, true)
+        }
+        // TODO - else, pass args via navArgs
+        viewModel.initBart(1, TrialDay.DAY_2, TrialTime.PRE_DIVE, isPractice)
     }
 
     override fun onCreateView(

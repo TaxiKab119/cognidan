@@ -5,6 +5,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.example.dancognitionapp.assessment.TrialDay
+import com.example.dancognitionapp.assessment.TrialTime
 
 @Dao
 interface BartDao {
@@ -17,6 +19,11 @@ interface BartDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertBart(bartEntity: BartEntity?)
 
-    @Query("SELECT * FROM bart_trial_data WHERE participant_id = :participantId")
-    fun getBartEntityForParticipant(participantId: Int): BartEntity?
+    // LIMIT 1 so that if there were was already an existing data it would just be overwritten
+    @Query("SELECT * FROM bart_trial_data WHERE participant_id = :participantId AND trial_day = :trialDay AND trial_time = :trialTime LIMIT 1")
+    fun getBartEntityForTrial(
+        participantId: Int,
+        trialDay: TrialDay,
+        trialTime: TrialTime
+    ): BartEntity?
 }

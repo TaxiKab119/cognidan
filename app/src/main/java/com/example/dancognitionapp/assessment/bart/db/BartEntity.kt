@@ -7,7 +7,6 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.example.dancognitionapp.assessment.TrialDay
 import com.example.dancognitionapp.assessment.TrialTime
-import java.util.UUID
 
 @Entity(tableName = "bart_trial_data")
 data class BartEntity(
@@ -22,25 +21,25 @@ data class BartEntity(
     foreignKeys = [
         ForeignKey(
             entity = BartEntity::class,
-            parentColumns = ["participant_id"],
-            childColumns = ["bart_participant_id"]
+            parentColumns = ["id"],
+            childColumns = ["bart_entity_id"]
         )
     ]
 )
 data class BalloonEntity(
-    @PrimaryKey val id: UUID = UUID.randomUUID(),
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo("balloon_number") val balloonNumber: Int,
     @ColumnInfo("max_inflations") val maxInflations: Int,
     @ColumnInfo("number_of_inflations") val numberOfInflations: Int,
     @ColumnInfo("did_pop") val didPop: Boolean,
-    @ColumnInfo("bart_participant_id") val participantId: Int = 0
+    @ColumnInfo("bart_entity_id") val bartEntityId: Int
 )
 
-@DatabaseView("SELECT * FROM balloon_table INNER JOIN bart_trial_data AS bartEntity WHERE bartEntity.participant_id = bart_participant_id")
+@DatabaseView("SELECT * FROM balloon_table INNER JOIN bart_trial_data AS bartEntity WHERE bartEntity.id = bart_entity_id")
 data class BalloonView(
     val balloonNumber: Int,
     val maxInflations: Int,
     val numberOfInflations: Int,
     val didPop: Boolean,
-    val participantId: Int
+    val bartEntityId: Int
 )

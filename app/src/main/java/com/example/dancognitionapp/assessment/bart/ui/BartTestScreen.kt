@@ -2,7 +2,6 @@ package com.example.dancognitionapp.assessment.bart.ui
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -18,20 +17,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.assessment.bart.ui.components.BalloonCanvas
 import com.example.dancognitionapp.assessment.bart.ui.components.BartDialog
-import com.example.dancognitionapp.utils.LandscapePreview
-import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 
 
 @Composable
-fun BartTestScreen(modifier: Modifier = Modifier, navigateTo: (Int) -> Unit) {
-
-    val viewModel: BartViewModel = viewModel()
-    val uiState by viewModel.uiState
-
+fun BartTestScreen(
+    viewModel: BartViewModel,
+    uiState: BartUiState,
+    modifier: Modifier = Modifier,
+    navigateTo: (Int) -> Unit
+) {
     BoxWithConstraints(modifier = modifier
         .padding(12.dp)
     ) {
@@ -184,10 +181,10 @@ fun BartButton(
     }
 }
 
-@LandscapePreview
-@Composable
-fun BartConstraintLayoutPreview() {
-    DanCognitionAppTheme {
-        BartTestScreen(modifier = Modifier.fillMaxSize(), {})
-    }
-}
+//@LandscapePreview
+//@Composable
+//fun BartConstraintLayoutPreview() {
+//    DanCognitionAppTheme {
+//        BartTestScreen(modifier = Modifier.fillMaxSize(), {})
+//    }
+//}

@@ -13,9 +13,6 @@ import androidx.navigation.fragment.findNavController
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.assessment.AssessmentActivity
 import com.example.dancognitionapp.assessment.AssessmentFragment
-import com.example.dancognitionapp.ui.nback.NBackScreen
-import com.example.dancognitionapp.ui.nback.NBackUiState
-import com.example.dancognitionapp.ui.nback.NBackViewModel
 
 class NBackFragment: AssessmentFragment() {
 

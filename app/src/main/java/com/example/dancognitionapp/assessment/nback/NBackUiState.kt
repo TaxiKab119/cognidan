@@ -1,4 +1,4 @@
-package com.example.dancognitionapp.ui.nback
+package com.example.dancognitionapp.assessment.nback
 
 import com.example.dancognitionapp.assessment.nback.data.NBackItem
 import com.example.dancognitionapp.assessment.nback.data.NBackType

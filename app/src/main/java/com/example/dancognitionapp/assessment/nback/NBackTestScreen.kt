@@ -1,4 +1,4 @@
-package com.example.dancognitionapp.ui.nback
+package com.example.dancognitionapp.assessment.nback
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -39,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.dancognitionapp.R
+import com.example.dancognitionapp.utils.widget.ResponsiveText
 
 enum class NBackFeedbackState {
     HIT,
@@ -170,53 +171,6 @@ fun NBackFeedback(feedbackState: NBackFeedbackState, modifier: Modifier = Modifi
             .offset(0.dp, 10.dp),
         style = MaterialTheme.typography.titleLarge,
         color = color
-    )
-}
-@Composable
-private fun ResponsiveText(
-    modifier: Modifier = Modifier,
-    maxLines: Int = 1,
-    text: String,
-    targetTextSize: TextStyle
-) {
-    val typographySizes = listOf<TextStyle>(
-        MaterialTheme.typography.displayLarge,
-        MaterialTheme.typography.displayMedium,
-        MaterialTheme.typography.displaySmall,
-        MaterialTheme.typography.headlineLarge,
-        MaterialTheme.typography.headlineMedium,
-        MaterialTheme.typography.headlineSmall,
-        MaterialTheme.typography.titleLarge,
-        MaterialTheme.typography.titleMedium,
-        MaterialTheme.typography.titleSmall,
-        MaterialTheme.typography.bodyLarge,
-        MaterialTheme.typography.bodyMedium,
-        MaterialTheme.typography.bodySmall,
-        MaterialTheme.typography.labelLarge,
-        MaterialTheme.typography.labelMedium,
-        MaterialTheme.typography.labelSmall,
-    )
-
-    var typographySizeIndex: Int by remember {
-        mutableStateOf(typographySizes.indexOfFirst {it == targetTextSize})
-    }
-    Text(
-        modifier = modifier,
-        text = text,
-        maxLines = maxLines,
-        overflow = TextOverflow.Ellipsis,
-        onTextLayout = { textLayoutResult: TextLayoutResult ->
-            val currentMaxLineIndex = textLayoutResult.lineCount - 1
-
-            if (textLayoutResult.isLineEllipsized(currentMaxLineIndex)) {
-                typographySizeIndex--
-            }
-        },
-        style = try {
-            typographySizes[typographySizeIndex]
-        } catch (e: IndexOutOfBoundsException) {
-            MaterialTheme.typography.labelSmall
-        }
     )
 }
 

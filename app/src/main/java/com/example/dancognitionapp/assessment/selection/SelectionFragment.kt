@@ -46,11 +46,18 @@ class SelectionFragment: Fragment() {
                 } else {
                     val viewModel:TrialDetailsViewModel = viewModel(factory = AppViewModelProvider.factory)
                     val uiState = viewModel.uiState.collectAsState(lifecycleScope.coroutineContext)
+                    val action = SelectionFragmentDirections.actionSelectionDestToBartDest(
+                        trialDetails = TrialDetailsUiState(
+                            selectedParticipant = uiState.value.selectedParticipant,
+                            selectedTrialDay = uiState.value.selectedTrialDay,
+                            selectedTrialTime = uiState.value.selectedTrialTime,
+                        )
+                    )
                     SelectTestDetailsScreen(
                         viewModel = viewModel,
                         participantList = uiState.value.participantList
                     ) {
-                        findNavController().navigate(R.id.bart_dest)
+                        findNavController().navigate(action)
                     }
                 }
             }

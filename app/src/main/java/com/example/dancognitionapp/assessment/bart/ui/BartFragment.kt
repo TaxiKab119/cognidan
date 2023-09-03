@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.dancognitionapp.AppViewModelProvider
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.assessment.AssessmentActivity
@@ -19,21 +20,22 @@ import com.example.dancognitionapp.assessment.AssessmentFragment
 import com.example.dancognitionapp.assessment.TrialDay
 import com.example.dancognitionapp.assessment.TrialTime
 import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
+import timber.log.Timber
 
 class BartFragment: AssessmentFragment() {
-    private val isPractice = requireActivity().intent.getBooleanExtra(AssessmentActivity.IS_PRACTICE, false)
+    private val navArgs: BartFragmentArgs by navArgs()
     private val viewModel: BartViewModel by viewModels { AppViewModelProvider.factory }
+
+    private var isPractice: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // If isPractice then initBart won't do anything except inform viewModel that isPractice == true
-        if (isPractice) {
-            viewModel.initBart(0, TrialDay.DAY_1, TrialTime.PRE_DIVE, true)
+        isPractice = navArgs.trialDetails == null
+        // this null check ensures that BART is only initialized/added to db once
+        if (savedInstanceState == null) {
+            initializeBart(isPractice)
         }
-        // TODO - else, pass args via navArgs
-        viewModel.initBart(1, TrialDay.DAY_2, TrialTime.PRE_DIVE, isPractice)
     }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -54,4 +56,21 @@ class BartFragment: AssessmentFragment() {
         }
         return view
     }
+    private fun initializeBart(isPractice: Boolean) {
+        if (isPractice) {
+            // If isPractice then initBart won't do anything except inform viewModel that isPractice == true
+            Timber.i("Practice BART instantiated")
+            viewModel.initBart(0, TrialDay.DAY_1, TrialTime.PRE_DIVE, true)
+        } else {
+            Timber.i("Real BART instantiated")
+            // else, pass args via navArgs
+            val participantId = navArgs.trialDetails?.selectedParticipant?.id ?: 0
+            val trialDay = navArgs.trialDetails?.selectedTrialDay ?: TrialDay.DAY_1
+            val trialTime = navArgs.trialDetails?.selectedTrialTime ?: TrialTime.PRE_DIVE
+            Timber.i("ParticipantId: $participantId\nTrialDay: $trialDay\nTrialTime: $trialTime")
+            viewModel.initBart(participantId, trialDay, trialTime, false)
+        }
+    }
+
 }
+

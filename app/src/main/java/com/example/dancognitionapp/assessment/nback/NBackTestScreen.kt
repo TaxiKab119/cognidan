@@ -93,7 +93,8 @@ fun NBackScreen(
                 indication = null
             ) {
                 if (uiState.isTestScreenClickable && !uiState.hasUserClicked) {
-                    viewModel.participantClick(uiState.currentItem)
+                    val clickTime = System.currentTimeMillis()
+                    viewModel.participantClick(uiState.currentItem, clickTime)
                 }
             },
         contentAlignment = Alignment.Center

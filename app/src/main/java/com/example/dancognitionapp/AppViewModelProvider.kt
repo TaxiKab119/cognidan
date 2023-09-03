@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.dancognitionapp.assessment.bart.ui.BartViewModel
+import com.example.dancognitionapp.assessment.nback.NBackViewModel
 import com.example.dancognitionapp.assessment.selection.TrialDetailsViewModel
 import com.example.dancognitionapp.participants.edit.AddEditViewModel
 import com.example.dancognitionapp.participants.home.ParticipantsHomeViewModel
@@ -32,6 +33,9 @@ object AppViewModelProvider {
             BartViewModel(
                 danCognitionApplication().container.bartRepository
             )
+        }
+        initializer {
+            NBackViewModel()
         }
     }
 }

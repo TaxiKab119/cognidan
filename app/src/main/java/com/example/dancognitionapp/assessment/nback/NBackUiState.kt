@@ -12,5 +12,6 @@ data class NBackUiState(
     val hasUserClicked: Boolean = false,
     val showDialog: Boolean = true,
     val nValue: NBackType = NBackType.N_1,
-    val isEndOfTest: Boolean = false
+    val isEndOfTest: Boolean = false,
+    val clickTime: Long = 0L
 )

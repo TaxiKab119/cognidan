@@ -1,17 +1,19 @@
 package com.example.dancognitionapp.assessment.nback
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dancognitionapp.assessment.nback.data.NBackGenerator
 import com.example.dancognitionapp.assessment.nback.data.NBackItem
 import com.example.dancognitionapp.assessment.nback.data.NBackType
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class NBackViewModel(isPractice: Boolean): ViewModel() {
+class NBackViewModel(): ViewModel() {
     private val presentationOrders = mutableListOf(
         NBackGenerator(testType = NBackType.N_1).items,
         NBackGenerator(testType = NBackType.N_2).items,
@@ -19,29 +21,38 @@ class NBackViewModel(isPractice: Boolean): ViewModel() {
     )
     private var testType = NBackType.N_1
     private var lifetimePresentations = 0
-    private val maxLifetimePresentations = if (isPractice) 3 else 9 // number of presentations in a real test would be 9 else 3
-    private val _uiState = mutableStateOf(
+    private val maxLifetimePresentations = 3
+    private val _uiState = MutableStateFlow(
         NBackUiState(
             presentationList = presentationOrders[0]
         )
     )
-    val uiState: State<NBackUiState> = _uiState
+    val uiState: StateFlow<NBackUiState> = _uiState.asStateFlow()
 
     private val currentState: NBackUiState
         get() = _uiState.value
 
     fun startAdvancing() {
         hideDialog()
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             delay(2000)
             while (!currentState.presentationList.isEmpty()) {
                 toNextItem()
                 toggleScreenClickable()
                 Timber.i("Current Char: ${uiState.value.currentItem} and list Size: ${uiState.value.presentationList.size}")
+
+                val startShowingStimulusTime = System.currentTimeMillis()
                 delay(1500) // Show Stimulus for 1500ms
+                val clickTime = _uiState.value.clickTime
+                var reactionTime: Long? = clickTime - startShowingStimulusTime
+                if (clickTime == 0L) {
+                    reactionTime = null
+                }
+                Timber.i("Reaction Time: $reactionTime")
                 _uiState.value = currentState.copy(
                     currentItem = NBackItem.intermediateItem,
-                    feedbackState = NBackFeedbackState.INTERMEDIATE
+                    feedbackState = NBackFeedbackState.INTERMEDIATE,
+                    clickTime = 0L
                 )
                 toggleScreenClickable()
                 delay(500) // inter-stimulus time (no dot showing)
@@ -56,11 +67,12 @@ class NBackViewModel(isPractice: Boolean): ViewModel() {
         )
     }
 
-    fun participantClick(currentItem: NBackItem) {
+    fun participantClick(currentItem: NBackItem, clickTime: Long) {
         _uiState.value = currentState.copy(
             feedbackState = if(currentItem.isTarget()) NBackFeedbackState.HIT
                 else NBackFeedbackState.FALSE_ALARM,
-            hasUserClicked = true
+            hasUserClicked = true,
+            clickTime = clickTime
         )
         Timber.i("User Clicked Screen")
     }

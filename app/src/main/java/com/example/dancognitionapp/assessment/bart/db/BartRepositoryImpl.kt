@@ -8,8 +8,18 @@ class BartRepositoryImpl(private val bartDao: BartDao): BartRepository {
         bartDao.insertBalloon(balloonEntity)
     }
 
-    override suspend fun updateBalloon(balloonEntity: BalloonEntity) {
-        bartDao.updateBalloon(balloonEntity)
+    override suspend fun updateBalloonInflations(
+        bartId: Int,
+        listPosition: Int,
+        newInflationCount: Int,
+        didPop: Boolean
+    ) {
+        bartDao.updateBalloonByListPositionAndBartId(
+            listPosition,
+            bartId,
+            newInflationCount,
+            didPop
+        )
     }
 
     override suspend fun insertBart(bartEntity: BartEntity?) {

@@ -7,7 +7,12 @@ interface BartRepository {
 
     suspend fun insertBalloon(balloonEntity: BalloonEntity)
 
-    suspend fun updateBalloon(balloonEntity: BalloonEntity)
+    suspend fun updateBalloonInflations(
+        bartId: Int,
+        listPosition: Int,
+        newInflationCount: Int,
+        didPop: Boolean
+    )
 
     suspend fun insertBart(bartEntity: BartEntity?)
 

@@ -26,7 +26,7 @@ class BartFragment: AssessmentFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // pass participant id via navArgs
-        viewModel.initBart(3, TrialDay.DAY_2, TrialTime.PRE_DIVE)
+        viewModel.initBart(1, TrialDay.DAY_2, TrialTime.PRE_DIVE)
     }
 
     override fun onCreateView(

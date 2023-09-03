@@ -75,15 +75,10 @@ class BartViewModel(private val bartRepository: BartRepository): ViewModel() {
             Timber.d("\nInflations: ${currentState.currentInflationCount}" +
                     "\nmaxInflationCount: ${currentState.currentBalloon.maxInflations}" +
                     "\nCurrent Reward: ${currentState.currentReward}")
-            viewModelScope.updateBalloon(_uiState.value.toBalloonEntity(currentBartEntity.id))
+            viewModelScope.updateBalloon(currentState.currentInflationCount, false)
         } else {
             // Update balloon inflations before it gets reset to 0
-            viewModelScope.updateBalloon(
-                _uiState.value.copy(
-                    currentInflationCount = currentState.currentInflationCount.inc(),
-                    isBalloonPopped = true
-                ).toBalloonEntity(currentBartEntity.id)
-            )
+            viewModelScope.updateBalloon(currentState.currentInflationCount + 1, true)
             Timber.i(
                 "Balloon Number ${currentState.currentBalloon.listPosition} popped!" +
                         " Max Inflation: ${currentState.currentBalloon.maxInflations} " +
@@ -120,9 +115,14 @@ class BartViewModel(private val bartRepository: BartRepository): ViewModel() {
         Timber.i("Balloon Number ${currentState.currentBalloon.listPosition} collected!")
         toNextBalloon()
     }
-    private fun CoroutineScope.updateBalloon(balloonEntity: BalloonEntity) {
+    private fun CoroutineScope.updateBalloon(newInflations: Int, didPop: Boolean) {
         this.launch(Dispatchers.IO) {
-            bartRepository.updateBalloon(balloonEntity)
+            bartRepository.updateBalloonInflations(
+                bartId = currentBartEntity.id,
+                newInflationCount = newInflations,
+                listPosition = currentState.currentBalloon.listPosition,
+                didPop = didPop
+            )
         }
     }
 

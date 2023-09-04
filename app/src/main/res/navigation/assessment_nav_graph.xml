@@ -11,6 +11,9 @@
             app:argType="com.example.dancognitionapp.assessment.selection.TrialDetailsUiState"
             app:nullable="true"
             android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_bart_dest_to_nback_dest"
+            app:destination="@id/nback_dest" />
     </fragment>
 
     <fragment
@@ -23,6 +26,6 @@
 
     <fragment
         android:id="@+id/nback_dest"
-        android:name="com.example.dancognitionapp.assessment.nback.NBackFragment"/>
+        android:name="com.example.dancognitionapp.assessment.nback.ui.NBackFragment"/>
 
 </navigation>

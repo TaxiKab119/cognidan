@@ -1,10 +1,11 @@
-package com.example.dancognitionapp.assessment.nback
+package com.example.dancognitionapp.assessment.nback.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dancognitionapp.assessment.nback.data.NBackGenerator
 import com.example.dancognitionapp.assessment.nback.data.NBackItem
 import com.example.dancognitionapp.assessment.nback.data.NBackType
+import com.example.dancognitionapp.assessment.nback.db.NBackRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class NBackViewModel(): ViewModel() {
+class NBackViewModel(private val nBackRepository: NBackRepository): ViewModel() {
     private val presentationOrders = mutableListOf(
         NBackGenerator(testType = NBackType.N_1).items,
         NBackGenerator(testType = NBackType.N_2).items,

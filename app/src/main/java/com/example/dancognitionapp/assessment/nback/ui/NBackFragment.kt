@@ -1,4 +1,4 @@
-package com.example.dancognitionapp.assessment.nback
+package com.example.dancognitionapp.assessment.nback.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,10 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.fragment.findNavController
 import com.example.dancognitionapp.AppViewModelProvider
 import com.example.dancognitionapp.R
@@ -19,7 +16,7 @@ import com.example.dancognitionapp.assessment.AssessmentActivity
 import com.example.dancognitionapp.assessment.AssessmentFragment
 
 class NBackFragment: AssessmentFragment() {
-    private val viewModel:NBackViewModel by viewModels { AppViewModelProvider.factory }
+    private val viewModel: NBackViewModel by viewModels { AppViewModelProvider.factory }
 
     override fun onCreateView(
         inflater: LayoutInflater,

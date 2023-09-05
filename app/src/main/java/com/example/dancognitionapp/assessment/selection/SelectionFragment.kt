@@ -46,7 +46,7 @@ class SelectionFragment: Fragment() {
                 } else {
                     val viewModel:TrialDetailsViewModel = viewModel(factory = AppViewModelProvider.factory)
                     val uiState = viewModel.uiState.collectAsState(lifecycleScope.coroutineContext)
-                    val action = SelectionFragmentDirections.actionSelectionDestToBartDest(
+                    val action = SelectionFragmentDirections.actionSelectionDestToStartTrialDest(
                         trialDetails = TrialDetailsUiState(
                             selectedParticipant = uiState.value.selectedParticipant,
                             selectedTrialDay = uiState.value.selectedTrialDay,

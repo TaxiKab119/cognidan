@@ -56,6 +56,7 @@ fun NBackScreen(
     isPractice: Boolean,
     viewModel: NBackViewModel,
     uiState: NBackUiState,
+    goToBart: () -> Unit = {},
     returnToSelect: () -> Unit = {}
 ) {
     val stimuli = listOf('A', 'B', 'C', 'D', 'Z', 'E', 'F', 'G', 'H')
@@ -67,13 +68,21 @@ fun NBackScreen(
             text = {
                 if (isPractice) {
                     Text(text = "Click OK to leave")
+                } else {
+                    Text(text = "Continue to BART")
                 }
             },
             confirmButton = {
-                if (isPractice) {
-                    TextButton(onClick = { returnToSelect() }) {
-                        Text(text = stringResource(id = R.string.ok_button))
+                TextButton(
+                    onClick = {
+                        if (isPractice) {
+                            returnToSelect()
+                        } else {
+                            goToBart()
+                        }
                     }
+                ) {
+                    Text(text = stringResource(id = R.string.ok_button))
                 }
             }
         )
@@ -160,6 +169,11 @@ fun NBackFeedback(feedbackState: NBackFeedbackState, modifier: Modifier = Modifi
         NBackFeedbackState.FALSE_ALARM -> slyRemarks.shuffled().first() to Color.Red
         NBackFeedbackState.INTERMEDIATE -> "" to Color.Black
     }
+    /* TODO
+    *   - add integration for isPractice that will just show if screen was clicked or not
+    *   - when NBackFeedBackState is Hit or False Alarm just show CLICKED
+    *   - Else show INTERMEDIATE
+    *  */
     Text(
         text = text,
         modifier = modifier

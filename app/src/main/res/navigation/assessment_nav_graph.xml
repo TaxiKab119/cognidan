@@ -4,6 +4,39 @@
     android:id="@+id/assessment_nav_graph"
     app:startDestination="@id/selection_dest">
     <fragment
+        android:id="@+id/selection_dest"
+        android:name="com.example.dancognitionapp.assessment.selection.SelectionFragment">
+        <action
+            android:id="@+id/action_selection_dest_to_start_trial_dest"
+            app:destination="@id/start_trial_dest" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nback_dest"
+        android:name="com.example.dancognitionapp.assessment.nback.ui.NBackFragment">
+        <action
+            android:id="@+id/action_nback_dest_to_bart_dest"
+            app:destination="@id/bart_dest" />
+        <argument
+            android:name="trialDetails"
+            app:argType="com.example.dancognitionapp.assessment.selection.TrialDetailsUiState"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+    <fragment
+        android:id="@+id/start_trial_dest"
+        android:name="com.example.dancognitionapp.assessment.selection.StartTrialFragment"
+        android:label="TrialDetailsFragment" >
+        <action
+            android:id="@+id/action_start_trial_dest_to_nback_dest"
+            app:destination="@id/nback_dest" />
+        <argument
+            android:name="trialDetails"
+            app:argType="com.example.dancognitionapp.assessment.selection.TrialDetailsUiState"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+    <fragment
         android:id="@+id/bart_dest"
         android:name="com.example.dancognitionapp.assessment.bart.ui.BartFragment">
         <argument
@@ -11,21 +44,6 @@
             app:argType="com.example.dancognitionapp.assessment.selection.TrialDetailsUiState"
             app:nullable="true"
             android:defaultValue="@null" />
-        <action
-            android:id="@+id/action_bart_dest_to_nback_dest"
-            app:destination="@id/nback_dest" />
     </fragment>
-
-    <fragment
-        android:id="@+id/selection_dest"
-        android:name="com.example.dancognitionapp.assessment.selection.SelectionFragment">
-        <action
-            android:id="@+id/action_selection_dest_to_bart_dest"
-            app:destination="@id/bart_dest" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/nback_dest"
-        android:name="com.example.dancognitionapp.assessment.nback.ui.NBackFragment"/>
 
 </navigation>

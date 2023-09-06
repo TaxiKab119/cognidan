@@ -48,6 +48,7 @@
     <string name="selection_trial_day_label">Trial day</string>
     <string name="selection_trial_time_label">Trial time</string>
     <string name="selection_trial_details_header">Select trial details</string>
+    <string name="selection_dialog_fields_empty_message">If you leave fields empty it makes Danny the Brain very sad. You don\'t want that on your conscience.</string>
 
 
     <string name="participants_delete_participant">Delete participant</string>

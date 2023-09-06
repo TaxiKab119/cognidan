@@ -50,6 +50,7 @@ fun SelectTestDetailsScreen(
         AlertDialog(
             onDismissRequest = { showDialog = false },
             title = { Text(text = "Please fill in all fields")},
+            text = { Text(text = stringResource(id = R.string.selection_dialog_fields_empty_message))},
             confirmButton = {
                 TextButton(onClick = { showDialog = false }) {
                     Text(text = stringResource(id = R.string.ok_button))

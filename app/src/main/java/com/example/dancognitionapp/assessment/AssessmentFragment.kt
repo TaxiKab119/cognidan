@@ -16,12 +16,10 @@ abstract class AssessmentFragment: Fragment() {
         super.onCreate(savedInstanceState)
         val isPractice = requireActivity().intent.getBooleanExtra(AssessmentActivity.IS_PRACTICE, false)
         //blocks backpresses if this is a real assessment
-        if (!isPractice) {
-            val backPressedCallback = object: OnBackPressedCallback(isPractice) {
-                override fun handleOnBackPressed() {}
-            }
-            requireActivity().onBackPressedDispatcher.addCallback(this, backPressedCallback)
+        val backPressedCallback = object: OnBackPressedCallback(!isPractice) {
+            override fun handleOnBackPressed() {}
         }
+        requireActivity().onBackPressedDispatcher.addCallback(this, backPressedCallback)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

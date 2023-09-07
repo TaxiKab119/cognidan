@@ -37,14 +37,7 @@ class BartViewModel(private val bartRepository: BartRepository): ViewModel() {
         get() = _uiState.value
 
     private lateinit var currentBartEntity: BartEntity
-    fun initBart(participantId: Int, trialDay: TrialDay, trialTime: TrialTime, isPractice: Boolean) {
-        // if isPractice, perform no database actions
-        if (isPractice) {
-            _uiState.value = currentState.copy(
-                isPractice = true
-            )
-            return
-        }
+    fun initBart(participantId: Int, trialDay: TrialDay, trialTime: TrialTime) {
         viewModelScope.launch(Dispatchers.IO) {
             currentBartEntity = BartEntity(
                 participantId = participantId,
@@ -82,14 +75,12 @@ class BartViewModel(private val bartRepository: BartRepository): ViewModel() {
             Timber.d("\nInflations: ${currentState.currentInflationCount}" +
                     "\nmaxInflationCount: ${currentState.currentBalloon.maxInflations}" +
                     "\nCurrent Reward: ${currentState.currentReward}")
-            if (!uiState.value.isPractice) {
-                viewModelScope.updateBalloon(currentState.currentInflationCount, false)
-            }
+
+            viewModelScope.updateBalloon(currentState.currentInflationCount, false)
         } else {
             // Update balloon inflations before it gets reset to 0
-            if (!uiState.value.isPractice) {
-                viewModelScope.updateBalloon(currentState.currentInflationCount + 1, true)
-            }
+            viewModelScope.updateBalloon(currentState.currentInflationCount + 1, true)
+
             Timber.i(
                 "Balloon Number ${currentState.currentBalloon.listPosition} popped!" +
                         " Max Inflation: ${currentState.currentBalloon.maxInflations} " +
@@ -149,26 +140,24 @@ class BartViewModel(private val bartRepository: BartRepository): ViewModel() {
             balloonList = balloonList,
             currentBalloon = nextBalloon
         )
-        if (!uiState.value.isPractice) {
-            viewModelScope.launch(Dispatchers.IO) {
-                bartRepository.insertBalloon(
-                    BalloonEntity(
-                        balloonNumber = nextBalloon.listPosition,
-                        maxInflations = nextBalloon.maxInflations,
-                        numberOfInflations = 0,
-                        didPop = false,
-                        bartEntityId = currentBartEntity.id
-                    )
+        viewModelScope.launch(Dispatchers.IO) {
+            bartRepository.insertBalloon(
+                BalloonEntity(
+                    balloonNumber = nextBalloon.listPosition,
+                    maxInflations = nextBalloon.maxInflations,
+                    numberOfInflations = 0,
+                    didPop = false,
+                    bartEntityId = currentBartEntity.id
                 )
-            }
+            )
         }
     }
-
-    private fun BartUiState.toBalloonEntity(bartEntityId: Int): BalloonEntity = BalloonEntity(
-        balloonNumber = currentBalloon.listPosition,
-        maxInflations = currentBalloon.maxInflations,
-        numberOfInflations = currentInflationCount,
-        didPop = isBalloonPopped,
-        bartEntityId = bartEntityId
-    )
 }
+
+private fun BartUiState.toBalloonEntity(bartEntityId: Int): BalloonEntity = BalloonEntity(
+    balloonNumber = currentBalloon.listPosition,
+    maxInflations = currentBalloon.maxInflations,
+    numberOfInflations = currentInflationCount,
+    didPop = isBalloonPopped,
+    bartEntityId = bartEntityId
+)

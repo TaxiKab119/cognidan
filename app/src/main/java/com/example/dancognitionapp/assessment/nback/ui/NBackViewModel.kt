@@ -83,7 +83,7 @@ class NBackViewModel(private val nBackRepository: NBackRepository): ViewModel() 
                 toggleScreenClickable()
                 Timber.i("Current Char: ${uiState.value.currentItem} and list Size: ${uiState.value.presentationList.size}")
                 val startShowingStimulusTime = System.currentTimeMillis()
-                delay(1500) // Show Stimulus for 1500ms
+                delay(150) // Show Stimulus for 1500ms
                 Timber.i("Current Char (AFTER DELAY): ${uiState.value.currentItem} and list Size: ${uiState.value.presentationList.size}")
                 if (!currentState.isPractice) {
                     val clickTime = _uiState.value.clickTime
@@ -105,7 +105,7 @@ class NBackViewModel(private val nBackRepository: NBackRepository): ViewModel() 
                     clickTime = 0L
                 )
                 toggleScreenClickable()
-                delay(500) // inter-stimulus time (no dot showing)
+                delay(50) // inter-stimulus time (no dot showing)
             }
             delay(1000) // add a delay before showing dialog for next type
             toNextList()

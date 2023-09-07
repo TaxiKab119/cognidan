@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.dancognitionapp.assessment.bart.db.PracticeBartRepository
 import com.example.dancognitionapp.assessment.bart.ui.BartViewModel
 import com.example.dancognitionapp.assessment.nback.ui.NBackViewModel
 import com.example.dancognitionapp.assessment.selection.TrialDetailsViewModel
@@ -12,7 +13,7 @@ import com.example.dancognitionapp.participants.edit.AddEditViewModel
 import com.example.dancognitionapp.participants.home.ParticipantsHomeViewModel
 
 object AppViewModelProvider {
-    fun danAppViewModelFactory(isPractice: Boolean? = null) = viewModelFactory {
+    fun danAppViewModelFactory(isPractice: Boolean = false) = viewModelFactory {
         // Initializer for the ParticipantsViewModel
         initializer {
             ParticipantsHomeViewModel(
@@ -31,7 +32,11 @@ object AppViewModelProvider {
         }
         initializer {
             BartViewModel(
-                danCognitionApplication().container.bartRepository
+                if (!isPractice) {
+                    danCognitionApplication().container.bartRepository
+                } else {
+                    PracticeBartRepository()
+                }
             )
         }
         initializer {

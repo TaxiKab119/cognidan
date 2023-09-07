@@ -58,9 +58,8 @@ class BartFragment: AssessmentFragment() {
     }
     private fun initializeBart(isPractice: Boolean) {
         if (isPractice) {
-            // If isPractice then initBart won't do anything except inform viewModel that isPractice == true
+            // If isPractice we don't need to call initBart bc nothing written to db
             Timber.i("Practice BART instantiated")
-            viewModel.initBart(0, TrialDay.DAY_1, TrialTime.PRE_DIVE, true)
         } else {
             Timber.i("Real BART instantiated")
             // else, pass args via navArgs
@@ -68,7 +67,7 @@ class BartFragment: AssessmentFragment() {
             val trialDay = navArgs.trialDetails?.selectedTrialDay ?: TrialDay.DAY_1
             val trialTime = navArgs.trialDetails?.selectedTrialTime ?: TrialTime.PRE_DIVE
             Timber.i("ParticipantId: $participantId\nTrialDay: $trialDay\nTrialTime: $trialTime")
-            viewModel.initBart(participantId, trialDay, trialTime, false)
+            viewModel.initBart(participantId, trialDay, trialTime)
         }
     }
 

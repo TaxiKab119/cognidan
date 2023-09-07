@@ -146,7 +146,6 @@ fun SelectionDropDownMenu(
     @StringRes titleRes: Int,
     @StringRes labelRes: Int,
     menuOptions: List<String>,
-    modifier: Modifier = Modifier,
     onSelectItem: (String) -> Unit = {}
 ) {
     var isExpanded by remember { mutableStateOf(false) }

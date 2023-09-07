@@ -44,13 +44,8 @@ class NBackViewModel(private val nBackRepository: NBackRepository): ViewModel() 
     private lateinit var currentNBackEntity: NBackEntity
 
     fun initNBackTrial(participantId: Int, trialDay: TrialDay, trialTime: TrialTime, isPractice: Boolean) {
-        //if isPractice, perform no db actions
         if (isPractice) {
-            _uiState.value = currentState.copy(
-                isPractice = true
-            )
             maxLifetimePresentations = 3
-            return
         }
         // initialize a trial and add it to the database
         viewModelScope.launch(Dispatchers.IO) {
@@ -85,19 +80,17 @@ class NBackViewModel(private val nBackRepository: NBackRepository): ViewModel() 
                 val startShowingStimulusTime = System.currentTimeMillis()
                 delay(150) // Show Stimulus for 1500ms
                 Timber.i("Current Char (AFTER DELAY): ${uiState.value.currentItem} and list Size: ${uiState.value.presentationList.size}")
-                if (!currentState.isPractice) {
-                    val clickTime = _uiState.value.clickTime
-                    var reactionTime: Long? = clickTime - startShowingStimulusTime
-                    if (clickTime == 0L) {
-                        reactionTime = null
-                    }
-                    val uiStateCopy: NBackUiState = currentState.copy()
-                    Timber.i("Current Char (AFTER DELAY, IN IF STATEMENT): ${uiState.value.currentItem}")
-                    viewModelScope.launch(Dispatchers.IO) {
-                        Timber.i("Current Char (AFTER DELAY, IN IF launch - ITEM COPY): ${uiStateCopy.currentItem}")
-                        Timber.i("Current Char (AFTER DELAY, IN IF launch): ${uiState.value.currentItem}")
-                        nBackRepository.insertNBackItem(uiStateCopy.toNBackItemEntity(reactionTime))
-                    }
+                val clickTime = _uiState.value.clickTime
+                var reactionTime: Long? = clickTime - startShowingStimulusTime
+                if (clickTime == 0L) {
+                    reactionTime = null
+                }
+                val uiStateCopy: NBackUiState = currentState.copy()
+                Timber.i("Current Char (AFTER DELAY, IN IF STATEMENT): ${uiState.value.currentItem}")
+                viewModelScope.launch(Dispatchers.IO) {
+                    Timber.i("Current Char (AFTER DELAY, IN IF launch - ITEM COPY): ${uiStateCopy.currentItem}")
+                    Timber.i("Current Char (AFTER DELAY, IN IF launch): ${uiState.value.currentItem}")
+                    nBackRepository.insertNBackItem(uiStateCopy.toNBackItemEntity(reactionTime))
                 }
                 _uiState.value = currentState.copy(
                     currentItem = NBackItem.intermediateItem,

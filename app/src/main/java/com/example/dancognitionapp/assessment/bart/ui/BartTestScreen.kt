@@ -180,11 +180,3 @@ fun BartButton(
         )
     }
 }
-
-//@LandscapePreview
-//@Composable
-//fun BartConstraintLayoutPreview() {
-//    DanCognitionAppTheme {
-//        BartTestScreen(modifier = Modifier.fillMaxSize(), {})
-//    }
-//}

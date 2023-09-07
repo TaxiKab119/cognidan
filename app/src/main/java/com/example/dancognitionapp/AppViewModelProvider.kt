@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.dancognitionapp.assessment.bart.db.PracticeBartRepository
 import com.example.dancognitionapp.assessment.bart.ui.BartViewModel
+import com.example.dancognitionapp.assessment.nback.db.PracticeNBackRepository
 import com.example.dancognitionapp.assessment.nback.ui.NBackViewModel
 import com.example.dancognitionapp.assessment.selection.TrialDetailsViewModel
 import com.example.dancognitionapp.participants.edit.AddEditViewModel
@@ -41,7 +42,11 @@ object AppViewModelProvider {
         }
         initializer {
             NBackViewModel(
-                danCognitionApplication().container.nBackRepository
+                if (!isPractice) {
+                    danCognitionApplication().container.nBackRepository
+                } else {
+                    PracticeNBackRepository()
+                }
             )
         }
     }

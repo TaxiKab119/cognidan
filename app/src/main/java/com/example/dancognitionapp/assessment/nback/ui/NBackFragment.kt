@@ -41,7 +41,6 @@ class NBackFragment: AssessmentFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_compose_host, container, false)
-        val isPractice = requireActivity().intent.getBooleanExtra(AssessmentActivity.IS_PRACTICE, false)
         view.findViewById<ComposeView>(R.id.compose_root).setContent {
             val uiState: NBackUiState by viewModel.uiState.collectAsState(lifecycleScope.coroutineContext)
             val action = NBackFragmentDirections.actionNbackDestToBartDest(
@@ -69,9 +68,9 @@ class NBackFragment: AssessmentFragment() {
 
     private fun initializeNBack(isPractice: Boolean) {
         if (isPractice) {
-            // If isPractice then initBart won't do anything except inform viewModel that isPractice == true
-            Timber.i("Practice NBack instantiated")
+            // If isPractice we only call initNBackTrial to set maxLifetimePresentations = 3
             viewModel.initNBackTrial(0, TrialDay.DAY_1, TrialTime.PRE_DIVE, true)
+            Timber.i("Practice NBack instantiated")
         } else {
             Timber.i("Real BART instantiated")
             // else, pass args via navArgs

@@ -67,7 +67,10 @@ class SelectionFragment: Fragment() {
 }
 
 @Composable
-fun PracticeTestSelectScreen(modifier: Modifier = Modifier, isPractice: Boolean = false, onClick: (Int) -> Unit = {}) {
+fun PracticeTestSelectScreen(
+    modifier: Modifier = Modifier,
+    onClick: (Int) -> Unit = {}
+) {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -88,7 +91,10 @@ fun PracticeTestSelectScreen(modifier: Modifier = Modifier, isPractice: Boolean 
 }
 
 @Composable
-fun PracticeSelectionPageContent(modifier: Modifier = Modifier, onClick: (Int) -> Unit = {}) {
+fun PracticeSelectionPageContent(
+    modifier: Modifier = Modifier,
+    onClick: (Int) -> Unit = {}
+) {
     Column(
         verticalArrangement = Arrangement.SpaceEvenly,
         modifier = modifier

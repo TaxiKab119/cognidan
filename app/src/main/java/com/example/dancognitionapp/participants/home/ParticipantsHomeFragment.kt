@@ -22,7 +22,7 @@ class ParticipantsHomeFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val viewModel: ParticipantsHomeViewModel by viewModels { AppViewModelProvider.factory }
+        val viewModel: ParticipantsHomeViewModel by viewModels { AppViewModelProvider.danAppViewModelFactory() }
         val view = inflater.inflate(R.layout.fragment_compose_host, container, false)
         view.findViewById<ComposeView>(R.id.compose_root).setContent {
             DanCognitionAppTheme {

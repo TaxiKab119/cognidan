@@ -24,7 +24,7 @@ import timber.log.Timber
 
 class BartFragment: AssessmentFragment() {
     private val navArgs: BartFragmentArgs by navArgs()
-    private val viewModel: BartViewModel by viewModels { AppViewModelProvider.factory }
+    private val viewModel: BartViewModel by viewModels { AppViewModelProvider.danAppViewModelFactory(isPractice) }
 
     private var isPractice: Boolean = false
 

@@ -22,7 +22,7 @@ import timber.log.Timber
 
 class NBackFragment: AssessmentFragment() {
     private val args: NBackFragmentArgs by navArgs()
-    private val viewModel: NBackViewModel by viewModels { AppViewModelProvider.factory }
+    private val viewModel: NBackViewModel by viewModels { AppViewModelProvider.danAppViewModelFactory(isPractice) }
 
     private var isPractice: Boolean = false
 

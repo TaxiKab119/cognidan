@@ -28,7 +28,7 @@ import timber.log.Timber
 @Suppress("UNCHECKED_CAST")
 class AddEditParticipantsFragment: Fragment() {
     private val args: AddEditParticipantsFragmentArgs by navArgs()
-    private val viewModel: AddEditViewModel by viewModels { AppViewModelProvider.factory }
+    private val viewModel: AddEditViewModel by viewModels { AppViewModelProvider.danAppViewModelFactory() }
 
     override fun onCreateView(
         inflater: LayoutInflater,

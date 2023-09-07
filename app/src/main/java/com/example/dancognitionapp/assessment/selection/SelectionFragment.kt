@@ -44,7 +44,7 @@ class SelectionFragment: Fragment() {
                         findNavController().navigate(destination)
                     }
                 } else {
-                    val viewModel:TrialDetailsViewModel = viewModel(factory = AppViewModelProvider.factory)
+                    val viewModel:TrialDetailsViewModel = viewModel(factory = AppViewModelProvider.danAppViewModelFactory(false))
                     val uiState = viewModel.uiState.collectAsState(lifecycleScope.coroutineContext)
                     val action = SelectionFragmentDirections.actionSelectionDestToStartTrialDest(
                         trialDetails = TrialDetailsUiState(

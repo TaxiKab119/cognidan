@@ -12,7 +12,7 @@ import com.example.dancognitionapp.participants.edit.AddEditViewModel
 import com.example.dancognitionapp.participants.home.ParticipantsHomeViewModel
 
 object AppViewModelProvider {
-    val factory = viewModelFactory {
+    fun danAppViewModelFactory(isPractice: Boolean? = null) = viewModelFactory {
         // Initializer for the ParticipantsViewModel
         initializer {
             ParticipantsHomeViewModel(

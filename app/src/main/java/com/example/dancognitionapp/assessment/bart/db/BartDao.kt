@@ -1,9 +1,11 @@
 package com.example.dancognitionapp.assessment.bart.db
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.example.dancognitionapp.assessment.TrialDay
 import com.example.dancognitionapp.assessment.TrialTime
 import kotlinx.coroutines.flow.Flow
@@ -12,6 +14,20 @@ import kotlinx.coroutines.flow.Flow
 interface BartDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertBalloon(balloonEntity: BalloonEntity)
+
+    @Query("""
+        DELETE FROM balloon_table
+        WHERE bart_entity_id = :bartEntityId
+    """)
+    private fun deleteBalloonsByTrialId(bartEntityId: Int) {}
+
+    @Query(""" 
+        DELETE FROM balloon_table
+        WHERE bart_entity_id IN (
+            SELECT id FROM bart_trials
+            WHERE participant_id = :participantId)
+    """)
+    private fun deleteBalloonsByParticipantId(participantId: Int) {}
 
     @Query("""
         UPDATE balloon_table
@@ -26,9 +42,20 @@ interface BartDao {
         didPop: Boolean
     )
 
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertBart(bartEntity: BartEntity?)
+
+    @Query("""
+        DELETE FROM bart_trials
+        WHERE id = :bartEntityId
+    """)
+    private fun deleteBartTrialEntitiesByTrialId(bartEntityId: Int) {}
+
+    @Query("""
+        DELETE FROM bart_trials
+        WHERE participant_id = :participantId
+    """)
+    private fun deleteBartTrialEntitiesByParticipantId(participantId: Int) {}
 
     @Query("""
         SELECT * FROM bart_trials
@@ -47,4 +74,24 @@ interface BartDao {
         ORDER BY trial_day AND trial_time
     """)
     fun getBartEntitiesForParticipant(participantId: Int): Flow<List<BartEntity>>
+
+    /**
+     * Deletes all data related to Bart (in all tables in the database) for a given trialId: [Int]
+     * @param trialId is a unique identifier for every BART Trial
+     */
+    @Transaction
+    fun deleteBartTrialDataByTrialId(trialId: Int) {
+        deleteBalloonsByTrialId(trialId)
+        deleteBartTrialEntitiesByTrialId(trialId)
+    }
+
+    /**
+     * Deletes all data related to Bart (in all tables in the database) for a given participantId: [Int]
+     * @param participantId is a unique internal identifier for every participant (separate from user_given_id)
+     */
+    @Transaction
+    fun deleteBartTrialDataByParticipantId(participantId: Int) {
+        deleteBartTrialEntitiesByParticipantId(participantId)
+        deleteBalloonsByParticipantId(participantId)
+    }
 }

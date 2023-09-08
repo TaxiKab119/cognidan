@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.emptyFlow
 
 class PracticeBartRepository: BartRepository {
     override suspend fun insertBalloon(balloonEntity: BalloonEntity) {
-        /*DO NOTHING (no db actions for practice trials*/
+        /* DO NOTHING (no db actions for practice trials) */
     }
 
     override suspend fun updateBalloonInflations(
@@ -16,11 +16,19 @@ class PracticeBartRepository: BartRepository {
         newInflationCount: Int,
         didPop: Boolean
     ) {
-        /*DO NOTHING (no db actions for practice trials*/
+        /* DO NOTHING (no db actions for practice trials) */
     }
 
     override suspend fun insertBart(bartEntity: BartEntity?) {
-        /*DO NOTHING (no db actions for practice trials*/
+        /* DO NOTHING (no db actions for practice trials) */
+    }
+
+    override suspend fun deleteBartDataByParticipantId(participantId: Int) {
+        /* DO NOTHING (no db actions for practice trials) */
+    }
+
+    override suspend fun deleteBartDataByTrialId(trialId: Int) {
+        /* DO NOTHING (no db actions for practice trials) */
     }
 
     override suspend fun getBartEntityByParticipantTrialData(
@@ -28,12 +36,12 @@ class PracticeBartRepository: BartRepository {
         trialDay: TrialDay,
         trialTime: TrialTime
     ): BartEntity? {
-        /*DO NOTHING (no db actions for practice trials*/
+        /* DO NOTHING (no db actions for practice trials) */
         return null
     }
 
     override suspend fun getBartTrialsByParticipantId(participantId: Int): Flow<List<BartEntity>> {
-        /*DO NOTHING (no db actions for practice trials*/
+        /* DO NOTHING (no db actions for practice trials) */
         return emptyFlow()
     }
 }

@@ -27,6 +27,14 @@ class BartRepositoryImpl(private val bartDao: BartDao): BartRepository {
         bartDao.insertBart(bartEntity)
     }
 
+    override suspend fun deleteBartDataByParticipantId(participantId: Int) {
+        bartDao.deleteBartTrialDataByParticipantId(participantId)
+    }
+
+    override suspend fun deleteBartDataByTrialId(trialId: Int) {
+        bartDao.deleteBartTrialDataByTrialId(trialId)
+    }
+
     override suspend fun getBartEntityByParticipantTrialData(
         participantId: Int,
         trialDay: TrialDay,

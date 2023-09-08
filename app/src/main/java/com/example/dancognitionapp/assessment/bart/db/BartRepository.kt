@@ -17,6 +17,9 @@ interface BartRepository {
 
     suspend fun insertBart(bartEntity: BartEntity?)
 
+    suspend fun deleteBartDataByParticipantId(participantId: Int)
+    suspend fun deleteBartDataByTrialId(trialId: Int)
+
     suspend fun getBartEntityByParticipantTrialData(
         participantId: Int,
         trialDay: TrialDay,

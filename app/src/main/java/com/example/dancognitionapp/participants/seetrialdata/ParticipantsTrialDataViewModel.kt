@@ -62,4 +62,11 @@ class ParticipantsTrialDataViewModel(
             }
         }
     }
+
+    fun deleteTrial(trialIdentifier: TrialIdentifier) {
+        when(trialIdentifier.testType){
+            TestType.BART -> {}
+            TestType.NBACK -> {}
+        }
+    }
 }

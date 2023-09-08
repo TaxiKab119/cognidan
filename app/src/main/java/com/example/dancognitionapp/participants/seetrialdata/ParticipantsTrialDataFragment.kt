@@ -15,6 +15,7 @@ import com.example.dancognitionapp.AppViewModelProvider
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.participants.db.Participant
 import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
+import kotlinx.coroutines.launch
 
 class ParticipantsTrialDataFragment: Fragment() {
     val args: ParticipantsTrialDataFragmentArgs by navArgs()
@@ -23,7 +24,9 @@ class ParticipantsTrialDataFragment: Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) {
-            viewModel.populateFields(args.selectedParticipant ?: Participant.emptyParticipant)
+            lifecycleScope.launch {
+                viewModel.populateFields(args.selectedParticipant ?: Participant.emptyParticipant)
+            }
         }
     }
     override fun onCreateView(

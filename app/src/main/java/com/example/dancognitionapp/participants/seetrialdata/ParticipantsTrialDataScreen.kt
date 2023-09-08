@@ -1,5 +1,8 @@
 package com.example.dancognitionapp.participants.seetrialdata
 
+import android.graphics.drawable.shapes.Shape
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -22,6 +26,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,6 +35,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.dancognitionapp.R
@@ -218,6 +225,58 @@ fun CollapsibleParticipantDataItemsGroups(
         }
     }
 }
+@Composable
+fun ParticipantDataItem(
+    participantDataFields: TrialDataFields,
+    modifier: Modifier = Modifier,
+    onDeleteClicked: (Int) -> Unit = {},
+    onCheckBoxClick: (Int) -> Unit = {},
+) {
+    var isChecked by remember { mutableStateOf(false) }
+    ListItem(
+        headlineContent = { Text(text = participantDataFields.trialTime.name) },
+        overlineContent = {
+            Text(
+                text = "${participantDataFields.participantName}'s " +
+                        "(id: ${participantDataFields.danParticipantId}) " +
+                        "${participantDataFields.testType.name} data"
+            )
+        },
+        supportingContent = { Text(text = participantDataFields.trialDay.name) },
+//        colors = ListItemDefaults.colors(
+//            containerColor = MaterialTheme.colorScheme.primaryContainer,
+//            headlineColor = MaterialTheme.colorScheme.onPrimaryContainer,
+//            leadingIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+//            overlineColor = MaterialTheme.colorScheme.onPrimaryContainer,
+//            supportingColor = MaterialTheme.colorScheme.onPrimaryContainer,
+//            trailingIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+//        ),
+        leadingContent = {
+            Checkbox(
+                checked = isChecked,
+                onCheckedChange = {
+                    isChecked = it
+                    onCheckBoxClick(participantDataFields.trialId)
+                }
+            )
+        },
+        trailingContent = {
+            IconButton(onClick = { onDeleteClicked(participantDataFields.trialId) }) {
+                Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
+            }
+        },
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .padding(vertical = 4.dp)
+            .border(
+                border = BorderStroke(2.dp, MaterialTheme.colorScheme.outlineVariant),
+                shape = RoundedCornerShape(10.dp)
+            )
+    )
+}
+
+
 private fun mapToTrialDataFields(
     name: String,
     nBackEntities: List<NBackEntity>? = null,
@@ -250,48 +309,5 @@ private fun mapToTrialDataFields(
     } else {
         return listOf()
     }
-}
-@Composable
-fun ParticipantDataItem(
-    participantDataFields: TrialDataFields,
-    modifier: Modifier = Modifier,
-    onDeleteClicked: (Int) -> Unit = {},
-    onCheckBoxClick: (Int) -> Unit = {},
-) {
-    var isChecked by remember { mutableStateOf(true) }
-    ListItem(
-        headlineContent = { Text(text = participantDataFields.trialTime.name) },
-        overlineContent = {
-            Text(
-                text = "${participantDataFields.participantName}'s " +
-                        "(id: ${participantDataFields.danParticipantId}}) " +
-                        "${participantDataFields.testType.name} data"
-            )
-        },
-        supportingContent = { Text(text = participantDataFields.trialDay.name) },
-        colors = ListItemDefaults.colors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            headlineColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            leadingIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            overlineColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            supportingColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            trailingIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
-        ),
-        leadingContent = {
-            Checkbox(
-                checked = isChecked,
-                onCheckedChange = {
-                    isChecked = it
-                    onCheckBoxClick(participantDataFields.trialId)
-                }
-            )
-        },
-        trailingContent = {
-            IconButton(onClick = { onDeleteClicked(participantDataFields.trialId) }) {
-                Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
-            }
-        },
-        modifier = modifier.fillMaxWidth()
-    )
 }
 

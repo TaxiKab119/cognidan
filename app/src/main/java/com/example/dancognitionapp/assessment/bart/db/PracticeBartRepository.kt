@@ -2,6 +2,8 @@ package com.example.dancognitionapp.assessment.bart.db
 
 import com.example.dancognitionapp.assessment.TrialDay
 import com.example.dancognitionapp.assessment.TrialTime
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 class PracticeBartRepository: BartRepository {
     override suspend fun insertBalloon(balloonEntity: BalloonEntity) {
@@ -28,5 +30,10 @@ class PracticeBartRepository: BartRepository {
     ): BartEntity? {
         /*DO NOTHING (no db actions for practice trials*/
         return null
+    }
+
+    override suspend fun getBartTrialsByParticipantId(participantId: Int): Flow<List<BartEntity>> {
+        /*DO NOTHING (no db actions for practice trials*/
+        return emptyFlow()
     }
 }

@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.dancognitionapp.assessment.TrialDay
 import com.example.dancognitionapp.assessment.TrialTime
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BartDao {
@@ -29,15 +30,21 @@ interface BartDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertBart(bartEntity: BartEntity?)
 
-    // LIMIT 1 so that if there were was already an existing data it would just be overwritten
     @Query("""
         SELECT * FROM bart_trials
         WHERE participant_id = :participantId AND trial_day = :trialDay AND trial_time = :trialTime
-        LIMIT 1
     """)
     fun getBartEntityForTrial(
         participantId: Int,
         trialDay: TrialDay,
         trialTime: TrialTime
     ): BartEntity?
+
+    @Query("""
+        SELECT *
+        FROM bart_trials
+        WHERE participant_id = :participantId
+        ORDER BY trial_day AND trial_time
+    """)
+    fun getBartEntitiesForParticipant(participantId: Int): Flow<List<BartEntity>>
 }

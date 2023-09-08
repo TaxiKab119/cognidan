@@ -7,11 +7,12 @@ import com.example.dancognitionapp.participants.data.ParticipantRepository
 import com.example.dancognitionapp.participants.db.Participant
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 
 class ParticipantsTrialDataViewModel(
-    bartRepository: BartRepository,
-    nBackRepository: NBackRepository,
-    participantRepository: ParticipantRepository
+    private val bartRepository: BartRepository,
+    private val nBackRepository: NBackRepository,
+    private val participantRepository: ParticipantRepository
 ): ViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -22,9 +23,10 @@ class ParticipantsTrialDataViewModel(
     private val currentState: ParticipantsTrialDataUiState
         get() = _uiState.value
 
-    fun populateFields(participant: Participant) {
+    suspend fun populateFields(participant: Participant) {
         _uiState.value = currentState.copy(
-            selectedParticipant = participant
+            selectedParticipant = participant,
+            allBartTrials = bartRepository.getBartTrialsByParticipantId(participant.id).first(),
         )
     }
 }

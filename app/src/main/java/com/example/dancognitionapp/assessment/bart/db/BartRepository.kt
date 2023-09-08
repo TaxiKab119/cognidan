@@ -2,6 +2,7 @@ package com.example.dancognitionapp.assessment.bart.db
 
 import com.example.dancognitionapp.assessment.TrialDay
 import com.example.dancognitionapp.assessment.TrialTime
+import kotlinx.coroutines.flow.Flow
 
 interface BartRepository {
 
@@ -21,4 +22,6 @@ interface BartRepository {
         trialDay: TrialDay,
         trialTime: TrialTime
     ): BartEntity?
+
+    suspend fun getBartTrialsByParticipantId(participantId: Int): Flow<List<BartEntity>>
 }

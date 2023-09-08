@@ -3,6 +3,7 @@ package com.example.dancognitionapp.assessment.nback.db
 import com.example.dancognitionapp.assessment.TrialDay
 import com.example.dancognitionapp.assessment.TrialTime
 import com.example.dancognitionapp.assessment.nback.data.NBackClickCategorization
+import kotlinx.coroutines.flow.Flow
 
 interface NBackRepository {
 
@@ -25,4 +26,6 @@ interface NBackRepository {
         trialDay: TrialDay,
         trialTime: TrialTime
     ): NBackEntity?
+
+    suspend fun getNBackTrialsByParticipantId(participantId: Int): Flow<List<NBackEntity>>
 }

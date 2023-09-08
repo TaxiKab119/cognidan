@@ -6,7 +6,8 @@ import com.example.dancognitionapp.participants.db.Participant
 
 data class ParticipantsTrialDataUiState(
     val selectedParticipant: Participant = Participant.emptyParticipant,
-    val selectedTrialIds: List<Int> = listOf(),
+    val selectedBartTrialIds: List<Int> = listOf(),
+    val selectedNBackTrialIds: List<Int> = listOf(),
     val allBartTrials: List<BartEntity> = listOf(),
     val allNBackTrials: List<NBackEntity> = listOf()
 )

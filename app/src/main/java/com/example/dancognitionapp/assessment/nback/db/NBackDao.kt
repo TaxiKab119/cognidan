@@ -7,6 +7,7 @@ import androidx.room.Query
 import com.example.dancognitionapp.assessment.TrialDay
 import com.example.dancognitionapp.assessment.TrialTime
 import com.example.dancognitionapp.assessment.nback.data.NBackClickCategorization
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NBackDao {
@@ -45,5 +46,12 @@ interface NBackDao {
         trialDay: TrialDay,
         trialTime: TrialTime
     ): NBackEntity?
+    @Query("""
+        SELECT *
+        FROM nback_trials
+        WHERE participant_id = :participantId
+        ORDER BY trial_day AND trial_time
+    """)
+    fun getNBackEntitiesForParticipant(participantId: Int): Flow<List<NBackEntity>>
 
 }

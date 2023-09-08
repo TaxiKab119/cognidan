@@ -3,6 +3,7 @@ package com.example.dancognitionapp.assessment.nback.db
 import com.example.dancognitionapp.assessment.TrialDay
 import com.example.dancognitionapp.assessment.TrialTime
 import com.example.dancognitionapp.assessment.nback.data.NBackClickCategorization
+import kotlinx.coroutines.flow.Flow
 
 class NBackRepositoryImpl(private val nBackDao: NBackDao): NBackRepository {
     override suspend fun insertNBackItem(nBackItemEntity: NBackItemEntity) {
@@ -39,6 +40,10 @@ class NBackRepositoryImpl(private val nBackDao: NBackDao): NBackRepository {
         trialTime: TrialTime
     ): NBackEntity? {
         return nBackDao.getNBackEntityForTrial(participantId, trialDay, trialTime)
+    }
+
+    override suspend fun getNBackTrialsByParticipantId(participantId: Int): Flow<List<NBackEntity>> {
+        return nBackDao.getNBackEntitiesForParticipant(participantId)
     }
 
 }

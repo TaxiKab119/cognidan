@@ -1,6 +1,5 @@
 package com.example.dancognitionapp.participants.seetrialdata
 
-import android.graphics.drawable.shapes.Shape
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -8,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,10 +23,8 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,7 +34,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.dancognitionapp.R
@@ -60,6 +57,11 @@ data class TrialDataFields(
     val testType: TestType,
     val trialId: Int
 )
+
+data class TrialIdentifier(
+    val trialId: Int,
+    val testType: TestType
+)
 @Composable
 fun ParticipantsTrialDataScreen(
     uiState: ParticipantsTrialDataUiState,
@@ -71,7 +73,11 @@ fun ParticipantsTrialDataScreen(
         topBar = { DanCognitionTopAppBar(headerResId = R.string.participants_data_header)},
         floatingActionButton = {
             ExtendedFloatingActionButton(onClick = { onFabClick() }) {
-                Text(text = "Export")
+                Text(
+                    text = "Export ${uiState.selectedBartTrialIds.size
+                            + uiState.selectedNBackTrialIds.size}",
+                    modifier = Modifier.padding(end = 8.dp)
+                )
                 Icon(imageVector = Icons.Default.Send, contentDescription = "Export to .csv")
             }
         }
@@ -80,7 +86,9 @@ fun ParticipantsTrialDataScreen(
             ParticipantDataTopCard(
                 participantName = uiState.selectedParticipant.name,
                 participantId = uiState.selectedParticipant.userGivenId,
-                participantNotes = uiState.selectedParticipant.notes
+                participantNotes = uiState.selectedParticipant.notes,
+                nBackTrialIds = uiState.selectedNBackTrialIds,
+                bartTrialIds = uiState.selectedBartTrialIds
             )
             CollapsibleParticipantDataItemsGroups(
                 title = "BART Data",
@@ -89,8 +97,11 @@ fun ParticipantsTrialDataScreen(
                     bartEntities = uiState.allBartTrials
                 ),
                 onDeleteClicked = {},
-                modifier = Modifier.padding(horizontal = 12.dp)
-            ) {
+                viewModel = viewModel,
+                uiState = uiState,
+                modifier = Modifier.padding(horizontal = 12.dp),
+
+                ) {
 
             }
             CollapsibleParticipantDataItemsGroups(
@@ -100,7 +111,9 @@ fun ParticipantsTrialDataScreen(
                     nBackEntities = uiState.allNBackTrials
                 ),
                 onDeleteClicked = {},
-                modifier = Modifier.padding(horizontal = 12.dp)
+                viewModel = viewModel,
+                uiState = uiState,
+                modifier = Modifier.padding(horizontal = 12.dp),
             ) {
 
             }
@@ -108,50 +121,121 @@ fun ParticipantsTrialDataScreen(
 
     }
 }
+@Composable
+fun CollapsibleParticipantDataItemsGroups(
+    title: String,
+    items: List<TrialDataFields>,
+    viewModel: ParticipantsTrialDataViewModel,
+    uiState: ParticipantsTrialDataUiState,
+    modifier: Modifier = Modifier,
+    onDeleteClicked: (TrialIdentifier) -> Unit = {},
+    onCheckBoxClick: (TrialIdentifier) -> Unit = {},
+) {
+    var isExpanded by remember { mutableStateOf(false) }
 
-//@Composable
-//fun ParticipantDataItem(
-//    trialId: Int,
-//    trialDay: TrialDay,
-//    trialTime: TrialTime,
-//    modifier: Modifier = Modifier,
-//    onDeleteClicked: (Int) -> Unit = {},
-//    onCheckBoxClick: (Int) -> Unit = {},
-//) {
-//    var isChecked by remember { mutableStateOf(true) }
-//    Column(
-//        modifier = modifier
-//            .fillMaxWidth()
-//            .padding(top = 12.dp, start = 0.dp, bottom = 12.dp, end = 12.dp)
-//    ) {
-//        Row(
-//            modifier = modifier
-//                .fillMaxWidth(),
-//            verticalAlignment = Alignment.CenterVertically,
-//            horizontalArrangement = Arrangement.Start
-//        ) {
-//            Checkbox(
-//                checked = isChecked,
-//                onCheckedChange = {
-//                    isChecked = it
-//                    onCheckBoxClick(trialId)
-//                }
-//            )
-//            Text(text = "Day: ${trialDay.name}")
-//            Spacer(modifier = Modifier.width(24.dp))
-//            Text(text = "Time: ${trialTime.name}")
-//            Spacer(modifier = Modifier.weight(1f))
-//            IconButton(onClick = { onDeleteClicked(trialId) }) {
-//                Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
-//            }
-//        }
-//    }
-//}
+    Column(modifier = modifier) {
+        Row(
+            modifier = Modifier.clickable { isExpanded = !isExpanded },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(8.dp)
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Icon(
+                imageVector = if (isExpanded) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowUp,
+                contentDescription = "Expand",
+                modifier = Modifier.padding(8.dp)
+            )
+        }
+        if (isExpanded) {
+            if (items.isEmpty()) {
+                Text(
+                    text = stringResource(id = R.string.participants_data_no_trials_message),
+                    modifier = Modifier.padding(horizontal = 12.dp)
+                )
+            } else {
+                LazyColumn {
+                    items(items) {trialData ->
+                        ParticipantDataItem(
+                            participantDataFields = trialData,
+                            onDeleteClicked = { onDeleteClicked(it) },
+                            viewModel = viewModel,
+                            uiState = uiState
+                        ) {
+                            onCheckBoxClick(it)
+                        }
+
+                    }
+                }
+            }
+
+        }
+    }
+}
+@Composable
+fun ParticipantDataItem(
+    participantDataFields: TrialDataFields,
+    viewModel: ParticipantsTrialDataViewModel,
+    uiState: ParticipantsTrialDataUiState,
+    modifier: Modifier = Modifier,
+    onDeleteClicked: (TrialIdentifier) -> Unit = {},
+    onCheckBoxClick: (TrialIdentifier) -> Unit = {},
+) {
+    val trialIdentifier: TrialIdentifier = participantDataFields.toTrialIdentifier()
+    var isChecked by remember {
+        mutableStateOf(
+            when(trialIdentifier.testType) {
+                TestType.BART -> { trialIdentifier.trialId in uiState.selectedBartTrialIds }
+                TestType.NBACK -> { trialIdentifier.trialId in uiState.selectedNBackTrialIds }
+            }
+        )
+    }
+    ListItem(
+        headlineContent = { Text(text = participantDataFields.trialTime.name) },
+        overlineContent = {
+            Text(
+                text = "${participantDataFields.participantName}'s " +
+                        "(id: ${participantDataFields.danParticipantId}) " +
+                        "${participantDataFields.testType.name} data"
+            )
+        },
+        supportingContent = { Text(text = participantDataFields.trialDay.name) },
+        leadingContent = {
+            Checkbox(
+                checked = isChecked,
+                onCheckedChange = {
+                    isChecked = it
+                    onCheckBoxClick(participantDataFields.toTrialIdentifier())
+                    viewModel.toggleToSelectedTrialsList(participantDataFields.toTrialIdentifier())
+                }
+            )
+        },
+        trailingContent = {
+            IconButton(onClick = { onDeleteClicked(participantDataFields.toTrialIdentifier()) }) {
+                Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
+            }
+        },
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .padding(vertical = 4.dp)
+            .border(
+                border = BorderStroke(2.dp, MaterialTheme.colorScheme.outlineVariant),
+                shape = RoundedCornerShape(10.dp)
+            )
+    )
+}
+
 @Composable
 fun ParticipantDataTopCard(
     participantName: String,
     participantId: String,
     participantNotes: String,
+    bartTrialIds: List<Int>,
+    nBackTrialIds: List<Int>,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -175,105 +259,14 @@ fun ParticipantDataTopCard(
                 Spacer(modifier = Modifier.padding(8.dp))
                 Text(text = participantNotes)
             }
+            Spacer(modifier = Modifier.height(8.dp))
+            val bartTrialsSpaced = bartTrialIds.joinToString { "$it" }
+            Text(text = "Selected Bart Trials: $bartTrialsSpaced")
+            Spacer(modifier = Modifier.height(8.dp))
+            val nBackTrialsSpaced = nBackTrialIds.joinToString { "$it" }
+            Text(text = "Selected NBack Trials: $nBackTrialsSpaced")
         }
     }
-}
-
-@Composable
-fun CollapsibleParticipantDataItemsGroups(
-    title: String,
-    items: List<TrialDataFields>,
-    modifier: Modifier = Modifier,
-    onDeleteClicked: (Int) -> Unit = {},
-    onCheckBoxClick: (Int) -> Unit = {},
-) {
-    var isExpanded by remember { mutableStateOf(false) }
-
-    Column(modifier = modifier) {
-        Row(
-            modifier = Modifier.clickable { isExpanded = !isExpanded },
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(8.dp)
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Icon(
-                imageVector = if (isExpanded) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowUp,
-                contentDescription = "Expand",
-                modifier = Modifier.padding(8.dp)
-            )
-        }
-        if (isExpanded) {
-            if (items.isEmpty()) {
-                Text(text = stringResource(id = R.string.participants_data_no_trials_message))
-            } else {
-                LazyColumn {
-                    items(items) {trialData ->
-                        ParticipantDataItem(
-                            participantDataFields = trialData,
-                            onDeleteClicked = { onDeleteClicked(it) },
-                        ) {
-                            onCheckBoxClick(it)
-                        }
-                    }
-                }
-            }
-
-        }
-    }
-}
-@Composable
-fun ParticipantDataItem(
-    participantDataFields: TrialDataFields,
-    modifier: Modifier = Modifier,
-    onDeleteClicked: (Int) -> Unit = {},
-    onCheckBoxClick: (Int) -> Unit = {},
-) {
-    var isChecked by remember { mutableStateOf(false) }
-    ListItem(
-        headlineContent = { Text(text = participantDataFields.trialTime.name) },
-        overlineContent = {
-            Text(
-                text = "${participantDataFields.participantName}'s " +
-                        "(id: ${participantDataFields.danParticipantId}) " +
-                        "${participantDataFields.testType.name} data"
-            )
-        },
-        supportingContent = { Text(text = participantDataFields.trialDay.name) },
-//        colors = ListItemDefaults.colors(
-//            containerColor = MaterialTheme.colorScheme.primaryContainer,
-//            headlineColor = MaterialTheme.colorScheme.onPrimaryContainer,
-//            leadingIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
-//            overlineColor = MaterialTheme.colorScheme.onPrimaryContainer,
-//            supportingColor = MaterialTheme.colorScheme.onPrimaryContainer,
-//            trailingIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
-//        ),
-        leadingContent = {
-            Checkbox(
-                checked = isChecked,
-                onCheckedChange = {
-                    isChecked = it
-                    onCheckBoxClick(participantDataFields.trialId)
-                }
-            )
-        },
-        trailingContent = {
-            IconButton(onClick = { onDeleteClicked(participantDataFields.trialId) }) {
-                Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
-            }
-        },
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(10.dp))
-            .padding(vertical = 4.dp)
-            .border(
-                border = BorderStroke(2.dp, MaterialTheme.colorScheme.outlineVariant),
-                shape = RoundedCornerShape(10.dp)
-            )
-    )
 }
 
 
@@ -311,3 +304,7 @@ private fun mapToTrialDataFields(
     }
 }
 
+private fun TrialDataFields.toTrialIdentifier(): TrialIdentifier = TrialIdentifier(
+    trialId = this.trialId,
+    testType = this.testType,
+)

@@ -18,7 +18,7 @@ interface BartDao {
         DELETE FROM balloon_table
         WHERE bart_entity_id = :bartEntityId
     """)
-    private fun deleteBalloonsByTrialId(bartEntityId: Int) {}
+    fun deleteBalloonsByTrialId(bartEntityId: Int)
 
     @Query(""" 
         DELETE FROM balloon_table
@@ -26,7 +26,7 @@ interface BartDao {
             SELECT id FROM bart_trials
             WHERE participant_id = :participantId)
     """)
-    private fun deleteBalloonsByParticipantId(participantId: Int) {}
+    fun deleteBalloonsByParticipantId(participantId: Int)
 
     @Query("""
         UPDATE balloon_table
@@ -48,13 +48,13 @@ interface BartDao {
         DELETE FROM bart_trials
         WHERE id = :bartEntityId
     """)
-    private fun deleteBartTrialEntitiesByTrialId(bartEntityId: Int) {}
+    fun deleteBartTrialEntitiesByTrialId(bartEntityId: Int)
 
     @Query("""
         DELETE FROM bart_trials
         WHERE participant_id = :participantId
     """)
-    private fun deleteBartTrialEntitiesByParticipantId(participantId: Int) {}
+    fun deleteBartTrialEntitiesByParticipantId(participantId: Int)
 
     @Query("""
         SELECT * FROM bart_trials

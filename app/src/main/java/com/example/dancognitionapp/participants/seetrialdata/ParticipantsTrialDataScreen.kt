@@ -42,6 +42,7 @@ import com.example.dancognitionapp.assessment.TrialTime
 import com.example.dancognitionapp.assessment.bart.db.BartEntity
 import com.example.dancognitionapp.assessment.nback.db.NBackEntity
 import com.example.dancognitionapp.landing.DanCognitionTopAppBar
+import timber.log.Timber
 
 enum class TestType{
     BART,
@@ -96,7 +97,10 @@ fun ParticipantsTrialDataScreen(
                     name = uiState.selectedParticipant.name,
                     bartEntities = uiState.allBartTrials
                 ),
-                onDeleteClicked = {},
+                onDeleteClicked = { trial ->
+                    viewModel.deleteTrial(trial)
+                    Timber.i("Attempt to Click Delete on $trial")
+                },
                 uiState = uiState,
                 modifier = Modifier.padding(horizontal = 12.dp),
             ) { trial ->

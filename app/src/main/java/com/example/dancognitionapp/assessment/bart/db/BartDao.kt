@@ -31,7 +31,7 @@ interface BartDao {
 
     // LIMIT 1 so that if there were was already an existing data it would just be overwritten
     @Query("""
-        SELECT * FROM bart_trial_data 
+        SELECT * FROM bart_trials
         WHERE participant_id = :participantId AND trial_day = :trialDay AND trial_time = :trialTime
         LIMIT 1
     """)

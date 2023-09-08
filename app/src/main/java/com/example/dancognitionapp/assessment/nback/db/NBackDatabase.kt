@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.dancognitionapp.assessment.bart.db.BartDatabase
 
-@Database(entities = [NBackEntity::class, NBackItemEntity::class], views = [NBackItemView::class], version = 1, exportSchema = false)
+@Database(entities = [NBackEntity::class, NBackItemEntity::class], views = [NBackTrialData::class], version = 1, exportSchema = false)
 abstract class NBackDatabase : RoomDatabase() {
     abstract fun nBackDao(): NBackDao
     companion object {

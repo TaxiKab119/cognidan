@@ -9,13 +9,14 @@ import com.example.dancognitionapp.assessment.TrialDay
 import com.example.dancognitionapp.assessment.TrialTime
 import com.example.dancognitionapp.assessment.nback.data.NBackClickCategorization
 
-@Entity(tableName = "nback_trial_data")
+@Entity(tableName = "nback_trials")
 data class NBackEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo("id") val id: Int = 0,
     @ColumnInfo("trial_day") val trialDay: TrialDay,
     @ColumnInfo("trial_time") val trialTime: TrialTime,
-    @ColumnInfo("participant_id") val participantId: Int
+    @ColumnInfo("participant_id") val participantId: Int,
+    @ColumnInfo("user_given_participant_id") val userGivenParticipantId: String,
 )
 
 @Entity(
@@ -42,14 +43,28 @@ data class NBackItemEntity(
 )
 
 @DatabaseView("""
-    SELECT * FROM nback_items 
-    INNER JOIN nback_trial_data AS nBackEntity 
-    WHERE nBackEntity.id = nback_entity_id
+    SELECT user_given_participant_id AS dan_participant_id,
+           trial_day,
+           trial_time,
+           block_number,
+           n_value,
+           presentation_number,
+           reaction_time,
+           is_target,
+           categorization,
+           was_correct_action,
+           nback_entity_id AS trial_id
+    FROM nback_items 
+    INNER JOIN nback_trials
+    ON nback_trials.id = nback_entity_id
 """)
-data class NBackItemView(
-    val position: Int,
+data class NBackTrialData(
+    val userGivenParticipantId: String,
+    val trialDay: TrialDay,
+    val trialTime: TrialTime,
     val blockNumber: Int,
     val nValue: Int,
+    val presentationNumber: Int,
     val reactionTime: Long?,
     val isTarget: Boolean,
     val categorization: NBackClickCategorization,

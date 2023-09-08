@@ -19,6 +19,7 @@ import com.example.dancognitionapp.assessment.AssessmentActivity
 import com.example.dancognitionapp.assessment.AssessmentFragment
 import com.example.dancognitionapp.assessment.TrialDay
 import com.example.dancognitionapp.assessment.TrialTime
+import com.example.dancognitionapp.participants.db.Participant
 import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 import timber.log.Timber
 
@@ -63,11 +64,11 @@ class BartFragment: AssessmentFragment() {
         } else {
             Timber.i("Real BART instantiated")
             // else, pass args via navArgs
-            val participantId = navArgs.trialDetails?.selectedParticipant?.id ?: 0
+            val participant = navArgs.trialDetails?.selectedParticipant ?: Participant.emptyParticipant
             val trialDay = navArgs.trialDetails?.selectedTrialDay ?: TrialDay.DAY_1
             val trialTime = navArgs.trialDetails?.selectedTrialTime ?: TrialTime.PRE_DIVE
-            Timber.i("ParticipantId: $participantId\nTrialDay: $trialDay\nTrialTime: $trialTime")
-            viewModel.initBart(participantId, trialDay, trialTime)
+            Timber.i("ParticipantId: $\nTrialDay: $trialDay\nTrialTime: $trialTime")
+            viewModel.initBart(participant, trialDay, trialTime)
         }
     }
 

@@ -9,6 +9,7 @@ import com.example.dancognitionapp.assessment.bart.data.BalloonGenerator
 import com.example.dancognitionapp.assessment.bart.db.BalloonEntity
 import com.example.dancognitionapp.assessment.bart.db.BartEntity
 import com.example.dancognitionapp.assessment.bart.db.BartRepository
+import com.example.dancognitionapp.participants.db.Participant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -37,12 +38,13 @@ class BartViewModel(private val bartRepository: BartRepository): ViewModel() {
         get() = _uiState.value
 
     private lateinit var currentBartEntity: BartEntity
-    fun initBart(participantId: Int, trialDay: TrialDay, trialTime: TrialTime) {
+    fun initBart(participant: Participant, trialDay: TrialDay, trialTime: TrialTime) {
         viewModelScope.launch(Dispatchers.IO) {
             currentBartEntity = BartEntity(
-                participantId = participantId,
+                participantId = participant.id,
                 trialTime = trialTime,
-                trialDay = trialDay
+                trialDay = trialDay,
+                userGivenParticipantId = participant.userGivenId
             )
             async {
                 bartRepository.insertBart(currentBartEntity)
@@ -50,7 +52,7 @@ class BartViewModel(private val bartRepository: BartRepository): ViewModel() {
             async {
                 currentBartEntity = currentBartEntity.copy(
                     id = bartRepository.getBartEntityByParticipantTrialData(
-                        participantId = participantId,
+                        participantId = participant.id,
                         trialDay = trialDay,
                         trialTime = trialTime
                     )?.id ?: 0

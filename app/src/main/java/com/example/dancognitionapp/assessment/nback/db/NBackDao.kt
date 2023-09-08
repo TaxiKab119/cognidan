@@ -37,7 +37,7 @@ interface NBackDao {
     fun insertNBackTrial(nBackEntity: NBackEntity)
 
     @Query("""
-        SELECT * FROM nback_trial_data
+        SELECT * FROM nback_trials
         WHERE participant_id = :participantId AND trial_day = :trialDay AND trial_time = :trialTime
     """)
     fun getNBackEntityForTrial(

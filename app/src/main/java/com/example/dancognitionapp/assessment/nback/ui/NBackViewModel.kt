@@ -11,6 +11,7 @@ import com.example.dancognitionapp.assessment.nback.data.NBackType
 import com.example.dancognitionapp.assessment.nback.db.NBackEntity
 import com.example.dancognitionapp.assessment.nback.db.NBackItemEntity
 import com.example.dancognitionapp.assessment.nback.db.NBackRepository
+import com.example.dancognitionapp.participants.db.Participant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -28,7 +29,7 @@ class NBackViewModel(private val nBackRepository: NBackRepository): ViewModel() 
     )
     private var testType = NBackType.N_1
     private var lifetimePresentations = 0
-    private var maxLifetimePresentations = 9 // initialize to 9 (assuming it is not practice, this is updated to 3 if it is practice
+    private var maxLifetimePresentations = 1 // initialize to 9 (assuming it is not practice, this is updated to 3 if it is practice // TODO - FIX THIS
     private var blockNumber = 1
 
     private val _uiState = MutableStateFlow(
@@ -43,16 +44,17 @@ class NBackViewModel(private val nBackRepository: NBackRepository): ViewModel() 
 
     private lateinit var currentNBackEntity: NBackEntity
 
-    fun initNBackTrial(participantId: Int, trialDay: TrialDay, trialTime: TrialTime, isPractice: Boolean) {
+    fun initNBackTrial(participant: Participant, trialDay: TrialDay, trialTime: TrialTime, isPractice: Boolean) {
         if (isPractice) {
             maxLifetimePresentations = 3
         }
         // initialize a trial and add it to the database
         viewModelScope.launch(Dispatchers.IO) {
             currentNBackEntity = NBackEntity(
-                participantId = participantId,
+                participantId = participant.id,
                 trialDay = trialDay,
                 trialTime = trialTime,
+                userGivenParticipantId = participant.userGivenId
             )
             async {
                 nBackRepository.insertNBackTrial(currentNBackEntity)
@@ -60,7 +62,7 @@ class NBackViewModel(private val nBackRepository: NBackRepository): ViewModel() 
             async {
                 currentNBackEntity = currentNBackEntity.copy(
                     id = nBackRepository.getNBackEntityForTrial(
-                        participantId = participantId,
+                        participantId = participant.id,
                         trialDay = trialDay,
                         trialTime = trialTime
                     )?.id ?: 0
@@ -78,7 +80,7 @@ class NBackViewModel(private val nBackRepository: NBackRepository): ViewModel() 
                 toggleScreenClickable()
                 Timber.i("Current Char: ${uiState.value.currentItem} and list Size: ${uiState.value.presentationList.size}")
                 val startShowingStimulusTime = System.currentTimeMillis()
-                delay(150) // Show Stimulus for 1500ms
+                delay(150) // Show Stimulus for 1500ms // TODO - FIX THIS
                 Timber.i("Current Char (AFTER DELAY): ${uiState.value.currentItem} and list Size: ${uiState.value.presentationList.size}")
                 val clickTime = _uiState.value.clickTime
                 var reactionTime: Long? = clickTime - startShowingStimulusTime
@@ -98,7 +100,7 @@ class NBackViewModel(private val nBackRepository: NBackRepository): ViewModel() 
                     clickTime = 0L
                 )
                 toggleScreenClickable()
-                delay(50) // inter-stimulus time (no dot showing)
+                delay(50) // inter-stimulus time (no dot showing) // TODO - FIX THIS
             }
             delay(1000) // add a delay before showing dialog for next type
             toNextList()

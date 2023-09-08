@@ -10,26 +10,34 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.navArgs
 import com.example.dancognitionapp.AppViewModelProvider
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.participants.db.Participant
 import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 
 class ParticipantsTrialDataFragment: Fragment() {
+    val args: ParticipantsTrialDataFragmentArgs by navArgs()
+    val viewModel: ParticipantsTrialDataViewModel by viewModels { AppViewModelProvider.danAppViewModelFactory(false) }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) {
+            viewModel.populateFields(args.selectedParticipant ?: Participant.emptyParticipant)
+        }
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val viewModel: ParticipantsTrialDataViewModel by viewModels { AppViewModelProvider.danAppViewModelFactory(false) }
         val view = inflater.inflate(R.layout.fragment_compose_host, container, false)
         view.findViewById<ComposeView>(R.id.compose_root).setContent {
             DanCognitionAppTheme {
                 val uiState by viewModel.uiState.collectAsState(context = lifecycleScope.coroutineContext)
                 ParticipantsTrialDataScreen(
                     uiState = uiState,
-                    viewModel = viewModel,
-                    selectedParticipant = Participant.emptyParticipant
+                    viewModel = viewModel
                 )
             }
         }

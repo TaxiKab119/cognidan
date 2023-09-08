@@ -25,28 +25,32 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-@Suppress("UNCHECKED_CAST")
 class AddEditParticipantsFragment: Fragment() {
     private val args: AddEditParticipantsFragmentArgs by navArgs()
     private val viewModel: AddEditViewModel by viewModels { AppViewModelProvider.danAppViewModelFactory(false) }
+
+    private var isNewParticipant: Boolean = true
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        isNewParticipant = args.selectedParticipant == null
+        // this null check ensures that participant fields are only populated once
+        if (savedInstanceState == null) {
+            viewModel.populateParticipantFields(args.selectedParticipant)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.populateParticipantFields(args.participantInternalId)
-            }
-        }
-        Timber.i("Agrs = participant internal Id: ${args.participantInternalId},Screen Type: ${args.screenType}")
         val view = inflater.inflate(R.layout.fragment_compose_host, container, false)
         view.findViewById<ComposeView>(R.id.compose_root).setContent {
             val uiState: AddEditUiState by viewModel.uiState.collectAsState(lifecycleScope.coroutineContext)
             DanCognitionAppTheme {
                 AddEditParticipantsFullScreen(
-                    screenType = args.screenType,
+                    screenType = if (isNewParticipant) ParticipantScreenType.ADD else ParticipantScreenType.EDIT,
                     viewModel = viewModel,
                     uiState = uiState
                 ) {

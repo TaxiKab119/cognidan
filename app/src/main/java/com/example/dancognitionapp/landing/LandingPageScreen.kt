@@ -42,7 +42,7 @@ enum class LandingDestination {
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LandingPageScreen(modifier: Modifier = Modifier, onClick: (LandingDestination) -> Unit = {}) {
+fun LandingPageScreen(onClick: (LandingDestination) -> Unit = {}) {
     Scaffold(
         topBar = {
             DanCognitionTopAppBar(headerResId = R.string.app_name)

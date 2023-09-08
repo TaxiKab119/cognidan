@@ -27,10 +27,8 @@ class AddEditViewModel(
     private val currentState: AddEditUiState
         get() = _uiState.value
 
-    suspend fun populateParticipantFields(participantInternalId: Int) {
-        _uiState.value = participantRepository.getParticipantByIdStream(participantInternalId)
-            .first()
-            ?.toAddEditUiState(participantInternalId) ?: AddEditUiState(participantInternalId = participantInternalId)
+    fun populateParticipantFields(selectedParticipant: Participant?) {
+        selectedParticipant?.toAddEditUiState(selectedParticipant.id) ?: AddEditUiState()
         Timber.i("Initial Ui State: ${uiState.value}")
         _uiState.value = currentState.copy(haveFieldsBeenPopulated = true)
     }
@@ -77,7 +75,7 @@ class AddEditViewModel(
 
     private fun Participant.toAddEditUiState(participantInternalId: Int): AddEditUiState = AddEditUiState(
         participantDetails = this.toParticipantDetails(),
-        participantInternalId = participantInternalId
+        participantInternalId = participantInternalId,
     )
 
     private fun ParticipantDetails.toParticipantEntity(): Participant = Participant(

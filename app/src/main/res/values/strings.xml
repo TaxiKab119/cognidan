@@ -62,4 +62,5 @@
     <string name="participants_delete_dialog_title">Are you sure you want to delete this participant?</string>
     <string name="participants_delete_dialog_content">If you click OK you will lose all information from this participant.</string>
     <string name="participants_data_header">Participant data</string>
+    <string name="participants_data_no_trials_message">You currently have no trials, time to do some research!</string>
 </resources>

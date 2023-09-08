@@ -60,10 +60,10 @@ import kotlinx.coroutines.launch
 fun ParticipantsHomeScreen(
     participantList: List<Participant>,
     goToAddScreen: () -> Unit = {},
-    goToParticipantData: (Int) -> Unit = {},
-    goToEditScreen: (Int) -> Unit = {}
+    goToParticipantData: (Participant) -> Unit = {},
+    goToEditScreen: (Participant) -> Unit = {}
 ) {
-    var selectedParticipantId: Int by remember { mutableStateOf(0) }
+    var selectedParticipant: Participant by remember { mutableStateOf(Participant.emptyParticipant) }
     val scope = rememberCoroutineScope()
     var isBottomSheetExpanded by remember { mutableStateOf(false) }
 
@@ -97,10 +97,10 @@ fun ParticipantsHomeScreen(
                     .fillMaxHeight(0.25f)
                     .padding(12.dp),
                 onParticipantDataClick = {
-                    goToParticipantData(selectedParticipantId)
+                    goToParticipantData(selectedParticipant)
                 }
             ) {
-                goToEditScreen(selectedParticipantId)
+                goToEditScreen(selectedParticipant)
             }
         },
         scaffoldState = scaffoldState,
@@ -152,7 +152,7 @@ fun ParticipantsHomeScreen(
 
                         }
                     ) {
-                        selectedParticipantId = participant.id
+                        selectedParticipant = participant
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         if (!isBottomSheetExpanded) {
                             scope.launch {

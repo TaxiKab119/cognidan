@@ -13,7 +13,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.dancognitionapp.AppViewModelProvider
 import com.example.dancognitionapp.R
-import com.example.dancognitionapp.participants.edit.ParticipantScreenType
 import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 
 class ParticipantsHomeFragment: Fragment() {
@@ -34,12 +33,14 @@ class ParticipantsHomeFragment: Fragment() {
                             .actionParticipantsViewDestToAddModifyParticipantsViewDest()
                         findNavController().navigate(action)
                     },
+                    goToParticipantData = {
+                        val action = ParticipantsHomeFragmentDirections
+                            .actionParticipantsViewDestToParticipantsTrialDataFragment(it)
+                        findNavController().navigate(action)
+                    }
                 ) {
                     val action = ParticipantsHomeFragmentDirections
-                        .actionParticipantsViewDestToAddModifyParticipantsViewDest(
-                            ParticipantScreenType.EDIT,
-                            participantInternalId = it,
-                        )
+                        .actionParticipantsViewDestToAddModifyParticipantsViewDest(it)
                     findNavController().navigate(action)
                 }
             }

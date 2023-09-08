@@ -30,7 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.assessment.TrialDay
@@ -38,8 +38,6 @@ import com.example.dancognitionapp.assessment.TrialTime
 import com.example.dancognitionapp.assessment.bart.db.BartEntity
 import com.example.dancognitionapp.assessment.nback.db.NBackEntity
 import com.example.dancognitionapp.landing.DanCognitionTopAppBar
-import com.example.dancognitionapp.participants.db.Participant
-import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 
 enum class TestType{
     BART,
@@ -57,7 +55,6 @@ data class TrialDataFields(
 )
 @Composable
 fun ParticipantsTrialDataScreen(
-    selectedParticipant: Participant,
     uiState: ParticipantsTrialDataUiState,
     viewModel: ParticipantsTrialDataViewModel,
     modifier: Modifier = Modifier,
@@ -73,21 +70,33 @@ fun ParticipantsTrialDataScreen(
         }
     ) {
         Column(modifier = Modifier.padding(it)) {
-            Card(modifier = Modifier.weight(0.25f)) {
-                Text(text = "Participant Name: ${selectedParticipant.name}")
-                Text(text = "Participant Id: ${selectedParticipant.userGivenId}")
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp)
+            ) {
+                Text(text = "Participant Name: ${uiState.selectedParticipant.name}")
+                Text(text = "Participant Id: ${uiState.selectedParticipant.userGivenId}")
             }
             CollapsibleParticipantDataItemsGroups(
                 title = "BART Data",
-                items = uiState.allBartTrials.toTrialDataFields(selectedParticipant.name),
-                onDeleteClicked = {}
+                items = mapToTrialDataFields(
+                    name = uiState.selectedParticipant.name,
+                    bartEntities = uiState.allBartTrials
+                ),
+                onDeleteClicked = {},
+                modifier = Modifier.padding(horizontal = 12.dp)
             ) {
 
             }
             CollapsibleParticipantDataItemsGroups(
                 title = "NBACK Data",
-                items = uiState.allNBackTrials.toTrialDataFields(selectedParticipant.name),
-                onDeleteClicked = {}
+                items = mapToTrialDataFields(
+                    name = uiState.selectedParticipant.name,
+                    nBackEntities = uiState.allNBackTrials
+                ),
+                onDeleteClicked = {},
+                modifier = Modifier.padding(horizontal = 12.dp)
             ) {
 
             }
@@ -162,45 +171,56 @@ fun CollapsibleParticipantDataItemsGroups(
                 modifier = Modifier.padding(8.dp)
             )
         }
-    }
-    if (isExpanded) {
-        LazyColumn {
-            items(items) {trialData ->
-                ParticipantDataItem(
-                    participantDataFields = trialData,
-                    onDeleteClicked = { onDeleteClicked(it) },
-                ) {
-                    onCheckBoxClick(it)
+        if (isExpanded) {
+            if (items.isEmpty()) {
+                Text(text = stringResource(id = R.string.participants_data_no_trials_message))
+            } else {
+                LazyColumn {
+                    items(items) {trialData ->
+                        ParticipantDataItem(
+                            participantDataFields = trialData,
+                            onDeleteClicked = { onDeleteClicked(it) },
+                        ) {
+                            onCheckBoxClick(it)
+                        }
+                    }
                 }
             }
+
         }
     }
 }
-
-private fun List<BartEntity>.toTrialDataFields(name: String): List<TrialDataFields> {
-    return this.map {
-        TrialDataFields(
-            danParticipantId = it.userGivenParticipantId,
-            participantId = it.participantId,
-            trialDay = it.trialDay,
-            trialTime = it.trialTime,
-            testType = TestType.BART,
-            trialId = it.id,
-            participantName = name
-        )
-    }
-}
-private fun List<NBackEntity>.toTrialDataFields(name: String): List<TrialDataFields> {
-    return this.map {
-        TrialDataFields(
-            danParticipantId = it.userGivenParticipantId,
-            participantId = it.participantId,
-            trialDay = it.trialDay,
-            trialTime = it.trialTime,
-            testType = TestType.NBACK,
-            trialId = it.id,
-            participantName = name
-        )
+private fun mapToTrialDataFields(
+    name: String,
+    nBackEntities: List<NBackEntity>? = null,
+    bartEntities: List<BartEntity>? = null
+): List<TrialDataFields> {
+    if (nBackEntities == null && bartEntities != null) {
+        return bartEntities.map {
+            TrialDataFields(
+                danParticipantId = it.userGivenParticipantId,
+                participantId = it.participantId,
+                trialDay = it.trialDay,
+                trialTime = it.trialTime,
+                testType = TestType.BART,
+                trialId = it.id,
+                participantName = name
+            )
+        }
+    } else if (nBackEntities != null && bartEntities == null) {
+        return nBackEntities.map {
+            TrialDataFields(
+                danParticipantId = it.userGivenParticipantId,
+                participantId = it.participantId,
+                trialDay = it.trialDay,
+                trialTime = it.trialTime,
+                testType = TestType.NBACK,
+                trialId = it.id,
+                participantName = name
+            )
+        }
+    } else {
+        return listOf()
     }
 }
 @Composable

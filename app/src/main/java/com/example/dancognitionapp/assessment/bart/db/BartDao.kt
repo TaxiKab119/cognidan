@@ -1,7 +1,6 @@
 package com.example.dancognitionapp.assessment.bart.db
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -71,7 +70,13 @@ interface BartDao {
         SELECT *
         FROM bart_trials
         WHERE participant_id = :participantId
-        ORDER BY trial_day AND trial_time
+        ORDER BY trial_day, 
+                CASE trial_time
+                    WHEN 'PRE_DIVE' THEN 1
+                    WHEN 'DIVE' THEN 2
+                    WHEN 'POST_DIVE' THEN 3
+                    ELSE 9999
+                END
     """)
     fun getBartEntitiesForParticipant(participantId: Int): Flow<List<BartEntity>>
 

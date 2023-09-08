@@ -50,7 +50,13 @@ interface NBackDao {
         SELECT *
         FROM nback_trials
         WHERE participant_id = :participantId
-        ORDER BY trial_day AND trial_time
+        ORDER BY trial_day, 
+                CASE trial_time
+                    WHEN 'PRE_DIVE' THEN 1
+                    WHEN 'DIVE' THEN 2
+                    WHEN 'POST_DIVE' THEN 3
+                    ELSE 9999
+                END
     """)
     fun getNBackEntitiesForParticipant(participantId: Int): Flow<List<NBackEntity>>
 

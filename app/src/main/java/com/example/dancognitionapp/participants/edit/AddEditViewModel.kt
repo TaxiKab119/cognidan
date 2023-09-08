@@ -28,7 +28,8 @@ class AddEditViewModel(
         get() = _uiState.value
 
     fun populateParticipantFields(selectedParticipant: Participant?) {
-        selectedParticipant?.toAddEditUiState(selectedParticipant.id) ?: AddEditUiState()
+        val populatedState = selectedParticipant?.toAddEditUiState(selectedParticipant.id) ?: AddEditUiState()
+        _uiState.value = populatedState
         Timber.i("Initial Ui State: ${uiState.value}")
         _uiState.value = currentState.copy(haveFieldsBeenPopulated = true)
     }

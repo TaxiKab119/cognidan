@@ -38,7 +38,9 @@ class ParticipantsTrialDataFragment: Fragment() {
                 ParticipantsTrialDataScreen(
                     uiState = uiState,
                     viewModel = viewModel
-                )
+                ) {
+                    // TODO - Export via db -> .csv library
+                }
             }
         }
         return view

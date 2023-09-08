@@ -69,15 +69,12 @@ fun ParticipantsTrialDataScreen(
             }
         }
     ) {
-        Column(modifier = Modifier.padding(it)) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp)
-            ) {
-                Text(text = "Participant Name: ${uiState.selectedParticipant.name}")
-                Text(text = "Participant Id: ${uiState.selectedParticipant.userGivenId}")
-            }
+        Column(modifier = modifier.padding(it)) {
+            ParticipantDataTopCard(
+                participantName = uiState.selectedParticipant.name,
+                participantId = uiState.selectedParticipant.userGivenId,
+                participantNotes = uiState.selectedParticipant.notes
+            )
             CollapsibleParticipantDataItemsGroups(
                 title = "BART Data",
                 items = mapToTrialDataFields(
@@ -143,6 +140,37 @@ fun ParticipantsTrialDataScreen(
 //        }
 //    }
 //}
+@Composable
+fun ParticipantDataTopCard(
+    participantName: String,
+    participantId: String,
+    participantNotes: String,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(12.dp)
+    ) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            Text(
+                text =
+                stringResource(
+                    id = R.string.participants_participant_name_label) + ": "
+                        + participantName
+            )
+            Text(
+                text = stringResource(
+                    id = R.string.participants_participant_id_label) + ": "
+                        + participantId
+            )
+            if (participantNotes != "") {
+                Spacer(modifier = Modifier.padding(8.dp))
+                Text(text = participantNotes)
+            }
+        }
+    }
+}
 
 @Composable
 fun CollapsibleParticipantDataItemsGroups(

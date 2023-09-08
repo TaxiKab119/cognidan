@@ -97,12 +97,10 @@ fun ParticipantsTrialDataScreen(
                     bartEntities = uiState.allBartTrials
                 ),
                 onDeleteClicked = {},
-                viewModel = viewModel,
                 uiState = uiState,
                 modifier = Modifier.padding(horizontal = 12.dp),
-
-                ) {
-
+            ) { trial ->
+                viewModel.toggleToSelectedTrialsList(trial)
             }
             CollapsibleParticipantDataItemsGroups(
                 title = "NBACK Data",
@@ -111,11 +109,10 @@ fun ParticipantsTrialDataScreen(
                     nBackEntities = uiState.allNBackTrials
                 ),
                 onDeleteClicked = {},
-                viewModel = viewModel,
                 uiState = uiState,
                 modifier = Modifier.padding(horizontal = 12.dp),
-            ) {
-
+            ) { trial ->
+                viewModel.toggleToSelectedTrialsList(trial)
             }
         }
 
@@ -125,7 +122,6 @@ fun ParticipantsTrialDataScreen(
 fun CollapsibleParticipantDataItemsGroups(
     title: String,
     items: List<TrialDataFields>,
-    viewModel: ParticipantsTrialDataViewModel,
     uiState: ParticipantsTrialDataUiState,
     modifier: Modifier = Modifier,
     onDeleteClicked: (TrialIdentifier) -> Unit = {},
@@ -162,7 +158,6 @@ fun CollapsibleParticipantDataItemsGroups(
                         ParticipantDataItem(
                             participantDataFields = trialData,
                             onDeleteClicked = { onDeleteClicked(it) },
-                            viewModel = viewModel,
                             uiState = uiState
                         ) {
                             onCheckBoxClick(it)
@@ -178,7 +173,6 @@ fun CollapsibleParticipantDataItemsGroups(
 @Composable
 fun ParticipantDataItem(
     participantDataFields: TrialDataFields,
-    viewModel: ParticipantsTrialDataViewModel,
     uiState: ParticipantsTrialDataUiState,
     modifier: Modifier = Modifier,
     onDeleteClicked: (TrialIdentifier) -> Unit = {},
@@ -209,7 +203,6 @@ fun ParticipantDataItem(
                 onCheckedChange = {
                     isChecked = it
                     onCheckBoxClick(participantDataFields.toTrialIdentifier())
-                    viewModel.toggleToSelectedTrialsList(participantDataFields.toTrialIdentifier())
                 }
             )
         },

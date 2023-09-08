@@ -60,6 +60,7 @@ import kotlinx.coroutines.launch
 fun ParticipantsHomeScreen(
     participantList: List<Participant>,
     goToAddScreen: () -> Unit = {},
+    goToParticipantData: (Int) -> Unit = {},
     goToEditScreen: (Int) -> Unit = {}
 ) {
     var selectedParticipantId: Int by remember { mutableStateOf(0) }
@@ -94,7 +95,10 @@ fun ParticipantsHomeScreen(
             ParticipantsBottomSheetContent(
                 modifier = Modifier
                     .fillMaxHeight(0.25f)
-                    .padding(12.dp)
+                    .padding(12.dp),
+                onParticipantDataClick = {
+                    goToParticipantData(selectedParticipantId)
+                }
             ) {
                 goToEditScreen(selectedParticipantId)
             }
@@ -220,20 +224,20 @@ fun ParticipantIcon(modifier: Modifier = Modifier) {
 @Composable
 fun ParticipantsBottomSheetContent(
     modifier: Modifier = Modifier,
-    onEditClick: () -> Unit
+    onParticipantDataClick: () -> Unit = {},
+    onEditClick: () -> Unit = {},
 ) {
     Column(modifier) {
         TextButton(
-            onClick = { /*TODO*/ },
+            onClick = { onParticipantDataClick() },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp)
                 .weight(1f),
-            enabled = false
         ) {
             Icon(imageVector = Icons.Default.Share, contentDescription = "Export to .csv")
             Spacer(Modifier.width(12.dp))
-            Text(text = "Export to .csv")
+            Text(text = "Participant data")
         }
         Spacer(modifier = Modifier.height(8.dp))
         TextButton(

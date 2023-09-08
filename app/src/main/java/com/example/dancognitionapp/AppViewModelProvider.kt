@@ -12,6 +12,7 @@ import com.example.dancognitionapp.assessment.nback.ui.NBackViewModel
 import com.example.dancognitionapp.assessment.selection.TrialDetailsViewModel
 import com.example.dancognitionapp.participants.edit.AddEditViewModel
 import com.example.dancognitionapp.participants.home.ParticipantsHomeViewModel
+import com.example.dancognitionapp.participants.seetrialdata.ParticipantsTrialDataViewModel
 
 object AppViewModelProvider {
     fun danAppViewModelFactory(isPractice: Boolean = false) = viewModelFactory {
@@ -24,6 +25,13 @@ object AppViewModelProvider {
         initializer {
             AddEditViewModel(
                 danCognitionApplication().container.participantRepository
+            )
+        }
+        initializer {
+            ParticipantsTrialDataViewModel(
+                bartRepository = danCognitionApplication().container.bartRepository,
+                nBackRepository = danCognitionApplication().container.nBackRepository,
+                participantRepository = danCognitionApplication().container.participantRepository,
             )
         }
         initializer {

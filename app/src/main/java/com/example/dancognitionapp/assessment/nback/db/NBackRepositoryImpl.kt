@@ -34,6 +34,14 @@ class NBackRepositoryImpl(private val nBackDao: NBackDao): NBackRepository {
         nBackDao.insertNBackTrial(nBackEntity)
     }
 
+    override suspend fun deleteNBackDataByParticipantId(participantId: Int) {
+        nBackDao.deleteNBackTrialDataByParticipantId(participantId)
+    }
+
+    override suspend fun deleteNBackDataByTrialId(trialId: Int) {
+        nBackDao.deleteNBackTrialDataByTrialId(trialId)
+    }
+
     override suspend fun getNBackEntityForTrial(
         participantId: Int,
         trialDay: TrialDay,

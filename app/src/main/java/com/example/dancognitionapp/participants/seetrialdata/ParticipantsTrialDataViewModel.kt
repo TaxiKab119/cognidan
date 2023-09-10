@@ -91,7 +91,11 @@ class ParticipantsTrialDataViewModel(
                     bartRepository.deleteBartDataByTrialId(trialIdentifier.trialId)
                 }
             }
-            TestType.NBACK -> {}
+            TestType.NBACK -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    nBackRepository.deleteNBackDataByTrialId(trialIdentifier.trialId)
+                }
+            }
         }
     }
 }

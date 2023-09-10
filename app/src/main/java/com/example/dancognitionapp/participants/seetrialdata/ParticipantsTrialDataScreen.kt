@@ -112,7 +112,9 @@ fun ParticipantsTrialDataScreen(
                     name = uiState.selectedParticipant.name,
                     nBackEntities = uiState.allNBackTrials
                 ),
-                onDeleteClicked = {},
+                onDeleteClicked = { trial ->
+                    viewModel.deleteTrial(trial)
+                },
                 uiState = uiState,
                 modifier = Modifier.padding(horizontal = 12.dp),
             ) { trial ->

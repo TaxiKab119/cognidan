@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.emptyFlow
 
 class PracticeNBackRepository: NBackRepository {
     override suspend fun insertNBackItem(nBackItemEntity: NBackItemEntity) {
-        /*DO NOTHING (no db actions for practice trials*/
+        /* DO NOTHING (no db actions for practice trials) */
     }
 
     override suspend fun updateReactionTimeAndClickDetailsForItem(
@@ -20,11 +20,19 @@ class PracticeNBackRepository: NBackRepository {
         clickCategorization: NBackClickCategorization,
         wasCorrectAction: Boolean
     ) {
-        /*DO NOTHING (no db actions for practice trials*/
+        /* DO NOTHING (no db actions for practice trials) */
     }
 
     override suspend fun insertNBackTrial(nBackEntity: NBackEntity) {
-        /*DO NOTHING (no db actions for practice trials*/
+        /* DO NOTHING (no db actions for practice trials) */
+    }
+
+    override suspend fun deleteNBackDataByParticipantId(participantId: Int) {
+        /* DO NOTHING (no db actions for practice trials) */
+    }
+
+    override suspend fun deleteNBackDataByTrialId(trialId: Int) {
+        /* DO NOTHING (no db actions for practice trials) */
     }
 
     override suspend fun getNBackEntityForTrial(
@@ -32,12 +40,12 @@ class PracticeNBackRepository: NBackRepository {
         trialDay: TrialDay,
         trialTime: TrialTime
     ): NBackEntity? {
-        /*DO NOTHING (no db actions for practice trials*/
+        /* DO NOTHING (no db actions for practice trials) */
         return null
     }
 
     override suspend fun getNBackTrialsByParticipantId(participantId: Int): Flow<List<NBackEntity>> {
-        /*DO NOTHING (no db actions for practice trials*/
+        /* DO NOTHING (no db actions for practice trials) */
         return emptyFlow()
     }
 }

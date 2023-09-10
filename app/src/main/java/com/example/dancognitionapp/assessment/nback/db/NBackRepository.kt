@@ -21,6 +21,9 @@ interface NBackRepository {
 
     suspend fun insertNBackTrial(nBackEntity: NBackEntity)
 
+    suspend fun deleteNBackDataByParticipantId(participantId: Int)
+
+    suspend fun deleteNBackDataByTrialId(trialId: Int)
     suspend fun getNBackEntityForTrial(
         participantId: Int,
         trialDay: TrialDay,

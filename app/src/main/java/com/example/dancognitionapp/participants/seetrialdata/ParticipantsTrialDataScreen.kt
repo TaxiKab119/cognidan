@@ -16,10 +16,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -34,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.dancognitionapp.R
@@ -42,6 +45,8 @@ import com.example.dancognitionapp.assessment.TrialTime
 import com.example.dancognitionapp.assessment.bart.db.BartEntity
 import com.example.dancognitionapp.assessment.nback.db.NBackEntity
 import com.example.dancognitionapp.landing.DanCognitionTopAppBar
+import com.example.dancognitionapp.landing.DanMenuItem
+import com.example.dancognitionapp.participants.edit.ParticipantDialog
 import timber.log.Timber
 
 enum class TestType{
@@ -62,26 +67,45 @@ data class TrialDataFields(
 data class TrialIdentifier(
     val trialId: Int,
     val testType: TestType
-)
+) {
+    companion object {
+        val emptyTrialId = TrialIdentifier(0, TestType.BART)
+    }
+}
 @Composable
 fun ParticipantsTrialDataScreen(
     uiState: ParticipantsTrialDataUiState,
     viewModel: ParticipantsTrialDataViewModel,
     modifier: Modifier = Modifier,
-    onFabClick: () -> Unit = {}
+    onShareClick: () -> Unit = {}
 ) {
-    Scaffold(
-        topBar = { DanCognitionTopAppBar(headerResId = R.string.participants_data_header)},
-        floatingActionButton = {
-            ExtendedFloatingActionButton(onClick = { onFabClick() }) {
-                Text(
-                    text = "Export ${uiState.selectedBartTrialIds.size
-                            + uiState.selectedNBackTrialIds.size}",
-                    modifier = Modifier.padding(end = 8.dp)
-                )
-                Icon(imageVector = Icons.Default.Send, contentDescription = "Export to .csv")
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var selectedTrialForDelete by remember { mutableStateOf(TrialIdentifier.emptyTrialId) }
+    var selectedTrialNumber: Int = uiState.selectedNBackTrialIds.size + uiState.selectedBartTrialIds.size
+    if (showDeleteDialog) {
+        ParticipantDialog(
+            title = R.string.participants_data_delete_dialog_title,
+            content = R.string.participants_data_delete_dialog_content,
+            onConfirm = {
+                viewModel.deleteTrial(selectedTrialForDelete)
+                showDeleteDialog = false
             }
-        }
+        ) { showDeleteDialog = false }
+    }
+    Scaffold(
+        topBar = {
+            DanCognitionTopAppBar(
+                headerResId = R.string.participants_data_header,
+                wantMenuButton = true,
+                menuIcon = Icons.Default.Share,
+                menuItems = listOf(
+                    DanMenuItem("Download $selectedTrialNumber selected", R.drawable.baseline_download_24),
+                    DanMenuItem("Download all", R.drawable.baseline_done_all_24),
+                ),
+            ) {
+                Timber.i("Menu button clicked!")
+            }
+        },
     ) {
         Column(modifier = modifier.padding(it)) {
             ParticipantDataTopCard(
@@ -98,8 +122,8 @@ fun ParticipantsTrialDataScreen(
                     bartEntities = uiState.allBartTrials
                 ),
                 onDeleteClicked = { trial ->
-                    viewModel.deleteTrial(trial)
-                    Timber.i("Attempt to Click Delete on $trial")
+                    selectedTrialForDelete = trial
+                    showDeleteDialog = true
                 },
                 uiState = uiState,
                 modifier = Modifier.padding(horizontal = 12.dp),
@@ -113,7 +137,8 @@ fun ParticipantsTrialDataScreen(
                     nBackEntities = uiState.allNBackTrials
                 ),
                 onDeleteClicked = { trial ->
-                    viewModel.deleteTrial(trial)
+                    selectedTrialForDelete = trial
+                    showDeleteDialog = true
                 },
                 uiState = uiState,
                 modifier = Modifier.padding(horizontal = 12.dp),
@@ -226,6 +251,39 @@ fun ParticipantDataItem(
                 shape = RoundedCornerShape(10.dp)
             )
     )
+}
+
+@Composable
+fun DataDropDownMenu(
+    modifier: Modifier = Modifier,
+    isExpanded: Boolean = false,
+    menuItems: List<DanMenuItem>,
+    onDismiss: () -> Unit = {},
+    onClickMenuItem: (DanMenuItem) -> Unit = {}
+) {
+    DropdownMenu(
+        expanded = isExpanded,
+        onDismissRequest = { onDismiss() },
+        modifier = modifier
+    ) {
+        var counter = menuItems.size
+        menuItems.forEach {
+            counter--
+            DropdownMenuItem(
+                leadingIcon = {
+                    Icon(painter = painterResource(id = it.iconRes), null)
+                },
+                text = { Text(text = it.text) },
+                onClick = {
+                    onClickMenuItem(it)
+                    onDismiss()
+                }
+            )
+            if (counter != 0) {
+                Divider()
+            }
+        }
+    }
 }
 
 @Composable

@@ -8,16 +8,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 
 @Composable
 fun ResponsiveText(
+    text: String,
+    color: Color,
+    targetTextSize: TextStyle,
     modifier: Modifier = Modifier,
     maxLines: Int = 1,
-    text: String,
-    targetTextSize: TextStyle
 ) {
     val typographySizes = listOf<TextStyle>(
         MaterialTheme.typography.displayLarge,
@@ -45,6 +47,7 @@ fun ResponsiveText(
         text = text,
         maxLines = maxLines,
         overflow = TextOverflow.Ellipsis,
+        color = color,
         onTextLayout = { textLayoutResult: TextLayoutResult ->
             val currentMaxLineIndex = textLayoutResult.lineCount - 1
 

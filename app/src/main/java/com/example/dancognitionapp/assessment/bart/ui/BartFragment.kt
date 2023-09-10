@@ -59,7 +59,8 @@ class BartFragment: AssessmentFragment() {
     }
     private fun initializeBart(isPractice: Boolean) {
         if (isPractice) {
-            // If isPractice we don't need to call initBart bc nothing written to db
+            // If isPractice we call initBart with empty values bc nothing written to db
+            viewModel.initBart(Participant.emptyParticipant, TrialDay.DAY_1, TrialTime.PRE_DIVE)
             Timber.i("Practice BART instantiated")
         } else {
             Timber.i("Real BART instantiated")

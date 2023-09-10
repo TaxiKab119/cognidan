@@ -217,7 +217,8 @@ fun NBackCustomDialog(
                 ResponsiveText(
                     text = context.resources.getQuantityString(R.plurals.nback_test_instructions, nValue, nValue),
                     maxLines = 5,
-                    targetTextSize = MaterialTheme.typography.titleSmall
+                    targetTextSize = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 if (isPractice) {
                     Spacer(modifier = Modifier.height(12.dp))
@@ -225,6 +226,7 @@ fun NBackCustomDialog(
                         text = stringResource(R.string.nback_feedback_instructions),
                         maxLines = 3,
                         targetTextSize = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 Row {

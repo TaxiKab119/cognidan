@@ -77,7 +77,7 @@ fun ParticipantsTrialDataScreen(
     uiState: ParticipantsTrialDataUiState,
     viewModel: ParticipantsTrialDataViewModel,
     modifier: Modifier = Modifier,
-    onShareClick: () -> Unit = {}
+    onShareClick: (String) -> Unit = {}
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
     var selectedTrialForDelete by remember { mutableStateOf(TrialIdentifier.emptyTrialId) }
@@ -99,11 +99,11 @@ fun ParticipantsTrialDataScreen(
                 wantMenuButton = true,
                 menuIcon = Icons.Default.Share,
                 menuItems = listOf(
-                    DanMenuItem("Download $selectedTrialNumber selected", R.drawable.baseline_download_24),
-                    DanMenuItem("Download all", R.drawable.baseline_done_all_24),
+                    DanMenuItem("Download $selectedTrialNumber selected", R.drawable.baseline_download_24, "SELECTED"),
+                    DanMenuItem("Download all", R.drawable.baseline_done_all_24, "ALL"),
                 ),
             ) {
-                Timber.i("Menu button clicked!")
+                onShareClick(it.key)
             }
         },
     ) {

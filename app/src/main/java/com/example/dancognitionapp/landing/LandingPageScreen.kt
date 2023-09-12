@@ -1,6 +1,5 @@
 package com.example.dancognitionapp.landing
 
-import android.view.MenuItem
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.animateFloatAsState
@@ -172,7 +171,8 @@ fun DanCognitionTopAppBar(
 
 data class DanMenuItem(
     val text: String = "text",
-    @DrawableRes val iconRes: Int = R.drawable.construction_48
+    @DrawableRes val iconRes: Int = R.drawable.construction_48,
+    val key: String = "id"
 )
 
 

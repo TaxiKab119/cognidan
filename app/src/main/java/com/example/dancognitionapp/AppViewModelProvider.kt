@@ -9,6 +9,7 @@ import com.example.dancognitionapp.assessment.bart.db.PracticeBartRepository
 import com.example.dancognitionapp.assessment.bart.ui.BartViewModel
 import com.example.dancognitionapp.assessment.nback.db.PracticeNBackRepository
 import com.example.dancognitionapp.assessment.nback.ui.NBackViewModel
+import com.example.dancognitionapp.assessment.selection.StartTrialViewModel
 import com.example.dancognitionapp.assessment.selection.TrialDetailsViewModel
 import com.example.dancognitionapp.participants.edit.AddEditViewModel
 import com.example.dancognitionapp.participants.home.ParticipantsHomeViewModel
@@ -39,6 +40,12 @@ object AppViewModelProvider {
         initializer {
             TrialDetailsViewModel(
                 danCognitionApplication().container.participantRepository
+            )
+        }
+        initializer {
+            StartTrialViewModel(
+                nBackRepository = danCognitionApplication().container.nBackRepository,
+                bartRepository = danCognitionApplication().container.bartRepository
             )
         }
         initializer {

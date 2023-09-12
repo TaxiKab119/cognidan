@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class ParticipantsTrialDataFragment: Fragment() {
-    val args: ParticipantsTrialDataFragmentArgs by navArgs()
+    private val args: ParticipantsTrialDataFragmentArgs by navArgs()
     val viewModel: ParticipantsTrialDataViewModel by viewModels { AppViewModelProvider.danAppViewModelFactory(false) }
 
     override fun onCreate(savedInstanceState: Bundle?) {

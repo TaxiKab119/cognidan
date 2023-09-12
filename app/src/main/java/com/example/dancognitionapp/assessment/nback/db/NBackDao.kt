@@ -89,7 +89,8 @@ interface NBackDao {
 
     /**
      * Deletes all data related to NBack (in all tables in the database) for a given trialId: [Int]
-     * @param trialId is a unique identifier for every BART Trial
+     * ORDER MATTERS, must delete children before parents.
+     * @param trialId is a unique identifier for every NBACK Trial
      */
     @Transaction
     fun deleteNBackTrialDataByTrialId(trialId: Int) {
@@ -98,6 +99,7 @@ interface NBackDao {
     }
     /**
      * Deletes all data related to NBack (in all tables in the database) for a given participantId: [Int]
+     * ORDER MATTERS, must delete children before parents.
      * @param participantId is a unique internal identifier for every participant (separate from user_given_id)
      */
     @Transaction

@@ -4,9 +4,13 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.dancognitionapp.assessment.bart.db.BartRepository
+import com.example.dancognitionapp.assessment.nback.db.NBackRepository
 import com.example.dancognitionapp.participants.data.ParticipantDetails
 import com.example.dancognitionapp.participants.data.ParticipantRepository
 import com.example.dancognitionapp.participants.db.Participant
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -14,7 +18,9 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class AddEditViewModel(
-    private val participantRepository: ParticipantRepository
+    private val participantRepository: ParticipantRepository,
+    private val bartRepository: BartRepository,
+    private val nBackRepository: NBackRepository
 ): ViewModel() {
     /**
      * This first block sets up the ui state to be mutable initializes participant list
@@ -55,8 +61,18 @@ class AddEditViewModel(
             )
         }
     }
-    suspend fun deleteParticipant() {
-        participantRepository.deleteParticipant(currentState.participantDetails.toParticipantEntity())
+    fun deleteParticipant() {
+        /**
+         * Deletes the participant from the database along with all their trial data.
+         */
+        viewModelScope.launch(Dispatchers.IO) {
+            val deleteData = async(Dispatchers.IO) {
+                bartRepository.deleteBartDataByParticipantId(currentState.participantInternalId)
+                nBackRepository.deleteNBackDataByParticipantId(currentState.participantInternalId)
+            }
+            deleteData.await()
+            participantRepository.deleteParticipant(currentState.participantDetails.toParticipantEntity())
+        }
     }
 
     /**

@@ -24,7 +24,9 @@ object AppViewModelProvider {
         }
         initializer {
             AddEditViewModel(
-                danCognitionApplication().container.participantRepository
+                danCognitionApplication().container.participantRepository,
+                bartRepository = danCognitionApplication().container.bartRepository,
+                nBackRepository = danCognitionApplication().container.nBackRepository,
             )
         }
         initializer {

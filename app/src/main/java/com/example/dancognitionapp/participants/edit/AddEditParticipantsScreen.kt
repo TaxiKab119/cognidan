@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -33,23 +34,28 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 enum class ParticipantScreenType() {
     ADD, EDIT
 }
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditParticipantsFullScreen(
     modifier: Modifier = Modifier,
     screenType: ParticipantScreenType,
     viewModel: AddEditViewModel,
     uiState: AddEditUiState,
+    onConfirm: () -> Unit = {},
     returnToManager: () -> Unit = {}
 ) {
 
     var showDeleteDialog: Boolean by remember { mutableStateOf(false) }
     var showCloseDialog: Boolean by remember { mutableStateOf(false) }
+    var showLoadingDialog: Boolean by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope() // need this to call updateItem() function
 
     lateinit var initialUiState: AddEditUiState // This only gets initialized if haveFieldsBeenPopulated is a uiState
@@ -57,7 +63,6 @@ fun AddEditParticipantsFullScreen(
         initialUiState = remember { uiState }
         Timber.i("InitialUiState updated to: $initialUiState")
     }
-
     if (showCloseDialog) {
         ParticipantDialog(
             title = R.string.participants_close_dialog_title,
@@ -72,10 +77,8 @@ fun AddEditParticipantsFullScreen(
             title = R.string.participants_delete_dialog_title,
             content = R.string.participants_delete_dialog_content,
             onConfirm = {
-                coroutineScope.launch {
-                    viewModel.deleteParticipant()
-                }
-                returnToManager()
+                showDeleteDialog = false
+                onConfirm()
             }
         ) { showDeleteDialog = false }
     }

@@ -81,7 +81,7 @@ fun ParticipantsTrialDataScreen(
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
     var selectedTrialForDelete by remember { mutableStateOf(TrialIdentifier.emptyTrialId) }
-    var selectedTrialNumber: Int = uiState.selectedNBackTrialIds.size + uiState.selectedBartTrialIds.size
+    val selectedTrialNumber: Int = uiState.selectedNBackTrialIds.size + uiState.selectedBartTrialIds.size
     if (showDeleteDialog) {
         ParticipantDialog(
             title = R.string.participants_data_delete_dialog_title,

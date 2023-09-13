@@ -34,7 +34,6 @@ object AppViewModelProvider {
             ParticipantsTrialDataViewModel(
                 bartRepository = danCognitionApplication().container.bartRepository,
                 nBackRepository = danCognitionApplication().container.nBackRepository,
-                participantRepository = danCognitionApplication().container.participantRepository,
             )
         }
         initializer {

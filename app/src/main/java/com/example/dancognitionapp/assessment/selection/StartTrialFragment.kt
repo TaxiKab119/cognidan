@@ -12,15 +12,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -36,22 +40,25 @@ import com.example.dancognitionapp.landing.DanCognitionTopAppBar
 import com.example.dancognitionapp.participants.db.Participant
 import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class StartTrialFragment: Fragment() {
     private val args: StartTrialFragmentArgs by navArgs()
-    private val viewModel by viewModels<StartTrialViewModel> { AppViewModelProvider.danAppViewModelFactory() }
+    val viewModel by viewModels<StartTrialViewModel> { AppViewModelProvider.danAppViewModelFactory() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) {
+            val trialDetails = args.trialDetails
             lifecycleScope.launch(Dispatchers.IO) {
-                viewModel.checkTrialExistence(args.trialDetails ?: TrialDetailsUiState())
+                Timber.i("check Trial existence was called")
+                viewModel.checkTrialExistence(trialDetails ?: TrialDetailsUiState())
             }
         }
     }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -72,7 +79,7 @@ class StartTrialFragment: Fragment() {
                     participant = args.trialDetails?.selectedParticipant ?: Participant.emptyParticipant,
                     trialDay = args.trialDetails?.selectedTrialDay?.name ?: "error",
                     trialTime = args.trialDetails?.selectedTrialTime?.name ?: "error",
-                    trialExists = viewModel.doesTrialExist
+                    trialExistsStateFlow = viewModel.startTrialScreenState
                 ) {
                     findNavController().navigate(action)
                 }
@@ -82,6 +89,11 @@ class StartTrialFragment: Fragment() {
         return view
     }
 }
+enum class StartTrialScreenState{
+    EXISTS,
+    NOT_EXIST,
+    LOADING
+}
 
 @Composable
 fun StartTrialScreen(
@@ -89,15 +101,19 @@ fun StartTrialScreen(
     participant: Participant,
     trialDay: String,
     trialTime: String,
-    trialExists: Boolean,
+    trialExistsStateFlow: StateFlow<StartTrialScreenState>,
     onFabClick: () -> Unit
 ) {
-    Timber.i("Trial Exists: $trialExists")
+    val trialExists by trialExistsStateFlow.collectAsState()
+    Timber.i("Screen Recomposed; Trial Exists: $trialExists")
     Scaffold(
         topBar = { DanCognitionTopAppBar(headerResId = R.string.selection_trial_details_header) },
         floatingActionButton = {
-            if (!trialExists) {
-                LargeFloatingActionButton(onClick = { onFabClick() }) {
+            if (trialExists == StartTrialScreenState.NOT_EXIST) {
+                ExtendedFloatingActionButton(
+                    onClick = { onFabClick() },
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                ) {
                     Text(text = "Start")
                 }
             }
@@ -108,50 +124,55 @@ fun StartTrialScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (trialExists) {
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.errorContainer,
-                        contentColor = MaterialTheme.colorScheme.onErrorContainer
-                    ),
-                    modifier = Modifier
-                        .padding(12.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically
+            when (trialExists) {
+                StartTrialScreenState.LOADING -> {
+                    Icon(imageVector = Icons.Default.Refresh, contentDescription = "Loading")}
+                else -> {
+                    if (trialExists == StartTrialScreenState.EXISTS) {
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer,
+                                contentColor = MaterialTheme.colorScheme.onErrorContainer
+                            ),
+                            modifier = Modifier
+                                .padding(12.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Warning,
+                                    contentDescription = "warning",
+                                    modifier = Modifier.padding(12.dp)
+                                )
+                                Text(
+                                    text = "This trial already exists, please delete old data before starting"
+                                )
+                            }
+                        }
+                    }
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        ),
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Warning,
-                            contentDescription = "warning",
-                            modifier = Modifier.padding(12.dp)
-                        )
-                        Text(
-                            text = "This trial already exists, please delete old data before starting"
-                        )
+                        Column(
+                            modifier = Modifier
+                                .padding(24.dp)
+                        ) {
+                            Text("Participant Name: ${participant.name}")
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Text("Participant ID: ${participant.userGivenId}")
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Text("Trial Day: $trialDay")
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Text("Trial Time: $trialTime")
+                        }
                     }
                 }
             }
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                ),
-            ) {
-                Column(
-                    modifier = Modifier
-                        .padding(24.dp)
-                ) {
-                    Text("Participant Name: ${participant.name}")
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Text("Participant ID: ${participant.userGivenId}")
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Text("Trial Day: $trialDay")
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Text("Trial Time: $trialTime")
-                }
-            }
-
         }
     }
 

@@ -66,7 +66,7 @@ class AddEditViewModel(
          * Deletes the participant from the database along with all their trial data.
          */
         viewModelScope.launch(Dispatchers.IO) {
-            val deleteData = async(Dispatchers.IO) {
+            val deleteData = async {
                 bartRepository.deleteBartDataByParticipantId(currentState.participantInternalId)
                 nBackRepository.deleteNBackDataByParticipantId(currentState.participantInternalId)
             }

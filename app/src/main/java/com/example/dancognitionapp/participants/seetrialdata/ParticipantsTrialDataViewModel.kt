@@ -4,10 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dancognitionapp.assessment.bart.db.BartRepository
 import com.example.dancognitionapp.assessment.nback.db.NBackRepository
-import com.example.dancognitionapp.participants.data.ParticipantRepository
 import com.example.dancognitionapp.participants.db.Participant
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -16,7 +14,6 @@ import kotlinx.coroutines.launch
 class ParticipantsTrialDataViewModel(
     private val bartRepository: BartRepository,
     private val nBackRepository: NBackRepository,
-    private val participantRepository: ParticipantRepository
 ): ViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -36,14 +33,14 @@ class ParticipantsTrialDataViewModel(
 
     private fun constantlyUpdateTrials(participant: Participant) {
         viewModelScope.launch(Dispatchers.IO) {
-            async {
+            launch {
                 bartRepository.getBartTrialsByParticipantId(participant.id).collect {
                     _uiState.value = currentState.copy(
                         allBartTrials = it
                     )
                 }
             }
-            async {
+            launch {
                 nBackRepository.getNBackTrialsByParticipantId(participant.id).collect {
                     _uiState.value = currentState.copy(
                         allNBackTrials = it

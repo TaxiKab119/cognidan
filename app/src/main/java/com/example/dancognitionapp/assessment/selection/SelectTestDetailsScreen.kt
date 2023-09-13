@@ -42,9 +42,14 @@ import timber.log.Timber
 fun SelectTestDetailsScreen(
     modifier: Modifier = Modifier,
     viewModel: TrialDetailsViewModel,
+    uiState: TrialDetailsUiState,
     participantList: List<Participant>,
+    onSelectTrialTime: (TrialTime) -> Unit = {},
+    onSelectTrialDay: (TrialDay) -> Unit = {},
+    onSelectParticipant: (Participant) -> Unit = {},
     onConfirmClick: () -> Unit,
 ) {
+    Timber.i("$uiState")
     var showDialog by remember { mutableStateOf(false) }
     if (showDialog) {
         AlertDialog(
@@ -70,12 +75,12 @@ fun SelectTestDetailsScreen(
                 ExtendedFloatingActionButton(
                     onClick = {
                         if (viewModel.areTrialDetailsFilled()) {
-                            Timber.i("Participant: ${viewModel.uiState.value.selectedParticipant} \nTrialDay: ${viewModel.uiState.value.selectedTrialDay} \nTrialTime: ${viewModel.uiState.value.selectedTrialTime}")
                             onConfirmClick()
                         } else {
                             showDialog = true
                         }
-                    }
+                    },
+                    containerColor = MaterialTheme.colorScheme.secondary,
                 ) {
                     Text(text = "Confirm")
                 }
@@ -86,10 +91,10 @@ fun SelectTestDetailsScreen(
                 participantList = participantList,
                 trialTimes = arrayOf(TrialTime.PRE_DIVE, TrialTime.DIVE, TrialTime.POST_DIVE),
                 trialDays = arrayOf(TrialDay.DAY_1, TrialDay.DAY_2),
-                onSelectTrialDay = { trialDay -> viewModel.selectTrialDay(trialDay) },
-                onSelectTrialTime = { trialTime -> viewModel.selectTrialTime(trialTime) }
+                onSelectTrialDay = { trialDay -> onSelectTrialDay(trialDay) },
+                onSelectTrialTime = { trialTime -> onSelectTrialTime(trialTime) }
             ) { participant ->
-                viewModel.selectParticipant(participant)
+                onSelectParticipant(participant)
             }
         }
     }

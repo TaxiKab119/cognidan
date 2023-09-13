@@ -13,6 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
@@ -44,18 +45,22 @@ class SelectionFragment: Fragment() {
                         findNavController().navigate(destination)
                     }
                 } else {
-                    val viewModel:TrialDetailsViewModel = viewModel(factory = AppViewModelProvider.danAppViewModelFactory(false))
-                    val uiState = viewModel.uiState.collectAsState(lifecycleScope.coroutineContext)
+                    val viewModel:TrialDetailsViewModel = viewModel(factory = AppViewModelProvider.danAppViewModelFactory())
+                    val uiState by viewModel.uiState.collectAsState(lifecycleScope.coroutineContext)
                     val action = SelectionFragmentDirections.actionSelectionDestToStartTrialDest(
                         trialDetails = TrialDetailsUiState(
-                            selectedParticipant = uiState.value.selectedParticipant,
-                            selectedTrialDay = uiState.value.selectedTrialDay,
-                            selectedTrialTime = uiState.value.selectedTrialTime,
+                            selectedParticipant = uiState.selectedParticipant,
+                            selectedTrialDay = uiState.selectedTrialDay,
+                            selectedTrialTime = uiState.selectedTrialTime,
                         )
                     )
                     SelectTestDetailsScreen(
                         viewModel = viewModel,
-                        participantList = uiState.value.participantList
+                        participantList = uiState.participantList,
+                        uiState = uiState,
+                        onSelectTrialTime = { viewModel.selectTrialTime(it) },
+                        onSelectTrialDay = { viewModel.selectTrialDay(it) },
+                        onSelectParticipant = { viewModel.selectParticipant(it) }
                     ) {
                         findNavController().navigate(action)
                     }

@@ -14,4 +14,8 @@ data class Participant(
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "notes") val notes: String
 
-) : Parcelable
+) : Parcelable {
+    companion object {
+        val emptyParticipant = Participant(0, "", "", "")
+    }
+}

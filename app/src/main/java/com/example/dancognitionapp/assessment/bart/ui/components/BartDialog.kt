@@ -37,7 +37,7 @@ fun BartDialog(
         onDismissRequest = {}
     ) {
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(12.dp))
         ) {

@@ -4,9 +4,13 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.dancognitionapp.assessment.bart.db.BartRepository
+import com.example.dancognitionapp.assessment.nback.db.NBackRepository
 import com.example.dancognitionapp.participants.data.ParticipantDetails
 import com.example.dancognitionapp.participants.data.ParticipantRepository
 import com.example.dancognitionapp.participants.db.Participant
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -14,7 +18,9 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class AddEditViewModel(
-    private val participantRepository: ParticipantRepository
+    private val participantRepository: ParticipantRepository,
+    private val bartRepository: BartRepository,
+    private val nBackRepository: NBackRepository
 ): ViewModel() {
     /**
      * This first block sets up the ui state to be mutable initializes participant list
@@ -27,10 +33,9 @@ class AddEditViewModel(
     private val currentState: AddEditUiState
         get() = _uiState.value
 
-    suspend fun populateParticipantFields(participantInternalId: Int) {
-        _uiState.value = participantRepository.getParticipantByIdStream(participantInternalId)
-            .first()
-            ?.toAddEditUiState(participantInternalId) ?: AddEditUiState(participantInternalId = participantInternalId)
+    fun populateParticipantFields(selectedParticipant: Participant?) {
+        val populatedState = selectedParticipant?.toAddEditUiState(selectedParticipant.id) ?: AddEditUiState()
+        _uiState.value = populatedState
         Timber.i("Initial Ui State: ${uiState.value}")
         _uiState.value = currentState.copy(haveFieldsBeenPopulated = true)
     }
@@ -56,8 +61,18 @@ class AddEditViewModel(
             )
         }
     }
-    suspend fun deleteParticipant() {
-        participantRepository.deleteParticipant(currentState.participantDetails.toParticipantEntity())
+    fun deleteParticipant() {
+        /**
+         * Deletes the participant from the database along with all their trial data.
+         */
+        viewModelScope.launch(Dispatchers.IO) {
+            val deleteData = async {
+                bartRepository.deleteBartDataByParticipantId(currentState.participantInternalId)
+                nBackRepository.deleteNBackDataByParticipantId(currentState.participantInternalId)
+            }
+            deleteData.await()
+            participantRepository.deleteParticipant(currentState.participantDetails.toParticipantEntity())
+        }
     }
 
     /**
@@ -77,7 +92,7 @@ class AddEditViewModel(
 
     private fun Participant.toAddEditUiState(participantInternalId: Int): AddEditUiState = AddEditUiState(
         participantDetails = this.toParticipantDetails(),
-        participantInternalId = participantInternalId
+        participantInternalId = participantInternalId,
     )
 
     private fun ParticipantDetails.toParticipantEntity(): Participant = Participant(

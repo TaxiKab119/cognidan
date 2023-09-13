@@ -1,4 +1,4 @@
-package com.example.dancognitionapp.ui.nback
+package com.example.dancognitionapp.assessment.nback.ui
 
 import com.example.dancognitionapp.assessment.nback.data.NBackItem
 import com.example.dancognitionapp.assessment.nback.data.NBackType
@@ -12,5 +12,6 @@ data class NBackUiState(
     val hasUserClicked: Boolean = false,
     val showDialog: Boolean = true,
     val nValue: NBackType = NBackType.N_1,
-    val isEndOfTest: Boolean = false
+    val isEndOfTest: Boolean = false,
+    val clickTime: Long = 0L
 )

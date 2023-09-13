@@ -1,4 +1,4 @@
-package com.example.dancognitionapp.ui.nback
+package com.example.dancognitionapp.assessment.nback.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,22 +23,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextLayoutResult
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.dancognitionapp.R
+import com.example.dancognitionapp.utils.widget.ResponsiveText
 
 enum class NBackFeedbackState {
     HIT,
@@ -61,6 +56,7 @@ fun NBackScreen(
     isPractice: Boolean,
     viewModel: NBackViewModel,
     uiState: NBackUiState,
+    goToBart: () -> Unit = {},
     returnToSelect: () -> Unit = {}
 ) {
     val stimuli = listOf('A', 'B', 'C', 'D', 'Z', 'E', 'F', 'G', 'H')
@@ -72,13 +68,21 @@ fun NBackScreen(
             text = {
                 if (isPractice) {
                     Text(text = "Click OK to leave")
+                } else {
+                    Text(text = "Continue to BART")
                 }
             },
             confirmButton = {
-                if (isPractice) {
-                    TextButton(onClick = { returnToSelect() }) {
-                        Text(text = stringResource(id = R.string.ok_button))
+                TextButton(
+                    onClick = {
+                        if (isPractice) {
+                            returnToSelect()
+                        } else {
+                            goToBart()
+                        }
                     }
+                ) {
+                    Text(text = stringResource(id = R.string.ok_button))
                 }
             }
         )
@@ -92,7 +96,8 @@ fun NBackScreen(
                 indication = null
             ) {
                 if (uiState.isTestScreenClickable && !uiState.hasUserClicked) {
-                    viewModel.participantClick(uiState.currentItem)
+                    val clickTime = System.currentTimeMillis()
+                    viewModel.participantClick(uiState.currentItem, clickTime)
                 }
             },
         contentAlignment = Alignment.Center
@@ -164,59 +169,17 @@ fun NBackFeedback(feedbackState: NBackFeedbackState, modifier: Modifier = Modifi
         NBackFeedbackState.FALSE_ALARM -> slyRemarks.shuffled().first() to Color.Red
         NBackFeedbackState.INTERMEDIATE -> "" to Color.Black
     }
+    /* TODO
+    *   - add integration for isPractice that will just show if screen was clicked or not
+    *   - when NBackFeedBackState is Hit or False Alarm just show CLICKED
+    *   - Else show INTERMEDIATE
+    *  */
     Text(
         text = text,
         modifier = modifier
             .offset(0.dp, 10.dp),
         style = MaterialTheme.typography.titleLarge,
         color = color
-    )
-}
-@Composable
-private fun ResponsiveText(
-    modifier: Modifier = Modifier,
-    maxLines: Int = 1,
-    text: String,
-    targetTextSize: TextStyle
-) {
-    val typographySizes = listOf<TextStyle>(
-        MaterialTheme.typography.displayLarge,
-        MaterialTheme.typography.displayMedium,
-        MaterialTheme.typography.displaySmall,
-        MaterialTheme.typography.headlineLarge,
-        MaterialTheme.typography.headlineMedium,
-        MaterialTheme.typography.headlineSmall,
-        MaterialTheme.typography.titleLarge,
-        MaterialTheme.typography.titleMedium,
-        MaterialTheme.typography.titleSmall,
-        MaterialTheme.typography.bodyLarge,
-        MaterialTheme.typography.bodyMedium,
-        MaterialTheme.typography.bodySmall,
-        MaterialTheme.typography.labelLarge,
-        MaterialTheme.typography.labelMedium,
-        MaterialTheme.typography.labelSmall,
-    )
-
-    var typographySizeIndex: Int by remember {
-        mutableStateOf(typographySizes.indexOfFirst {it == targetTextSize})
-    }
-    Text(
-        modifier = modifier,
-        text = text,
-        maxLines = maxLines,
-        overflow = TextOverflow.Ellipsis,
-        onTextLayout = { textLayoutResult: TextLayoutResult ->
-            val currentMaxLineIndex = textLayoutResult.lineCount - 1
-
-            if (textLayoutResult.isLineEllipsized(currentMaxLineIndex)) {
-                typographySizeIndex--
-            }
-        },
-        style = try {
-            typographySizes[typographySizeIndex]
-        } catch (e: IndexOutOfBoundsException) {
-            MaterialTheme.typography.labelSmall
-        }
     )
 }
 
@@ -254,7 +217,8 @@ fun NBackCustomDialog(
                 ResponsiveText(
                     text = context.resources.getQuantityString(R.plurals.nback_test_instructions, nValue, nValue),
                     maxLines = 5,
-                    targetTextSize = MaterialTheme.typography.titleSmall
+                    targetTextSize = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 if (isPractice) {
                     Spacer(modifier = Modifier.height(12.dp))
@@ -262,6 +226,7 @@ fun NBackCustomDialog(
                         text = stringResource(R.string.nback_feedback_instructions),
                         maxLines = 3,
                         targetTextSize = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 Row {

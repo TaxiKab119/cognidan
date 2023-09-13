@@ -60,9 +60,10 @@ import kotlinx.coroutines.launch
 fun ParticipantsHomeScreen(
     participantList: List<Participant>,
     goToAddScreen: () -> Unit = {},
-    goToEditScreen: (Int) -> Unit = {}
+    goToParticipantData: (Participant) -> Unit = {},
+    goToEditScreen: (Participant) -> Unit = {}
 ) {
-    var selectedParticipantId: Int by remember { mutableStateOf(0) }
+    var selectedParticipant: Participant by remember { mutableStateOf(Participant.emptyParticipant) }
     val scope = rememberCoroutineScope()
     var isBottomSheetExpanded by remember { mutableStateOf(false) }
 
@@ -94,9 +95,12 @@ fun ParticipantsHomeScreen(
             ParticipantsBottomSheetContent(
                 modifier = Modifier
                     .fillMaxHeight(0.25f)
-                    .padding(12.dp)
+                    .padding(12.dp),
+                onParticipantDataClick = {
+                    goToParticipantData(selectedParticipant)
+                }
             ) {
-                goToEditScreen(selectedParticipantId)
+                goToEditScreen(selectedParticipant)
             }
         },
         scaffoldState = scaffoldState,
@@ -148,7 +152,7 @@ fun ParticipantsHomeScreen(
 
                         }
                     ) {
-                        selectedParticipantId = participant.id
+                        selectedParticipant = participant
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         if (!isBottomSheetExpanded) {
                             scope.launch {
@@ -220,20 +224,20 @@ fun ParticipantIcon(modifier: Modifier = Modifier) {
 @Composable
 fun ParticipantsBottomSheetContent(
     modifier: Modifier = Modifier,
-    onEditClick: () -> Unit
+    onParticipantDataClick: () -> Unit = {},
+    onEditClick: () -> Unit = {},
 ) {
     Column(modifier) {
         TextButton(
-            onClick = { /*TODO*/ },
+            onClick = { onParticipantDataClick() },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp)
                 .weight(1f),
-            enabled = false
         ) {
             Icon(imageVector = Icons.Default.Share, contentDescription = "Export to .csv")
             Spacer(Modifier.width(12.dp))
-            Text(text = "Export to .csv")
+            Text(text = "Participant data")
         }
         Spacer(modifier = Modifier.height(8.dp))
         TextButton(

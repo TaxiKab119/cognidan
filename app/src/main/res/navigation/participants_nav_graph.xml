@@ -9,6 +9,9 @@
         <action
             android:id="@+id/action_participants_view_dest_to_add_modify_participants_view_dest"
             app:destination="@id/add_modify_participants_view_dest" />
+        <action
+            android:id="@+id/action_participants_view_dest_to_participantsTrialDataFragment"
+            app:destination="@id/participantsTrialDataFragment" />
     </fragment>
 
     <fragment
@@ -18,12 +21,19 @@
             android:id="@+id/action_add_modify_participants_view_dest_to_participants_view_dest"
             app:destination="@id/participants_view_dest" />
         <argument
-            android:name="screenType"
-            app:argType="com.example.dancognitionapp.participants.edit.ParticipantScreenType"
-            android:defaultValue="ADD" />
+            android:name="selectedParticipant"
+            app:argType="com.example.dancognitionapp.participants.db.Participant"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+    <fragment
+        android:id="@+id/participantsTrialDataFragment"
+        android:name="com.example.dancognitionapp.participants.seetrialdata.ParticipantsTrialDataFragment"
+        android:label="ParticipantsTrialDataFragment" >
         <argument
-            android:name="participantInternalId"
-            app:argType="integer"
-            android:defaultValue="0" />
+            android:name="selectedParticipant"
+            app:argType="com.example.dancognitionapp.participants.db.Participant"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
 </navigation>

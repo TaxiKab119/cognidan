@@ -47,7 +47,6 @@ import com.example.dancognitionapp.assessment.nback.db.NBackEntity
 import com.example.dancognitionapp.landing.DanCognitionTopAppBar
 import com.example.dancognitionapp.landing.DanMenuItem
 import com.example.dancognitionapp.participants.edit.ParticipantDialog
-import timber.log.Timber
 
 enum class TestType{
     BART,
@@ -127,8 +126,8 @@ fun ParticipantsTrialDataScreen(
                 },
                 uiState = uiState,
                 modifier = Modifier.padding(horizontal = 12.dp),
-            ) { trial ->
-                viewModel.toggleToSelectedTrialsList(trial)
+            ) { trial, dataFields ->
+                viewModel.toggleToSelectedTrialsList(trial, dataFields)
             }
             CollapsibleParticipantDataItemsGroups(
                 title = "NBACK Data",
@@ -142,8 +141,8 @@ fun ParticipantsTrialDataScreen(
                 },
                 uiState = uiState,
                 modifier = Modifier.padding(horizontal = 12.dp),
-            ) { trial ->
-                viewModel.toggleToSelectedTrialsList(trial)
+            ) { trial, dataFields ->
+                viewModel.toggleToSelectedTrialsList(trial, dataFields)
             }
         }
 
@@ -156,7 +155,7 @@ fun CollapsibleParticipantDataItemsGroups(
     uiState: ParticipantsTrialDataUiState,
     modifier: Modifier = Modifier,
     onDeleteClicked: (TrialIdentifier) -> Unit = {},
-    onCheckBoxClick: (TrialIdentifier) -> Unit = {},
+    onCheckBoxClick: (TrialIdentifier, TrialDataFields) -> Unit = { _, _ -> },
 ) {
     var isExpanded by remember { mutableStateOf(false) }
 
@@ -191,7 +190,7 @@ fun CollapsibleParticipantDataItemsGroups(
                             onDeleteClicked = { onDeleteClicked(it) },
                             uiState = uiState
                         ) {
-                            onCheckBoxClick(it)
+                            onCheckBoxClick(it, trialData)
                         }
 
                     }

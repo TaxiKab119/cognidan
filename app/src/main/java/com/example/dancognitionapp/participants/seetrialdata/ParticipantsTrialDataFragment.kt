@@ -45,6 +45,7 @@ class ParticipantsTrialDataFragment: Fragment() {
                 ) { key ->
                     Timber.i("$key button was clicked")
                     // TODO - Export via db -> .csv library
+                    viewModel.exportFiles()
                 }
             }
         }

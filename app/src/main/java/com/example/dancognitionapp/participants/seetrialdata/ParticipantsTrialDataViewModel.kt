@@ -24,6 +24,8 @@ class ParticipantsTrialDataViewModel(
     private val currentState: ParticipantsTrialDataUiState
         get() = _uiState.value
 
+    private val fileBuilder = FileBuilder()
+
     fun populateFields(participant: Participant) {
         _uiState.value = currentState.copy(
             selectedParticipant = participant
@@ -55,17 +57,25 @@ class ParticipantsTrialDataViewModel(
      * a user checks the checkbox.
      * @param trialIdentifier Each checkbox has a corresponding [TrialIdentifier]
      */
-    fun toggleToSelectedTrialsList(trialIdentifier: TrialIdentifier) {
+    fun toggleToSelectedTrialsList(trialIdentifier: TrialIdentifier, trialDataFields: TrialDataFields) {
+        val csvFileParams = CSVFileParams(
+            participantName = trialDataFields.participantName,
+            testType = trialDataFields.testType.name,
+            diveStage = trialDataFields.trialTime.name,
+            day = trialDataFields.trialDay.name
+        )
         when(trialIdentifier.testType) {
             TestType.BART -> {
                 if (trialIdentifier.trialId in currentState.selectedBartTrialIds) {
                     _uiState.value = currentState.copy(
                         selectedBartTrialIds = currentState.selectedBartTrialIds - trialIdentifier.trialId
                     )
+                    fileBuilder.removeFile(csvFileParams)
                 } else {
                     _uiState.value = currentState.copy(
                         selectedBartTrialIds = currentState.selectedBartTrialIds + trialIdentifier.trialId
                     )
+                    fileBuilder.addFile(csvFileParams)
                 }
             }
             TestType.NBACK -> {
@@ -73,10 +83,12 @@ class ParticipantsTrialDataViewModel(
                     _uiState.value = currentState.copy(
                         selectedNBackTrialIds = currentState.selectedNBackTrialIds - trialIdentifier.trialId
                     )
+                    fileBuilder.removeFile(csvFileParams)
                 } else {
                     _uiState.value = currentState.copy(
                         selectedNBackTrialIds = currentState.selectedNBackTrialIds + trialIdentifier.trialId
                     )
+                    fileBuilder.addFile(csvFileParams)
                 }
             }
         }
@@ -95,5 +107,9 @@ class ParticipantsTrialDataViewModel(
                 }
             }
         }
+    }
+
+    fun exportFiles() {
+        fileBuilder.buildFiles()
     }
 }

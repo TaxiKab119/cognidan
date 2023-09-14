@@ -103,10 +103,6 @@ class FileBuilder(
         }
         return files
     }
-//    private fun buildFileName(fileParams: CSVFileParams): String {
-//        val name = fileParams.participantName.replace("\t", "")
-//        return "${name}_${fileParams.testType.name}_${fileParams.trialTime.name}_${fileParams.trialDay.name}.csv"
-//    }
 
     fun goToFileIntent(context: Context, file: File): Intent {
         val intent = Intent(Intent.ACTION_VIEW)

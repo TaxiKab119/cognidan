@@ -315,11 +315,9 @@ fun ParticipantDataTopCard(
                 Text(text = participantNotes)
             }
             Spacer(modifier = Modifier.height(8.dp))
-            val bartTrialsSpaced = bartTrialIds.joinToString { "$it" }
-            Text(text = "Selected Bart Trials: $bartTrialsSpaced")
+            Text(text = "Selected Bart Trials: ${bartTrialIds.size}")
             Spacer(modifier = Modifier.height(8.dp))
-            val nBackTrialsSpaced = nBackTrialIds.joinToString { "$it" }
-            Text(text = "Selected NBack Trials: $nBackTrialsSpaced")
+            Text(text = "Selected NBack Trials: ${nBackTrialIds.size}")
         }
     }
 }

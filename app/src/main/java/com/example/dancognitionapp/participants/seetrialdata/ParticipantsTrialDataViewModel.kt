@@ -9,6 +9,7 @@ import com.example.dancognitionapp.assessment.bart.db.BartRepository
 import com.example.dancognitionapp.assessment.nback.db.NBackRepository
 import com.example.dancognitionapp.participants.db.Participant
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -102,7 +103,25 @@ class ParticipantsTrialDataViewModel(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun exportFiles(context: Context) {
+    fun shareSelectedOrAll(context: Context, key: String) {
+        when(key) {
+            "ALL" -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    async {
+                        _uiState.value = currentState.copy(
+                            selectedBartTrialIds = currentState.allBartTrials.map { it.id },
+                            selectedNBackTrialIds = currentState.allNBackTrials.map { it.id },
+                        )
+                    }.await()
+                    exportFiles(context)
+                }
+            }
+            "SELECTED" -> { exportFiles(context) }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun exportFiles(context: Context) {
         val files = fileBuilder.buildFiles(
             context,
             currentState.selectedParticipant.userGivenId,

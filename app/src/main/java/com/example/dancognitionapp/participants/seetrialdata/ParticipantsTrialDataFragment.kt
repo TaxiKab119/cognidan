@@ -44,8 +44,8 @@ class ParticipantsTrialDataFragment: Fragment() {
                 ParticipantsTrialDataScreen(
                     uiState = uiState,
                     viewModel = viewModel
-                ) { _ ->
-                    viewModel.exportFiles(requireContext())
+                ) {
+                    viewModel.shareSelectedOrAll(requireContext(), it)
                 }
             }
         }

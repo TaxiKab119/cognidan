@@ -42,10 +42,8 @@ class ParticipantsTrialDataFragment: Fragment() {
                 ParticipantsTrialDataScreen(
                     uiState = uiState,
                     viewModel = viewModel
-                ) { key ->
-                    Timber.i("$key button was clicked")
-                    // TODO - Export via db -> .csv library
-                    viewModel.exportFiles()
+                ) { _ ->
+                    viewModel.downloadFiles(requireContext())
                 }
             }
         }

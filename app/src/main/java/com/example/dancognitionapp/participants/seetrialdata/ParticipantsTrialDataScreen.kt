@@ -192,7 +192,6 @@ fun CollapsibleParticipantDataItemsGroups(
                         ) {
                             onCheckBoxClick(it, trialData)
                         }
-
                     }
                 }
             }

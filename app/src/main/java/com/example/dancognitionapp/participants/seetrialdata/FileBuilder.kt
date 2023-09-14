@@ -1,7 +1,9 @@
 package com.example.dancognitionapp.participants.seetrialdata
 
 import android.content.Context
-import timber.log.Timber
+import android.content.Intent
+import androidx.core.content.FileProvider
+import com.example.dancognitionapp.BuildConfig
 import java.io.File
 
 class FileBuilder {
@@ -18,22 +20,29 @@ class FileBuilder {
             fileParams.remove(csvFileParams)
         }
     }
-    fun buildFiles() {
+    fun buildFiles(context: Context): List<File> {
         fileParams.forEach { fileParam ->
             val name = buildFileName(fileParam)
-            Timber.d("TONY filename: $name")
-//            val file = File(context.filesDir, name)
-//            file.createNewFile()
-//            if (file.exists()) {
-//                files.add(file)
-//            }
-
+            val file = File(context.filesDir, name)
+            file.createNewFile()
+            if (file.exists()) {
+                files.add(file)
+            }
         }
-
+        return files
     }
     private fun buildFileName(fileParams: CSVFileParams): String {
         val name = fileParams.participantName.replace("\t", "")
         return "${name}_${fileParams.testType}_${fileParams.diveStage}_${fileParams.day}.csv"
+    }
+
+    fun goToFileIntent(context: Context, file: File): Intent {
+        val intent = Intent(Intent.ACTION_VIEW)
+        val contentUri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.fileprovider", file)
+        val mimeType = context.contentResolver.getType(contentUri)
+        intent.setDataAndType(contentUri, mimeType)
+        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+        return intent
     }
 }
 

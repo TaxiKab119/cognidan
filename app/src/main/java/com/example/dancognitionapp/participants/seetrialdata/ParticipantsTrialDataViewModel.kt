@@ -1,5 +1,6 @@
 package com.example.dancognitionapp.participants.seetrialdata
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dancognitionapp.assessment.bart.db.BartRepository
@@ -109,7 +110,9 @@ class ParticipantsTrialDataViewModel(
         }
     }
 
-    fun exportFiles() {
-        fileBuilder.buildFiles()
+    fun downloadFiles(context: Context) {
+        val files = fileBuilder.buildFiles(context)
+        val intent = fileBuilder.goToFileIntent(context, files.first())
+        context.startActivity(intent)
     }
 }

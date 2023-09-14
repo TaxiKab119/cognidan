@@ -126,8 +126,8 @@ fun ParticipantsTrialDataScreen(
                 },
                 uiState = uiState,
                 modifier = Modifier.padding(horizontal = 12.dp),
-            ) { trial, dataFields ->
-                viewModel.toggleToSelectedTrialsList(trial, dataFields)
+            ) { trial ->
+                viewModel.toggleToSelectedTrialsList(trial)
             }
             CollapsibleParticipantDataItemsGroups(
                 title = "NBACK Data",
@@ -141,8 +141,8 @@ fun ParticipantsTrialDataScreen(
                 },
                 uiState = uiState,
                 modifier = Modifier.padding(horizontal = 12.dp),
-            ) { trial, dataFields ->
-                viewModel.toggleToSelectedTrialsList(trial, dataFields)
+            ) { trial ->
+                viewModel.toggleToSelectedTrialsList(trial)
             }
         }
 
@@ -155,7 +155,7 @@ fun CollapsibleParticipantDataItemsGroups(
     uiState: ParticipantsTrialDataUiState,
     modifier: Modifier = Modifier,
     onDeleteClicked: (TrialIdentifier) -> Unit = {},
-    onCheckBoxClick: (TrialIdentifier, TrialDataFields) -> Unit = { _, _ -> },
+    onCheckBoxClick: (TrialIdentifier ) -> Unit = {},
 ) {
     var isExpanded by remember { mutableStateOf(false) }
 
@@ -190,7 +190,7 @@ fun CollapsibleParticipantDataItemsGroups(
                             onDeleteClicked = { onDeleteClicked(it) },
                             uiState = uiState
                         ) {
-                            onCheckBoxClick(it, trialData)
+                            onCheckBoxClick(it)
                         }
                     }
                 }

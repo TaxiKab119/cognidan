@@ -104,4 +104,10 @@ interface BartDao {
 
     @Query("SELECT * FROM BartTrialData WHERE dan_participant_id = :participantId AND trial_day = :trialDay AND trial_time = :trialTime")
     fun loadBartTrialData(participantId: String, trialDay: TrialDay, trialTime: TrialTime): List<BartTrialData>
+
+    @Query("""
+        SELECT * FROM BartTrialData
+        WHERE trial_id IN (:trialIds)
+    """)
+    fun getBartTrialDataById(trialIds: List<Int>): List<BartTrialData>
 }

@@ -1,6 +1,8 @@
 package com.example.dancognitionapp.participants.seetrialdata
 
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dancognitionapp.assessment.bart.db.BartRepository
@@ -57,26 +59,17 @@ class ParticipantsTrialDataViewModel(
      * a user checks the checkbox.
      * @param trialIdentifier Each checkbox has a corresponding [TrialIdentifier]
      */
-    fun toggleToSelectedTrialsList(trialIdentifier: TrialIdentifier, trialDataFields: TrialDataFields) {
-        val csvFileParams = CSVFileParams(
-            participantName = trialDataFields.participantName,
-            participantId = trialDataFields.danParticipantId,
-            testType = trialDataFields.testType,
-            trialTime = trialDataFields.trialTime,
-            trialDay = trialDataFields.trialDay
-        )
+    fun toggleToSelectedTrialsList(trialIdentifier: TrialIdentifier) {
         when(trialIdentifier.testType) {
             TestType.BART -> {
                 if (trialIdentifier.trialId in currentState.selectedBartTrialIds) {
                     _uiState.value = currentState.copy(
                         selectedBartTrialIds = currentState.selectedBartTrialIds - trialIdentifier.trialId
                     )
-                    fileBuilder.removeFile(csvFileParams)
                 } else {
                     _uiState.value = currentState.copy(
                         selectedBartTrialIds = currentState.selectedBartTrialIds + trialIdentifier.trialId
                     )
-                    fileBuilder.addFile(csvFileParams)
                 }
             }
             TestType.NBACK -> {
@@ -84,12 +77,10 @@ class ParticipantsTrialDataViewModel(
                     _uiState.value = currentState.copy(
                         selectedNBackTrialIds = currentState.selectedNBackTrialIds - trialIdentifier.trialId
                     )
-                    fileBuilder.removeFile(csvFileParams)
                 } else {
                     _uiState.value = currentState.copy(
                         selectedNBackTrialIds = currentState.selectedNBackTrialIds + trialIdentifier.trialId
                     )
-                    fileBuilder.addFile(csvFileParams)
                 }
             }
         }
@@ -110,11 +101,14 @@ class ParticipantsTrialDataViewModel(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun exportFiles(context: Context) {
-        val files = fileBuilder.buildFiles(context)
-        files.forEach { file ->
-            val intent = fileBuilder.goToFileIntent(context, file)
-            context.startActivity(intent)
-        }
+        val file = fileBuilder.buildFiles(
+            context,
+            currentState.selectedParticipant.userGivenId,
+            currentState.selectedBartTrialIds,
+        )
+        val intent = fileBuilder.goToFileIntent(context, file)
+        context.startActivity(intent)
     }
 }

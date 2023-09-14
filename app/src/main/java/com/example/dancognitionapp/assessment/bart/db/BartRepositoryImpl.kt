@@ -55,4 +55,8 @@ class BartRepositoryImpl(private val bartDao: BartDao): BartRepository {
     ): Flow<List<BartTrialData>> {
         return flowOf(bartDao.loadBartTrialData(participantId, trialDay, trialTime))
     }
+
+    override suspend fun getBartTrialDataByTrialIds(trialIds: List<Int>): Flow<List<BartTrialData>> {
+        return flowOf(bartDao.getBartTrialDataById(trialIds))
+    }
 }

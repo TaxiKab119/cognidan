@@ -2,6 +2,8 @@ package com.example.dancognitionapp.participants.seetrialdata
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
 import com.example.dancognitionapp.BuildConfig
 import com.example.dancognitionapp.assessment.TrialDay
@@ -13,7 +15,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
-
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 class FileBuilder(
     private val coroutineScope: CoroutineScope,
     private val bartRepository: BartRepository,
@@ -21,54 +24,39 @@ class FileBuilder(
 ) {
 
     private val files = mutableListOf<File>()
-    private val fileParams = mutableListOf<CSVFileParams>()
-
-    fun addFile(csvFileParams: CSVFileParams) {
-       fileParams.add(csvFileParams)
-    }
-
-    fun removeFile(csvFileParams: CSVFileParams) {
-        if (fileParams.contains(csvFileParams)) {
-            fileParams.remove(csvFileParams)
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun buildFiles(context: Context, participantId: String, bartTrialIds: List<Int>): File {
+        val currentTime = getCurrentDateTimeForFilename()
+        val name = "${participantId}_${currentTime}_BART_DATA.csv"
+        val file = File(context.filesDir, name)
+        file.createNewFile()
+        if(file.exists()) {
+            files.add(file)
         }
-    }
-    fun buildFiles(context: Context): List<File> {
-        fileParams.forEach { fileParam ->
-            val name = buildFileName(fileParam)
-            val file = File(context.filesDir, name)
-            file.createNewFile()
-            if (file.exists()) {
-                files.add(file)
-            }
-            coroutineScope.launch(Dispatchers.IO) {
-                if (fileParam.testType == TestType.BART){
-                    bartRepository.loadBartTrialData(
-                        participantId = fileParam.participantId,
-                        trialDay = fileParam.trialDay,
-                        trialTime = fileParam.trialTime
-                    ).collect { trials ->
-                        csvWriter().open(file, append = false) {
-                            //Header
-                            writeRow(listOf("Id", "Trial Day", "Trial Time", "Balloon Number", "Max Inflations", "Number of Inflations", "Did Pop"))
-                            trials.forEach {
-                                writeRow(
-                                    listOf(
-                                        it.userGivenParticipantId,
-                                        it.trialDay,
-                                        it.trialTime,
-                                        it.balloonNumber,
-                                        it.maxInflations,
-                                        it.numberOfInflations,
-                                        it.didPop
-                                    )
-                                )
-                            }
-                        }
+        coroutineScope.launch(Dispatchers.IO) {
+            bartRepository.getBartTrialDataByTrialIds(
+                bartTrialIds
+            ).collect { trials ->
+                csvWriter().open(file, append = false) {
+                    //Header
+                    writeRow(listOf("Id", "Trial Day", "Trial Time", "Balloon Number", "Max Inflations", "Number of Inflations", "Did Pop"))
+                    trials.forEach {
+                        writeRow(
+                            listOf(
+                                it.userGivenParticipantId,
+                                it.trialDay,
+                                it.trialTime,
+                                it.balloonNumber,
+                                it.maxInflations,
+                                it.numberOfInflations,
+                                it.didPop
+                            )
+                        )
                     }
                 }
             }
         }
-        return files
+        return file
     }
     private fun buildFileName(fileParams: CSVFileParams): String {
         val name = fileParams.participantName.replace("\t", "")
@@ -82,6 +70,18 @@ class FileBuilder(
         intent.setDataAndType(contentUri, mimeType)
         intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
         return intent
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getCurrentDateTimeForFilename(): String {
+        // Get the current date and time
+        val currentDateTime = LocalDateTime.now()
+
+        // Define a date-time format suitable for filenames
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd(HH_mm_ss)")
+
+        // Format the current date and time as a string
+        return currentDateTime.format(formatter)
     }
 }
 

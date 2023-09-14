@@ -7,6 +7,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.example.dancognitionapp.assessment.TrialDay
 import com.example.dancognitionapp.assessment.TrialTime
+import com.example.dancognitionapp.assessment.bart.db.BartTrialData
 import com.example.dancognitionapp.assessment.nback.data.NBackClickCategorization
 import kotlinx.coroutines.flow.Flow
 
@@ -107,5 +108,11 @@ interface NBackDao {
         deleteNBackItemsByParticipantId(participantId)
         deleteNBackTrialEntitiesByParticipantId(participantId)
     }
+
+    @Query("""
+        SELECT * FROM NBackTrialData
+        WHERE trial_id IN (:trialIds)
+    """)
+    fun getNBackTrialDataById(trialIds: List<Int>): List<NBackTrialData>
 
 }

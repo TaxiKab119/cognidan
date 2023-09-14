@@ -48,4 +48,9 @@ class PracticeNBackRepository: NBackRepository {
         /* DO NOTHING (no db actions for practice trials) */
         return emptyFlow()
     }
+
+    override suspend fun getNBackTrialsByTrialIds(trialIds: List<Int>): Flow<List<NBackTrialData>> {
+        /* DO NOTHING (no db actions for practice trials) */
+        return emptyFlow()
+    }
 }

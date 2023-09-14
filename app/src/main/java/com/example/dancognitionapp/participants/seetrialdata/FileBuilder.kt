@@ -13,6 +13,7 @@ import com.example.dancognitionapp.assessment.nback.db.NBackRepository
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.io.File
 import java.time.LocalDateTime
@@ -25,21 +26,35 @@ class FileBuilder(
 
     private val files = mutableListOf<File>()
     @RequiresApi(Build.VERSION_CODES.O)
-    fun buildFiles(context: Context, participantId: String, bartTrialIds: List<Int>): File {
+    fun buildFiles(
+        context: Context,
+        participantId: String,
+        bartTrialIds: List<Int>,
+        nbackTrialIds: List<Int>,
+    ): List<File> {
         val currentTime = getCurrentDateTimeForFilename()
-        val name = "${participantId}_${currentTime}_BART_DATA.csv"
-        val file = File(context.filesDir, name)
-        file.createNewFile()
-        if(file.exists()) {
-            files.add(file)
+
+        // Create BART file
+        val bartName = "${participantId}_${currentTime}_BART_DATA.csv"
+        val bartFile = File(context.filesDir, bartName)
+        bartFile.createNewFile()
+        if (bartFile.exists()) {
+            files.add(bartFile)
         }
+
+        // Create NBack file
+        val nBackName = "${participantId}_${currentTime}_NBACK_DATA.csv"
+        val nBackFile = File(context.filesDir, nBackName)
+        nBackFile.createNewFile()
+        if (nBackFile.exists()) {
+            files.add(nBackFile)
+        }
+
         coroutineScope.launch(Dispatchers.IO) {
-            bartRepository.getBartTrialDataByTrialIds(
-                bartTrialIds
-            ).collect { trials ->
-                csvWriter().open(file, append = false) {
+            bartRepository.getBartTrialDataByTrialIds(bartTrialIds).collect { trials ->
+                csvWriter().open(bartFile, append = false) {
                     //Header
-                    writeRow(listOf("Id", "Trial Day", "Trial Time", "Balloon Number", "Max Inflations", "Number of Inflations", "Did Pop"))
+                    writeRow(listOf("Id", "Trial_Day", "Trial_Time", "Balloon_Number", "Max_Inflations", "Number_of_Inflations", "Did_Pop"))
                     trials.forEach {
                         writeRow(
                             listOf(
@@ -56,12 +71,42 @@ class FileBuilder(
                 }
             }
         }
-        return file
+        coroutineScope.launch(Dispatchers.IO) {
+            nBackRepository.getNBackTrialsByTrialIds(nbackTrialIds).collect { trials ->
+                csvWriter().open(nBackFile, append = false) {
+                    //Header
+                    writeRow(
+                        listOf(
+                            "Id", "Trial_Day", "Trial_Time", "Block_Number", "N_Value",
+                            "Presentation_Number", "Reaction_Time", "Is_Target", "Categorization",
+                            "Was_Correct_Action",
+                        )
+                    )
+                    trials.forEach {
+                        writeRow(
+                            listOf(
+                                it.userGivenParticipantId,
+                                it.trialDay,
+                                it.trialTime,
+                                it.blockNumber,
+                                it.nValue,
+                                it.presentationNumber,
+                                it.reactionTime,
+                                it.isTarget,
+                                it.categorization,
+                                it.wasCorrectAction
+                            )
+                        )
+                    }
+                }
+            }
+        }
+        return files
     }
-    private fun buildFileName(fileParams: CSVFileParams): String {
-        val name = fileParams.participantName.replace("\t", "")
-        return "${name}_${fileParams.testType.name}_${fileParams.trialTime.name}_${fileParams.trialDay.name}.csv"
-    }
+//    private fun buildFileName(fileParams: CSVFileParams): String {
+//        val name = fileParams.participantName.replace("\t", "")
+//        return "${name}_${fileParams.testType.name}_${fileParams.trialTime.name}_${fileParams.trialDay.name}.csv"
+//    }
 
     fun goToFileIntent(context: Context, file: File): Intent {
         val intent = Intent(Intent.ACTION_VIEW)
@@ -84,11 +129,3 @@ class FileBuilder(
         return currentDateTime.format(formatter)
     }
 }
-
-data class CSVFileParams(
-    val participantId: String,
-    val participantName: String,
-    val testType: TestType,
-    val trialTime: TrialTime,
-    val trialDay: TrialDay
-)

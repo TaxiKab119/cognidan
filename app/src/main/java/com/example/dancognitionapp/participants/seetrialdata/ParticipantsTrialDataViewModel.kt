@@ -103,12 +103,15 @@ class ParticipantsTrialDataViewModel(
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun exportFiles(context: Context) {
-        val file = fileBuilder.buildFiles(
+        val files = fileBuilder.buildFiles(
             context,
             currentState.selectedParticipant.userGivenId,
             currentState.selectedBartTrialIds,
+            currentState.selectedNBackTrialIds
         )
-        val intent = fileBuilder.goToFileIntent(context, file)
-        context.startActivity(intent)
+        files.forEach { file ->
+            val intent = fileBuilder.goToFileIntent(context, file)
+            context.startActivity(intent)
+        }
     }
 }

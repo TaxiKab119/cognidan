@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-
 class ParticipantsTrialDataViewModel(
     private val bartRepository: BartRepository,
     private val nBackRepository: NBackRepository,
@@ -111,9 +110,11 @@ class ParticipantsTrialDataViewModel(
         }
     }
 
-    fun downloadFiles(context: Context) {
+    fun exportFiles(context: Context) {
         val files = fileBuilder.buildFiles(context)
-        val intent = fileBuilder.goToFileIntent(context, files.first())
-        context.startActivity(intent)
+        files.forEach { file ->
+            val intent = fileBuilder.goToFileIntent(context, file)
+            context.startActivity(intent)
+        }
     }
 }

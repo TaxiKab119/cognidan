@@ -46,11 +46,11 @@ class FileBuilder(
                         participantId = fileParam.participantId,
                         trialDay = fileParam.trialDay,
                         trialTime = fileParam.trialTime
-                    ).collect { entities ->
+                    ).collect { trials ->
                         csvWriter().open(file, append = false) {
                             //Header
                             writeRow(listOf("Id", "Trial Day", "Trial Time", "Balloon Number", "Max Inflations", "Number of Inflations", "Did Pop"))
-                            entities.forEach {
+                            trials.forEach {
                                 writeRow(
                                     listOf(
                                         it.userGivenParticipantId,

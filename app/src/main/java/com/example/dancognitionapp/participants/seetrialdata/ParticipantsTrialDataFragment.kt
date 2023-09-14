@@ -16,7 +16,6 @@ import com.example.dancognitionapp.R
 import com.example.dancognitionapp.participants.db.Participant
 import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class ParticipantsTrialDataFragment: Fragment() {
     private val args: ParticipantsTrialDataFragmentArgs by navArgs()
@@ -43,7 +42,7 @@ class ParticipantsTrialDataFragment: Fragment() {
                     uiState = uiState,
                     viewModel = viewModel
                 ) { _ ->
-                    viewModel.downloadFiles(requireContext())
+                    viewModel.exportFiles(requireContext())
                 }
             }
         }

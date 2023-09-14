@@ -44,4 +44,12 @@ class PracticeBartRepository: BartRepository {
         /* DO NOTHING (no db actions for practice trials) */
         return emptyFlow()
     }
+
+    override suspend fun loadBartTrialData(
+        participantId: String,
+        trialDay: TrialDay,
+        trialTime: TrialTime
+    ): Flow<List<BartTrialData>> {
+        return emptyFlow()
+    }
 }

@@ -25,7 +25,7 @@ class ParticipantsTrialDataViewModel(
     private val currentState: ParticipantsTrialDataUiState
         get() = _uiState.value
 
-    private val fileBuilder = FileBuilder()
+    private val fileBuilder = FileBuilder(viewModelScope, bartRepository, nBackRepository)
 
     fun populateFields(participant: Participant) {
         _uiState.value = currentState.copy(
@@ -61,9 +61,10 @@ class ParticipantsTrialDataViewModel(
     fun toggleToSelectedTrialsList(trialIdentifier: TrialIdentifier, trialDataFields: TrialDataFields) {
         val csvFileParams = CSVFileParams(
             participantName = trialDataFields.participantName,
-            testType = trialDataFields.testType.name,
-            diveStage = trialDataFields.trialTime.name,
-            day = trialDataFields.trialDay.name
+            participantId = trialDataFields.danParticipantId,
+            testType = trialDataFields.testType,
+            trialTime = trialDataFields.trialTime,
+            trialDay = trialDataFields.trialDay
         )
         when(trialIdentifier.testType) {
             TestType.BART -> {

@@ -27,4 +27,6 @@ interface BartRepository {
     ): BartEntity?
 
     suspend fun getBartTrialsByParticipantId(participantId: Int): Flow<List<BartEntity>>
+
+    suspend fun loadBartTrialData(participantId: String, trialDay: TrialDay, trialTime: TrialTime): Flow<List<BartTrialData>>
 }

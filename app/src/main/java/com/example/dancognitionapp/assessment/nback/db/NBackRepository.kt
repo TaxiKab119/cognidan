@@ -31,4 +31,5 @@ interface NBackRepository {
     ): NBackEntity?
 
     suspend fun getNBackTrialsByParticipantId(participantId: Int): Flow<List<NBackEntity>>
+    suspend fun getNBackTrialsByTrialIds(trialIds: List<Int>): Flow<List<NBackTrialData>>
 }

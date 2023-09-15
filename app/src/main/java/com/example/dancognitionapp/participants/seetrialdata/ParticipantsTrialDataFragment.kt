@@ -1,9 +1,11 @@
 package com.example.dancognitionapp.participants.seetrialdata
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
@@ -16,7 +18,6 @@ import com.example.dancognitionapp.R
 import com.example.dancognitionapp.participants.db.Participant
 import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class ParticipantsTrialDataFragment: Fragment() {
     private val args: ParticipantsTrialDataFragmentArgs by navArgs()
@@ -24,12 +25,22 @@ class ParticipantsTrialDataFragment: Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (savedInstanceState == null) {
-            lifecycleScope.launch {
-                viewModel.populateFields(args.selectedParticipant ?: Participant.emptyParticipant)
+        lifecycleScope.launch {
+            args.selectedParticipant?.let {
+                viewModel.populateFields(it, it.id)
             }
+
+            val participantId = args.selectedParticipant?.id ?: savedInstanceState?.getInt("participantId") ?: 0
+            viewModel.populateFields(args.selectedParticipant ?: Participant.emptyParticipant, participantId)
         }
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        args.selectedParticipant?.id?.let { outState.putInt("participantId", it) }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -42,9 +53,8 @@ class ParticipantsTrialDataFragment: Fragment() {
                 ParticipantsTrialDataScreen(
                     uiState = uiState,
                     viewModel = viewModel
-                ) { key ->
-                    Timber.i("$key button was clicked")
-                    // TODO - Export via db -> .csv library
+                ) {
+                    viewModel.shareSelectedOrAll(requireContext(), it)
                 }
             }
         }

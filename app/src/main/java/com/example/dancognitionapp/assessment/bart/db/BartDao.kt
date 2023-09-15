@@ -101,4 +101,10 @@ interface BartDao {
         deleteBalloonsByParticipantId(participantId)
         deleteBartTrialEntitiesByParticipantId(participantId)
     }
+
+    @Query("""
+        SELECT * FROM BartTrialData
+        WHERE trial_id IN (:trialIds)
+    """)
+    fun getBartTrialDataById(trialIds: List<Int>): List<BartTrialData>
 }

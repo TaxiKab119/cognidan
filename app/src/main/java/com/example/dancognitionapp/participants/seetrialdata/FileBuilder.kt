@@ -6,51 +6,37 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
 import com.example.dancognitionapp.BuildConfig
-import com.example.dancognitionapp.assessment.TrialDay
-import com.example.dancognitionapp.assessment.TrialTime
 import com.example.dancognitionapp.assessment.bart.db.BartRepository
 import com.example.dancognitionapp.assessment.nback.db.NBackRepository
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+
 class FileBuilder(
-    private val coroutineScope: CoroutineScope,
     private val bartRepository: BartRepository,
     private val nBackRepository: NBackRepository
 ) {
 
     private val files = mutableListOf<File>()
     @RequiresApi(Build.VERSION_CODES.O)
-    fun buildFiles(
+    suspend fun buildFiles(
         context: Context,
         participantId: String,
         bartTrialIds: List<Int>,
         nbackTrialIds: List<Int>,
     ): List<File> {
+        files.clear()
         val currentTime = getCurrentDateTimeForFilename()
 
         // Create BART file
         val bartName = "${participantId}_${currentTime}_BART_DATA.csv"
         val bartFile = File(context.filesDir, bartName)
-        bartFile.createNewFile()
-        if (bartFile.exists()) {
-            files.add(bartFile)
-        }
-
-        // Create NBack file
-        val nBackName = "${participantId}_${currentTime}_NBACK_DATA.csv"
-        val nBackFile = File(context.filesDir, nBackName)
-        nBackFile.createNewFile()
-        if (nBackFile.exists()) {
-            files.add(nBackFile)
-        }
-
-        coroutineScope.launch(Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
+            bartFile.createNewFile()
             bartRepository.getBartTrialDataByTrialIds(bartTrialIds).collect { trials ->
                 csvWriter().open(bartFile, append = false) {
                     //Header
@@ -71,7 +57,15 @@ class FileBuilder(
                 }
             }
         }
-        coroutineScope.launch(Dispatchers.IO) {
+        if (bartFile.exists()) {
+            files.add(bartFile)
+        }
+
+        // Create NBack file
+        val nBackName = "${participantId}_${currentTime}_NBACK_DATA.csv"
+        val nBackFile = File(context.filesDir, nBackName)
+        withContext(Dispatchers.IO) {
+            nBackFile.createNewFile()
             nBackRepository.getNBackTrialsByTrialIds(nbackTrialIds).collect { trials ->
                 csvWriter().open(nBackFile, append = false) {
                     //Header
@@ -101,6 +95,10 @@ class FileBuilder(
                 }
             }
         }
+        if (nBackFile.exists()) {
+            files.add(nBackFile)
+        }
+
         return files
     }
 

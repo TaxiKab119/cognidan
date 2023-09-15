@@ -27,7 +27,7 @@ class ParticipantsTrialDataViewModel(
     private val currentState: ParticipantsTrialDataUiState
         get() = _uiState.value
 
-    private val fileBuilder = FileBuilder(viewModelScope, bartRepository, nBackRepository)
+    private val fileBuilder = FileBuilder(bartRepository, nBackRepository)
 
     fun populateFields(participant: Participant) {
         _uiState.value = currentState.copy(
@@ -122,15 +122,17 @@ class ParticipantsTrialDataViewModel(
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun exportFiles(context: Context) {
-        val files = fileBuilder.buildFiles(
-            context,
-            currentState.selectedParticipant.userGivenId,
-            currentState.selectedBartTrialIds,
-            currentState.selectedNBackTrialIds
-        )
-        files.forEach { file ->
-            val intent = fileBuilder.goToFileIntent(context, file)
-            context.startActivity(intent)
+        viewModelScope.launch(Dispatchers.IO) {
+            val files = fileBuilder.buildFiles(
+                context,
+                currentState.selectedParticipant.userGivenId,
+                currentState.selectedBartTrialIds,
+                currentState.selectedNBackTrialIds
+            )
+            files.forEach { file ->
+                val intent = fileBuilder.goToFileIntent(context, file)
+                context.startActivity(intent)
+            }
         }
     }
 }

@@ -29,7 +29,7 @@ class NBackViewModel(private val nBackRepository: NBackRepository): ViewModel() 
     )
     private var testType = NBackType.N_1
     private var lifetimePresentations = 0
-    private var maxLifetimePresentations = 9 // initialize to 9 (assuming it is not practice, this is updated to 3 if it is practice // TODO - FIX THIS
+    private var maxLifetimePresentations = 9 // initialize to 9 (assuming it is not practice, this is updated to 3 if it is practice)
     private var blockNumber = 1
 
     private val _uiState = MutableStateFlow(
@@ -80,7 +80,7 @@ class NBackViewModel(private val nBackRepository: NBackRepository): ViewModel() 
                 toggleScreenClickable()
                 Timber.i("Current Char: ${uiState.value.currentItem} and list Size: ${uiState.value.presentationList.size}")
                 val startShowingStimulusTime = System.currentTimeMillis()
-                delay(150) // Show Stimulus for 1500ms // TODO - FIX THIS
+                delay(1500) // Show Stimulus for 1500ms
                 Timber.i("Current Char (AFTER DELAY): ${uiState.value.currentItem} and list Size: ${uiState.value.presentationList.size}")
                 val clickTime = _uiState.value.clickTime
                 var reactionTime: Long? = clickTime - startShowingStimulusTime
@@ -100,7 +100,7 @@ class NBackViewModel(private val nBackRepository: NBackRepository): ViewModel() 
                     clickTime = 0L
                 )
                 toggleScreenClickable()
-                delay(50) // inter-stimulus time (no dot showing) // TODO - FIX THIS
+                delay(500) // inter-stimulus time (no dot showing)
             }
             delay(1000) // add a delay before showing dialog for next type
             toNextList()

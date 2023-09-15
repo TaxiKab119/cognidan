@@ -23,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -107,12 +108,16 @@ fun LandingPageContent(modifier: Modifier = Modifier, onClick: (LandingDestinati
 fun DanCognitionTopAppBar(
     @StringRes headerResId: Int,
     modifier: Modifier = Modifier,
+    initialRotation: Float = 0f,
     wantMenuButton: Boolean = false,
     menuIcon: ImageVector = Icons.Default.MoreVert,
     menuItems: List<DanMenuItem> = listOf(),
     onMenuItemClick: (DanMenuItem) -> Unit = {}
 ) {
-    var rotationState by remember { mutableStateOf(0f) }
+    var rotationState by remember { mutableStateOf(initialRotation) }
+    var clickCounter by remember { mutableStateOf(0) }
+
+    Timber.i("Rotation State: $rotationState")
 
     val rotation by animateFloatAsState(
         targetValue = rotationState,
@@ -122,7 +127,7 @@ fun DanCognitionTopAppBar(
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
-                    painter = painterResource(id = R.drawable.brain_logo),
+                    painter = painterResource(id = if (clickCounter >= 7) R.drawable.cognidan_flipped else R.drawable.brain_logo),
                     contentDescription = null,
                     modifier = Modifier
                         .size(64.dp)
@@ -130,6 +135,10 @@ fun DanCognitionTopAppBar(
                         .graphicsLayer { rotationZ = rotation }
                         .clickable {
                             rotationState += 360f // Rotate by 360 degrees when clicked
+                            clickCounter++
+                            if (clickCounter >= 10) {
+                                clickCounter = 0
+                            }
                         }
                 )
                 ResponsiveText(

@@ -18,7 +18,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -33,23 +36,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.dancognitionapp.R
+import com.example.dancognitionapp.utils.LandscapePreview
+import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 import com.example.dancognitionapp.utils.widget.ResponsiveText
 
 enum class NBackFeedbackState {
     HIT,
-    //    MISS,
     FALSE_ALARM,
-    //    CORRECT_REJECTION,
     INTERMEDIATE
 }
-val slyRemarks = listOf(
-    "Wow that was bad!",
-    "Trigger happy much?",
-    "I\'d be better with my eyes closed",
-    "Incorrect...Loser",
-    "Consult an optometrist",
-    "Why did you click that one?"
-)
+//val slyRemarks = listOf(
+//    "Wow that was bad!",
+//    "Trigger happy much?",
+//    "I\'d be better with my eyes closed",
+//    "Incorrect...Loser",
+//    "Consult an optometrist",
+//    "Why did you click that one?"
+//)
 
 @Composable
 fun NBackScreen(
@@ -111,17 +114,18 @@ fun NBackScreen(
                 viewModel.startAdvancing()
             }
         }
-        if (isPractice && !uiState.showDialog) {
+        if (!uiState.showDialog) {
             NBackFeedback(
                 feedbackState = uiState.feedbackState,
-                modifier = Modifier.align(Alignment.TopCenter)
+                modifier = Modifier.align(Alignment.TopCenter),
+                isPractice = isPractice
             )
         }
         Box(
             modifier = Modifier
                 .fillMaxWidth(0.7f)
                 .wrapContentSize(Alignment.Center)
-                .border(8.dp, color = MaterialTheme.colorScheme.surface)
+                .border(4.dp, color = MaterialTheme.colorScheme.surface)
         ) {
             if (!uiState.showDialog) {
                 LazyVerticalGrid(
@@ -148,7 +152,7 @@ fun NBackQuadrant(modifier: Modifier = Modifier, currentChar: Char = 'a', quadra
     Box(
         modifier = modifier
             .background(color = MaterialTheme.colorScheme.surface)
-            .border(8.dp, Color.Black)
+            .border(4.dp, Color.Black)
             .size(85.dp)
     ) {
         if (currentChar == quadrantChar) {
@@ -159,21 +163,37 @@ fun NBackQuadrant(modifier: Modifier = Modifier, currentChar: Char = 'a', quadra
                     .align(Alignment.Center)
             )
         }
+        if (quadrantChar == 'Z') {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.align(Alignment.Center)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Focus",
+                    modifier = Modifier.size(40.dp)
+                )
+            }
+
+        }
     }
 }
 
 @Composable
-fun NBackFeedback(feedbackState: NBackFeedbackState, modifier: Modifier = Modifier) {
+fun NBackFeedback(
+    feedbackState: NBackFeedbackState,
+    isPractice: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val isPracticeResponse: Pair<String, Color> = "Clicked" to Color.Black
+    val goodClickResponse: Pair<String, Color> = if (isPractice) ("Correct" to Color.Green) else isPracticeResponse
+    val badClickResponse: Pair<String, Color> = if (isPractice) "Incorrect!" to Color.Red else isPracticeResponse
+
     val (text, color) = when(feedbackState) {
-        NBackFeedbackState.HIT -> "Correct!" to Color.Green
-        NBackFeedbackState.FALSE_ALARM -> slyRemarks.shuffled().first() to Color.Red
+        NBackFeedbackState.HIT -> goodClickResponse
+        NBackFeedbackState.FALSE_ALARM -> badClickResponse
         NBackFeedbackState.INTERMEDIATE -> "" to Color.Black
     }
-    /* TODO
-    *   - add integration for isPractice that will just show if screen was clicked or not
-    *   - when NBackFeedBackState is Hit or False Alarm just show CLICKED
-    *   - Else show INTERMEDIATE
-    *  */
     Text(
         text = text,
         modifier = modifier
@@ -246,11 +266,3 @@ fun NBackCustomDialog(
         }
     }
 }
-
-//@LandscapePreview
-//@Composable
-//fun NBackScreenPreview() {
-//    DanCognitionAppTheme {
-//        NBackCustomDialog(isPractice = true)
-//    }
-//}

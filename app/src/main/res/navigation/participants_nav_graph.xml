@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/participants_nav_graph"
+    app:startDestination="@id/participants_view_dest">
+    <fragment
+        android:id="@+id/participants_view_dest"
+        android:name="com.example.dancognitionapp.participants.home.ParticipantsHomeFragment">
+        <action
+            android:id="@+id/action_participants_view_dest_to_add_modify_participants_view_dest"
+            app:destination="@id/add_modify_participants_view_dest" />
+        <action
+            android:id="@+id/action_participants_view_dest_to_participantsTrialDataFragment"
+            app:destination="@id/participantsTrialDataFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/add_modify_participants_view_dest"
+        android:name="com.example.dancognitionapp.participants.edit.AddEditParticipantsFragment">
+        <action
+            android:id="@+id/action_add_modify_participants_view_dest_to_participants_view_dest"
+            app:destination="@id/participants_view_dest" />
+        <argument
+            android:name="selectedParticipant"
+            app:argType="com.example.dancognitionapp.participants.db.Participant"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+    <fragment
+        android:id="@+id/participantsTrialDataFragment"
+        android:name="com.example.dancognitionapp.participants.seetrialdata.ParticipantsTrialDataFragment"
+        android:label="ParticipantsTrialDataFragment" >
+        <argument
+            android:name="selectedParticipant"
+            app:argType="com.example.dancognitionapp.participants.db.Participant"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+</navigation>

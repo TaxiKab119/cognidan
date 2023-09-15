@@ -1,3 +1,68 @@
 <resources>
-    <string name="app_name">DanCognitionApp</string>
+    <string name="app_name">CogniDAN</string>
+    <string name="ok_button">OK</string>
+    <string name="cancel_button">Cancel</string>
+
+    <string name="landing_practice_trial">Practice</string>
+    <string name="landing_participant_manager">Participant manager</string>
+    <string name="landing_start_trial">Start a trial</string>
+
+    <string name="bart_screen_title">BART</string>
+    <string name="bart_test_instructions">In this task, you will see a series of balloons. For each balloon, you have the choice to either collect the balloon\'s reward to store in your bank or inflate the balloon to increase the reward. Each time you inflate a balloon the reward for that balloon will increase, but if the balloon pops before you can collect the reward you will not be able to claim any reward money for that balloon.</string>
+    <string name="bart_inflate_button_label">Inflate</string>
+    <string name="bart_collect_button_label">Collect \$</string>
+    <string name="bart_reward_for_balloon">Balloon reward:</string>
+    <string name="bart_total_earnings">Total earnings:</string>
+    <string name="bart_dialog_popped_message">Balloon popped!</string>
+    <string name="bart_dialog_popped_instructions">Click here to dismiss</string>
+    <string name="bart_dialog_end_message">End of test</string>
+    <string name="bart_dialog_end_instructions">Click to leave</string>
+
+    <plurals name="nback_test_instructions">
+        <item quantity="one">
+            After a 2s pause, you will see a sequence of blue dots.
+            Each dot is shown for a few seconds.
+            You need to decide if you saw the same blue dot %1$d trial ago.
+            If you saw the same dot %1$d trial prior, click ANYWHERE on the screen.
+        </item>
+        <item quantity="other">
+            After a 2s pause, you will see a sequence of blue dots.
+            Each dot is shown for a few seconds.
+            You need to decide if you saw the same blue dot %1$d trials ago.
+            If you saw the same dot %1$d trials prior, click ANYWHERE on the screen.
+        </item>
+    </plurals>
+    <string name="nback_feedback_instructions">During practice, you will receive feedback on your clicks. There will be NO FEEDBACK IN THE REAL TEST</string>
+    <string name="nback_instructions_dialog_title">Click OK to start %1$d-Back</string>
+
+
+    <string name="selection_title">Select test</string>
+    <string name="selection_pre_dive">Pre-dive</string>
+    <string name="selection_dive">Dive</string>
+    <string name="selection_post_dive">Post-dive</string>
+    <string name="selection_practice_nback">n-back</string>
+    <string name="selection_practice_bart">BART</string>
+    <string name="selection_select_participant">Select participant</string>
+    <string name="selection_select_trial_day">Select day</string>
+    <string name="selection_select_trial_time">Select time</string>
+    <string name="selection_trial_day_label">Trial day</string>
+    <string name="selection_trial_time_label">Trial time</string>
+    <string name="selection_trial_details_header">Select trial details</string>
+    <string name="selection_dialog_fields_empty_message">If you leave fields empty it makes Danny the Brain very sad. You don\'t want that on your conscience.</string>
+
+
+    <string name="participants_delete_participant">Delete participant</string>
+    <string name="participants_notes_label">Notes</string>
+    <string name="participants_participant_id_label">Participant id</string>
+    <string name="participants_participant_name_label">Participant name</string>
+    <string name="participants_add_participant_title">Add participant</string>
+    <string name="participants_modify_participant_title">Modify participant</string>
+    <string name="participants_close_dialog_title">Close and lose changes?</string>
+    <string name="participants_close_dialog_content">If you close this screen without saving you will lose all information added to this participant.</string>
+    <string name="participants_delete_dialog_title">Are you sure you want to delete this participant?</string>
+    <string name="participants_delete_dialog_content">If you click OK you will lose all information from this participant.</string>
+    <string name="participants_data_header">Participant data</string>
+    <string name="participants_data_no_trials_message">You currently have no trials, time to do some research!</string>
+    <string name="participants_data_delete_dialog_title">Are you sure you want to delete this participant\'s data?</string>
+    <string name="participants_data_delete_dialog_content">If you click OK you will lose all information from the selected trial.</string>
 </resources>

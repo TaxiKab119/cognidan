@@ -1,15 +1,18 @@
 package com.example.dancognitionapp.participants.seetrialdata
 
+import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dancognitionapp.assessment.bart.db.BartRepository
 import com.example.dancognitionapp.assessment.nback.db.NBackRepository
 import com.example.dancognitionapp.participants.db.Participant
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-
 
 class ParticipantsTrialDataViewModel(
     private val bartRepository: BartRepository,
@@ -24,24 +27,26 @@ class ParticipantsTrialDataViewModel(
     private val currentState: ParticipantsTrialDataUiState
         get() = _uiState.value
 
-    fun populateFields(participant: Participant) {
+    private val fileBuilder = FileBuilder(bartRepository, nBackRepository)
+
+    fun populateFields(participant: Participant, participantId: Int) {
         _uiState.value = currentState.copy(
             selectedParticipant = participant
         )
-        constantlyUpdateTrials(participant)
+        constantlyUpdateTrials(participantId)
     }
 
-    private fun constantlyUpdateTrials(participant: Participant) {
+    private fun constantlyUpdateTrials(participantId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             launch {
-                bartRepository.getBartTrialsByParticipantId(participant.id).collect {
+                bartRepository.getBartTrialsByParticipantId(participantId).collect {
                     _uiState.value = currentState.copy(
                         allBartTrials = it
                     )
                 }
             }
             launch {
-                nBackRepository.getNBackTrialsByParticipantId(participant.id).collect {
+                nBackRepository.getNBackTrialsByParticipantId(participantId).collect {
                     _uiState.value = currentState.copy(
                         allNBackTrials = it
                     )
@@ -93,6 +98,40 @@ class ParticipantsTrialDataViewModel(
                 viewModelScope.launch(Dispatchers.IO) {
                     nBackRepository.deleteNBackDataByTrialId(trialIdentifier.trialId)
                 }
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun shareSelectedOrAll(context: Context, key: String) {
+        when(key) {
+            "ALL" -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    async {
+                        _uiState.value = currentState.copy(
+                            selectedBartTrialIds = currentState.allBartTrials.map { it.id },
+                            selectedNBackTrialIds = currentState.allNBackTrials.map { it.id },
+                        )
+                    }.await()
+                    exportFiles(context)
+                }
+            }
+            "SELECTED" -> { exportFiles(context) }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun exportFiles(context: Context) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val files = fileBuilder.buildFiles(
+                context,
+                currentState.selectedParticipant.userGivenId,
+                currentState.selectedBartTrialIds,
+                currentState.selectedNBackTrialIds
+            )
+            files.forEach { file ->
+                val intent = fileBuilder.goToFileIntent(context, file)
+                context.startActivity(intent)
             }
         }
     }

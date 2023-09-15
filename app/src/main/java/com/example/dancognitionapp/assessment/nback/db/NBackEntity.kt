@@ -59,15 +59,15 @@ data class NBackItemEntity(
     ON nback_trials.id = nback_entity_id
 """)
 data class NBackTrialData(
-    val userGivenParticipantId: String,
-    val trialDay: TrialDay,
-    val trialTime: TrialTime,
-    val blockNumber: Int,
-    val nValue: Int,
-    val presentationNumber: Int,
-    val reactionTime: Long?,
-    val isTarget: Boolean,
-    val categorization: NBackClickCategorization,
-    val wasCorrectAction: Boolean,
-    val nBackEntityId: Int
+    @ColumnInfo("dan_participant_id") val userGivenParticipantId: String,
+    @ColumnInfo("trial_day") val trialDay: TrialDay,
+    @ColumnInfo("trial_time") val trialTime: TrialTime,
+    @ColumnInfo("block_number") val blockNumber: Int,
+    @ColumnInfo("n_value") val nValue: Int,
+    @ColumnInfo("presentation_number") val presentationNumber: Int,
+    @ColumnInfo("reaction_time") val reactionTime: Long?,
+    @ColumnInfo("is_target") val isTarget: Boolean,
+    @ColumnInfo("categorization") val categorization: NBackClickCategorization,
+    @ColumnInfo("was_correct_action") val wasCorrectAction: Boolean,
+    @ColumnInfo("trial_id") val nBackEntityId: Int
 )

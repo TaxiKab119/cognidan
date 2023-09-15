@@ -6,7 +6,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Participant::class], version = 3, exportSchema = false)
+@Database(entities = [Participant::class], version = 1, exportSchema = false)
 abstract class ParticipantDatabase : RoomDatabase() {
     abstract fun participantDao(): ParticipantDao
 
@@ -22,7 +22,6 @@ abstract class ParticipantDatabase : RoomDatabase() {
             return Instance ?: synchronized(this) {
                 // if the Instance is not null, return it, otherwise create a new database instance.
                 Room.databaseBuilder(context, ParticipantDatabase::class.java, "participant_database")
-                    .fallbackToDestructiveMigration() // SHOULD MAYBE HAVE A BETTER MIGRATION STRAT?
                     .build()
                     .also { Instance = it } //keep a reference to the recently created db instance
             }

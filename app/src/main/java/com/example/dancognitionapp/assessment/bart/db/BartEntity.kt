@@ -50,12 +50,12 @@ data class BalloonEntity(
     ON bart_trials.id = bart_entity_id
 """)
 data class BartTrialData(
-    val userGivenParticipantId: String,
-    val trialDay: TrialDay,
-    val trialTime: TrialTime,
-    val balloonNumber: Int,
-    val maxInflations: Int,
-    val numberOfInflations: Int,
-    val didPop: Boolean,
-    val bartEntityId: Int
+    @ColumnInfo("dan_participant_id") val userGivenParticipantId: String,
+    @ColumnInfo("trial_day")val trialDay: TrialDay,
+    @ColumnInfo("trial_time")val trialTime: TrialTime,
+    @ColumnInfo("balloon_number")val balloonNumber: Int,
+    @ColumnInfo("max_inflations")val maxInflations: Int,
+    @ColumnInfo("number_of_inflations")val numberOfInflations: Int,
+    @ColumnInfo("did_pop")val didPop: Boolean,
+    @ColumnInfo("trial_id")val bartEntityId: Int
 )

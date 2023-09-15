@@ -3,6 +3,7 @@ package com.example.dancognitionapp.participants.seetrialdata
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,7 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -106,7 +109,10 @@ fun ParticipantsTrialDataScreen(
             }
         },
     ) {
-        Column(modifier = modifier.padding(it)) {
+        Column(modifier = modifier
+            .padding(it)
+            .verticalScroll(rememberScrollState())
+        ) {
             ParticipantDataTopCard(
                 participantName = uiState.selectedParticipant.name,
                 participantId = uiState.selectedParticipant.userGivenId,
@@ -183,19 +189,16 @@ fun CollapsibleParticipantDataItemsGroups(
                     modifier = Modifier.padding(horizontal = 12.dp)
                 )
             } else {
-                LazyColumn {
-                    items(items) {trialData ->
-                        ParticipantDataItem(
-                            participantDataFields = trialData,
-                            onDeleteClicked = { onDeleteClicked(it) },
-                            uiState = uiState
-                        ) {
-                            onCheckBoxClick(it)
-                        }
+                items.forEach {
+                    ParticipantDataItem(
+                        participantDataFields = it,
+                        onDeleteClicked = { onDeleteClicked(it) },
+                        uiState = uiState
+                    ) {
+                        onCheckBoxClick(it)
                     }
                 }
             }
-
         }
     }
 }

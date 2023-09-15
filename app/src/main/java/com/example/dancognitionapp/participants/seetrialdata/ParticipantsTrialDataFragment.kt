@@ -25,12 +25,21 @@ class ParticipantsTrialDataFragment: Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (savedInstanceState == null) {
-            lifecycleScope.launch {
-                viewModel.populateFields(args.selectedParticipant ?: Participant.emptyParticipant)
+        lifecycleScope.launch {
+            args.selectedParticipant?.let {
+                viewModel.populateFields(it, it.id)
             }
+
+            val participantId = args.selectedParticipant?.id ?: savedInstanceState?.getInt("participantId") ?: 0
+            viewModel.populateFields(args.selectedParticipant ?: Participant.emptyParticipant, participantId)
         }
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        args.selectedParticipant?.id?.let { outState.putInt("participantId", it) }
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater,

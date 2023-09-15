@@ -29,24 +29,24 @@ class ParticipantsTrialDataViewModel(
 
     private val fileBuilder = FileBuilder(bartRepository, nBackRepository)
 
-    fun populateFields(participant: Participant) {
+    fun populateFields(participant: Participant, participantId: Int) {
         _uiState.value = currentState.copy(
             selectedParticipant = participant
         )
-        constantlyUpdateTrials(participant)
+        constantlyUpdateTrials(participantId)
     }
 
-    private fun constantlyUpdateTrials(participant: Participant) {
+    private fun constantlyUpdateTrials(participantId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             launch {
-                bartRepository.getBartTrialsByParticipantId(participant.id).collect {
+                bartRepository.getBartTrialsByParticipantId(participantId).collect {
                     _uiState.value = currentState.copy(
                         allBartTrials = it
                     )
                 }
             }
             launch {
-                nBackRepository.getNBackTrialsByParticipantId(participant.id).collect {
+                nBackRepository.getNBackTrialsByParticipantId(participantId).collect {
                     _uiState.value = currentState.copy(
                         allNBackTrials = it
                     )

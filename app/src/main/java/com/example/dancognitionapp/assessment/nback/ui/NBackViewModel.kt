@@ -29,7 +29,7 @@ class NBackViewModel(private val nBackRepository: NBackRepository): ViewModel() 
     )
     private var testType = NBackType.N_1
     private var lifetimePresentations = 0
-    private var maxLifetimePresentations = 1 // initialize to 9 (assuming it is not practice, this is updated to 3 if it is practice // TODO - FIX THIS
+    private var maxLifetimePresentations = 9 // initialize to 9 (assuming it is not practice, this is updated to 3 if it is practice // TODO - FIX THIS
     private var blockNumber = 1
 
     private val _uiState = MutableStateFlow(

@@ -1,5 +1,7 @@
 package com.example.dancognitionapp.assessment.selection
 
+import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -69,6 +71,16 @@ class SelectionFragment: Fragment() {
         }
         return view
     }
+    @SuppressLint("SourceLockedOrientationActivity")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+    }
+
 }
 
 @Composable

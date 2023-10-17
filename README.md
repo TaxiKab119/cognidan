@@ -1,6 +1,15 @@
 # CogniDAN
 **An Android app to manage and conduct cognitive testing for scuba divers created for Divers Alert Network (DAN).**
 
+## Technologies, Libraries, Tools
+ - Kotlin
+ - Jetpack Compose 
+ - Fragment Based Navigation
+ - Room (SQLite)
+ - Coroutines, Flows, UDF Development Pattern
+ - Custom UI Components (Canvas)
+ - Object Oriented Programming
+
 ## Features
 ### Cognitive Tests 
 - Both tasks were created with custom UI components
@@ -45,15 +54,6 @@
 
 #### Trial Creation
 ![TrialDetails](https://github.com/TaxiKab119/cognidan/assets/115945374/8e0b4167-71ce-4ba2-9a39-68b087ce550a)
-
-## Technologies, Libraries, Tools
- - Kotlin
- - Jetpack Compose 
- - Fragment Based Navigation
- - Room (SQLite)
- - Coroutines, Flows, UDF Development Pattern
- - Custom UI Components (Canvas)
- - Object Oriented Programming
 
 ## Overall Flow Diagram
 ![FlowDiagram](https://github.com/TaxiKab119/cognidan/assets/115945374/6630c510-0f0d-4ae3-8869-5487b82edcf6)

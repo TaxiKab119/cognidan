@@ -20,6 +20,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.assessment.bart.ui.components.BalloonCanvas
 import com.example.dancognitionapp.assessment.bart.ui.components.BartDialog
+import com.example.dancognitionapp.assessment.bart.ui.components.BartInstructionDialog
 
 
 @Composable
@@ -63,7 +64,6 @@ fun BartTestScreen(
                     }
                 )
             }
-
             BalloonCanvas(
                 modifier = modifier
                     .constrainAs(balloon) {

@@ -1,5 +1,6 @@
 package com.example.dancognitionapp.assessment.nback.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -36,8 +37,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.dancognitionapp.R
-import com.example.dancognitionapp.utils.LandscapePreview
-import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 import com.example.dancognitionapp.utils.widget.ResponsiveText
 
 enum class NBackFeedbackState {
@@ -45,6 +44,8 @@ enum class NBackFeedbackState {
     FALSE_ALARM,
     INTERMEDIATE
 }
+
+// Only commented this out because it's still awesome and don't want to get rid of it
 //val slyRemarks = listOf(
 //    "Wow that was bad!",
 //    "Trigger happy much?",
@@ -83,9 +84,14 @@ fun NBackScreen(
                         } else {
                             goToBart()
                         }
-                    }
+                    },
+                    modifier = Modifier.padding(8.dp),
+                    border = BorderStroke(width = 2.dp, MaterialTheme.colorScheme.outline)
                 ) {
-                    Text(text = stringResource(id = R.string.ok_button))
+                    Text(
+                        text = stringResource(id = R.string.ok_button),
+                        modifier = Modifier.padding(6.dp)
+                    )
                 }
             }
         )
@@ -93,7 +99,7 @@ fun NBackScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = MaterialTheme.colorScheme.surface)
+            .background(MaterialTheme.colorScheme.background)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null
@@ -125,7 +131,8 @@ fun NBackScreen(
             modifier = Modifier
                 .fillMaxWidth(0.7f)
                 .wrapContentSize(Alignment.Center)
-                .border(4.dp, color = MaterialTheme.colorScheme.surface)
+                .border(4.dp, color = MaterialTheme.colorScheme.background)
+                .background(MaterialTheme.colorScheme.background)
         ) {
             if (!uiState.showDialog) {
                 LazyVerticalGrid(
@@ -252,14 +259,26 @@ fun NBackCustomDialog(
                 Row {
                     Spacer(modifier = Modifier.weight(1f))
                     if (isPractice) {
-                        TextButton(onClick = { onCancelClick() }) {
-                            Text(text = stringResource(id = R.string.cancel_button))
+                        TextButton(
+                            onClick = { onCancelClick() },
+                            modifier = Modifier.padding(8.dp),
+                            border = BorderStroke(width = 2.dp, MaterialTheme.colorScheme.outline)
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.cancel_button),
+                                modifier = Modifier.padding(6.dp),
+                            )
                         }
                     }
                     TextButton(
-                        onClick = { onOkClick() }
+                        onClick = { onOkClick() },
+                        modifier = Modifier.padding(8.dp),
+                        border = BorderStroke(width = 2.dp, MaterialTheme.colorScheme.outline)
                     ) {
-                        Text(text = stringResource(id = R.string.ok_button))
+                        Text(
+                            text = stringResource(id = R.string.ok_button),
+                            modifier = Modifier.padding(6.dp),
+                        )
                     }
                 }
             }

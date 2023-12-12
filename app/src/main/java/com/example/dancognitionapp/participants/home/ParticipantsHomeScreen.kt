@@ -2,6 +2,7 @@ package com.example.dancognitionapp.participants.home
 
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -46,11 +47,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.landing.DanCognitionTopAppBar
 import com.example.dancognitionapp.participants.db.Participant
@@ -287,25 +290,6 @@ fun ParticipantsBottomSheetContent(
 
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun ParticipantManagerScreenPreview() {
-//    DanCognitionAppTheme {
-//        val viewModel: ParticipantsViewModel = viewModel()
-//        val uiState: ParticipantUiState by viewModel.uiState.collectAsState()
-//        ParticipantsHomeScreen(
-//            uiState = uiState
-//        )
-//    }
-//}
-
-//@Preview(showBackground = true)
-//@Composable
-//fun ParticipantCardPreview() {
-//    DanCognitionAppTheme {
-//        ParticipantCard(participantModelLists.first())
-//    }
-//}
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable

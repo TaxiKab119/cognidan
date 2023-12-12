@@ -10,5 +10,6 @@ data class BartUiState(
     val currentReward: Int = 1,
     val totalEarnings: Int = 0,
     val isBalloonPopped: Boolean = false,
-    val isTestComplete: Boolean = false
+    val isTestComplete: Boolean = false,
+    val hasTestBegun: Boolean = false
 )

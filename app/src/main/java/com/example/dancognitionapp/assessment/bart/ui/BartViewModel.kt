@@ -16,6 +16,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -63,6 +64,15 @@ class BartViewModel(private val bartRepository: BartRepository): ViewModel() {
             )
         }
     }
+
+    fun hideInstructions() {
+        _uiState.update {
+            it.copy(
+                hasTestBegun = true
+            )
+        }
+    }
+
     fun inflateBalloon() {
         val canInflate =
             currentState.currentBalloon.maxInflations > currentState.currentInflationCount

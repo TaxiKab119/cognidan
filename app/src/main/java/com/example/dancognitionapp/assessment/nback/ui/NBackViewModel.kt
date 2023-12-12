@@ -1,5 +1,6 @@
 package com.example.dancognitionapp.assessment.nback.ui
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dancognitionapp.assessment.TrialDay
@@ -18,6 +19,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -29,7 +31,7 @@ class NBackViewModel(private val nBackRepository: NBackRepository): ViewModel() 
     )
     private var testType = NBackType.N_1
     private var lifetimePresentations = 0
-    private var maxLifetimePresentations = 9 // initialize to 9 (assuming it is not practice, this is updated to 3 if it is practice)
+    private var maxLifetimePresentations = 6 // initialize to 6, which is 2 blocks, (assuming it is not practice, this is updated to 3 if it is practice)
     private var blockNumber = 1
 
     private val _uiState = MutableStateFlow(
@@ -47,6 +49,11 @@ class NBackViewModel(private val nBackRepository: NBackRepository): ViewModel() 
     fun initNBackTrial(participant: Participant, trialDay: TrialDay, trialTime: TrialTime, isPractice: Boolean) {
         if (isPractice) {
             maxLifetimePresentations = 3
+            _uiState.update {
+                it.copy(
+                    isPractice = true
+                )
+            }
         }
         // initialize a trial and add it to the database
         viewModelScope.launch(Dispatchers.IO) {
@@ -70,7 +77,6 @@ class NBackViewModel(private val nBackRepository: NBackRepository): ViewModel() 
             }
         }
     }
-
     fun startAdvancing() {
         hideDialog()
         viewModelScope.launch {
@@ -100,10 +106,24 @@ class NBackViewModel(private val nBackRepository: NBackRepository): ViewModel() 
                     clickTime = 0L
                 )
                 toggleScreenClickable()
+
+                if (uiState.value.isPractice && reactionTime == null && uiStateCopy.currentItem.isTarget()) {
+                    toggleFalseAlarm() // show dialog
+                    delay(1000)
+                    toggleFalseAlarm() // hide dialog
+                }
                 delay(500) // inter-stimulus time (no dot showing)
             }
             delay(1000) // add a delay before showing dialog for next type
             toNextList()
+        }
+    }
+
+    private fun toggleFalseAlarm() {
+        _uiState.update {
+            it.copy(
+                isFalseAlarm = !uiState.value.isFalseAlarm
+            )
         }
     }
     private fun hideDialog() {

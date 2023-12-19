@@ -18,11 +18,16 @@ import com.example.dancognitionapp.assessment.TrialDay
 import com.example.dancognitionapp.assessment.TrialTime
 import com.example.dancognitionapp.assessment.selection.TrialDetailsUiState
 import com.example.dancognitionapp.participants.db.Participant
+import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 import timber.log.Timber
 
-class NBackFragment: AssessmentFragment() {
+class NBackFragment : AssessmentFragment() {
     private val args: NBackFragmentArgs by navArgs()
-    private val viewModel: NBackViewModel by viewModels { AppViewModelProvider.danAppViewModelFactory(isPractice) }
+    private val viewModel: NBackViewModel by viewModels {
+        AppViewModelProvider.danAppViewModelFactory(
+            isPractice
+        )
+    }
 
     private var isPractice: Boolean = false
 
@@ -50,17 +55,19 @@ class NBackFragment: AssessmentFragment() {
                     selectedTrialTime = args.trialDetails?.selectedTrialTime,
                 )
             )
-            NBackScreen(
-                isPractice,
-                viewModel,
-                uiState,
-                goToBart = {
-                    findNavController().navigate(action)
-                },
-                returnToSelect = {
-                    findNavController().popBackStack(R.id.selection_dest, inclusive = false)
-                }
-            )
+            DanCognitionAppTheme {
+                NBackScreen(
+                    isPractice,
+                    viewModel,
+                    uiState,
+                    goToBart = {
+                        findNavController().navigate(action)
+                    },
+                    returnToSelect = {
+                        findNavController().popBackStack(R.id.selection_dest, inclusive = false)
+                    }
+                )
+            }
         }
         return view
     }
@@ -69,7 +76,12 @@ class NBackFragment: AssessmentFragment() {
     private fun initializeNBack(isPractice: Boolean) {
         if (isPractice) {
             // If isPractice we only call initNBackTrial to set maxLifetimePresentations = 3
-            viewModel.initNBackTrial(Participant.emptyParticipant, TrialDay.DAY_1, TrialTime.PRE_DIVE, true)
+            viewModel.initNBackTrial(
+                Participant.emptyParticipant,
+                TrialDay.DAY_1,
+                TrialTime.PRE_DIVE,
+                true
+            )
             Timber.i("Practice NBack instantiated")
         } else {
             Timber.i("Real BART instantiated")

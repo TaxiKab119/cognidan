@@ -1,5 +1,6 @@
 package com.example.dancognitionapp.assessment.nback.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -21,6 +22,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,9 +39,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.example.dancognitionapp.R
-import com.example.dancognitionapp.utils.LandscapePreview
-import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 import com.example.dancognitionapp.utils.widget.ResponsiveText
 
 enum class NBackFeedbackState {
@@ -45,6 +49,8 @@ enum class NBackFeedbackState {
     FALSE_ALARM,
     INTERMEDIATE
 }
+
+// Only commented this out because it's still awesome and don't want to get rid of it
 //val slyRemarks = listOf(
 //    "Wow that was bad!",
 //    "Trigger happy much?",
@@ -54,6 +60,7 @@ enum class NBackFeedbackState {
 //    "Why did you click that one?"
 //)
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NBackScreen(
     isPractice: Boolean,
@@ -83,17 +90,44 @@ fun NBackScreen(
                         } else {
                             goToBart()
                         }
-                    }
+                    },
+                    modifier = Modifier.padding(8.dp),
+                    border = BorderStroke(width = 2.dp, MaterialTheme.colorScheme.outline)
                 ) {
-                    Text(text = stringResource(id = R.string.ok_button))
+                    Text(
+                        text = stringResource(id = R.string.ok_button),
+                        modifier = Modifier.padding(6.dp)
+                    )
                 }
             }
         )
     }
+    if (uiState.isFalseAlarm) {
+        Dialog(
+            onDismissRequest = { /*Do Nothing*/ }
+        ) {
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError
+                ),
+                modifier = Modifier
+                    .wrapContentSize(align = Alignment.Center)
+
+            ) {
+                Text(
+                    text = "You missed! Incorrect.",
+                    fontSize = 30.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+        }
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = MaterialTheme.colorScheme.surface)
+            .background(MaterialTheme.colorScheme.background)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null
@@ -125,7 +159,8 @@ fun NBackScreen(
             modifier = Modifier
                 .fillMaxWidth(0.7f)
                 .wrapContentSize(Alignment.Center)
-                .border(4.dp, color = MaterialTheme.colorScheme.surface)
+                .border(4.dp, color = MaterialTheme.colorScheme.background)
+                .background(MaterialTheme.colorScheme.background)
         ) {
             if (!uiState.showDialog) {
                 LazyVerticalGrid(
@@ -252,14 +287,26 @@ fun NBackCustomDialog(
                 Row {
                     Spacer(modifier = Modifier.weight(1f))
                     if (isPractice) {
-                        TextButton(onClick = { onCancelClick() }) {
-                            Text(text = stringResource(id = R.string.cancel_button))
+                        TextButton(
+                            onClick = { onCancelClick() },
+                            modifier = Modifier.padding(8.dp),
+                            border = BorderStroke(width = 2.dp, MaterialTheme.colorScheme.outline)
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.cancel_button),
+                                modifier = Modifier.padding(6.dp),
+                            )
                         }
                     }
                     TextButton(
-                        onClick = { onOkClick() }
+                        onClick = { onOkClick() },
+                        modifier = Modifier.padding(8.dp),
+                        border = BorderStroke(width = 2.dp, MaterialTheme.colorScheme.outline)
                     ) {
-                        Text(text = stringResource(id = R.string.ok_button))
+                        Text(
+                            text = stringResource(id = R.string.ok_button),
+                            modifier = Modifier.padding(6.dp),
+                        )
                     }
                 }
             }

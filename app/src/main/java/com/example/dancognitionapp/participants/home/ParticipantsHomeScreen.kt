@@ -2,19 +2,19 @@ package com.example.dancognitionapp.participants.home
 
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -26,6 +26,7 @@ import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
@@ -46,16 +47,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dancognitionapp.R
-import com.example.dancognitionapp.participants.db.Participant
 import com.example.dancognitionapp.landing.DanCognitionTopAppBar
+import com.example.dancognitionapp.participants.db.Participant
 import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 import kotlinx.coroutines.launch
 
@@ -64,6 +65,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ParticipantsHomeScreen(
     participantList: List<Participant>,
+    isLoading: Boolean,
     goToAddScreen: () -> Unit = {},
     goToParticipantData: (Participant) -> Unit = {},
     goToEditScreen: (Participant) -> Unit = {}
@@ -132,52 +134,65 @@ fun ParticipantsHomeScreen(
                 )
             }
         ) { padding ->
-            if (participantList.isEmpty()) {
-                Box(
-                    contentAlignment = Alignment.Center,
+            if (isLoading) {
+                Column(
                     modifier = Modifier
                         .padding(padding)
-                        .wrapContentSize(Alignment.Center)
-                    ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.cognidan_final_noparticipants),
-                        contentDescription = null,
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    CircularProgressIndicator(
                         modifier = Modifier
-                            .padding(40.dp)
+                            .width(64.dp)
+                            .padding(padding),
+                        color = MaterialTheme.colorScheme.secondary,
+                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
                     )
                 }
-            }
-            LazyColumn(
-                contentPadding = padding,
-                state = listState
-            ) {
-                if (hideBottomSheet) {
-                    scope.launch {
-                        scaffoldState.bottomSheetState.hide()
-                        isBottomSheetExpanded = false
-                    }
+            } else if (participantList.isEmpty()) {
+                Column(
+                    modifier = Modifier
+                        .padding(padding)
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(text = "There are no participants yet.", modifier = Modifier.padding(padding))
                 }
-                items(participantList) { participant ->
-                    ParticipantCard(
-                        participant = participant,
-                        modifier = Modifier
-                            .padding(8.dp),
-                        onClick = {
-                            if (isBottomSheetExpanded) {
-                                scope.launch {
-                                    scaffoldState.bottomSheetState.hide()
-                                    isBottomSheetExpanded = false
-                                }
-                            }
-
+            } else {
+                LazyColumn(
+                    contentPadding = padding,
+                    state = listState
+                ) {
+                    if (hideBottomSheet) {
+                        scope.launch {
+                            scaffoldState.bottomSheetState.hide()
+                            isBottomSheetExpanded = false
                         }
-                    ) {
-                        selectedParticipant = participant
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        if (!isBottomSheetExpanded) {
-                            scope.launch {
-                                scaffoldState.bottomSheetState.expand()
-                                isBottomSheetExpanded = true
+                    }
+                    items(participantList) { participant ->
+                        ParticipantCard(
+                            participant = participant,
+                            modifier = Modifier
+                                .padding(8.dp),
+                            onClick = {
+                                if (isBottomSheetExpanded) {
+                                    scope.launch {
+                                        scaffoldState.bottomSheetState.hide()
+                                        isBottomSheetExpanded = false
+                                    }
+                                }
+
+                            }
+                        ) {
+                            selectedParticipant = participant
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            if (!isBottomSheetExpanded) {
+                                scope.launch {
+                                    scaffoldState.bottomSheetState.expand()
+                                    isBottomSheetExpanded = true
+                                }
                             }
                         }
                     }
@@ -275,25 +290,6 @@ fun ParticipantsBottomSheetContent(
 
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun ParticipantManagerScreenPreview() {
-//    DanCognitionAppTheme {
-//        val viewModel: ParticipantsViewModel = viewModel()
-//        val uiState: ParticipantUiState by viewModel.uiState.collectAsState()
-//        ParticipantsHomeScreen(
-//            uiState = uiState
-//        )
-//    }
-//}
-
-//@Preview(showBackground = true)
-//@Composable
-//fun ParticipantCardPreview() {
-//    DanCognitionAppTheme {
-//        ParticipantCard(participantModelLists.first())
-//    }
-//}
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable

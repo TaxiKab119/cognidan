@@ -28,6 +28,7 @@ class ParticipantsHomeFragment: Fragment() {
                 val uiState by viewModel.uiState.collectAsState(context = lifecycleScope.coroutineContext)
                 ParticipantsHomeScreen(
                     participantList = uiState.participantList,
+                    isLoading = uiState.isLoading,
                     goToAddScreen = {
                         val action = ParticipantsHomeFragmentDirections
                             .actionParticipantsViewDestToAddModifyParticipantsViewDest()

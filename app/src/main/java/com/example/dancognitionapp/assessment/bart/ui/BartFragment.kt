@@ -19,6 +19,7 @@ import com.example.dancognitionapp.assessment.AssessmentActivity
 import com.example.dancognitionapp.assessment.AssessmentFragment
 import com.example.dancognitionapp.assessment.TrialDay
 import com.example.dancognitionapp.assessment.TrialTime
+import com.example.dancognitionapp.assessment.bart.ui.components.BartInstructionDialog
 import com.example.dancognitionapp.participants.db.Participant
 import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 import timber.log.Timber
@@ -46,13 +47,24 @@ class BartFragment: AssessmentFragment() {
         view.findViewById<ComposeView>(R.id.compose_root).setContent {
             DanCognitionAppTheme {
                 val uiState: BartUiState by viewModel.uiState.collectAsState(lifecycleScope.coroutineContext)
-                BartTestScreen(
-                    viewModel,
-                    uiState,
-                    Modifier.fillMaxSize()
-                ) { destination ->
-                    findNavController().popBackStack(destination, inclusive = false)
+                if (!uiState.hasTestBegun) {
+                    BartInstructionDialog(
+                        onCancelClick = {
+                            findNavController().popBackStack(R.id.selection_dest, false)
+                        }
+                    ) {
+                        viewModel.hideInstructions()
+                    }
+                } else {
+                    BartTestScreen(
+                        viewModel,
+                        uiState,
+                        Modifier.fillMaxSize()
+                    ) { destination ->
+                        findNavController().popBackStack(destination, inclusive = false)
+                    }
                 }
+
             }
         }
         return view

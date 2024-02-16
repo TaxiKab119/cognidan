@@ -11,6 +11,13 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 
+/**
+ * This ViewModel provides a reactive UI state management pattern for a screen displaying the list
+ * of participants. It transforms and exposes participant data as a StateFlow.
+ *
+ *
+ * @param participantRepository Repository with db methods for Participants DB
+ */
 class ParticipantsHomeViewModel(participantRepository: ParticipantRepository): ViewModel() {
 
     val uiState: StateFlow<ParticipantsHomeUiState> =

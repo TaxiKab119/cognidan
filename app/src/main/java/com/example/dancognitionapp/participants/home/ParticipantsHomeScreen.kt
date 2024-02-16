@@ -2,10 +2,10 @@ package com.example.dancognitionapp.participants.home
 
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -47,15 +47,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dancognitionapp.R
-import com.example.dancognitionapp.landing.DanCognitionTopAppBar
+import com.example.dancognitionapp.utils.widget.DanCognitionTopAppBar
 import com.example.dancognitionapp.participants.db.Participant
 import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 import kotlinx.coroutines.launch
@@ -93,9 +91,11 @@ fun ParticipantsHomeScreen(
             }
         ),
     )
-
-    LaunchedEffect(key1 = Unit) {
-        scaffoldState.bottomSheetState.hide()
+    // Ensure upon re-entering from other participant screens, BottomSheet is hidden
+    if (!isBottomSheetExpanded) {
+        LaunchedEffect(key1 = Unit) {
+            scaffoldState.bottomSheetState.hide()
+        }
     }
     BottomSheetScaffold(
         sheetContent = {
@@ -135,21 +135,7 @@ fun ParticipantsHomeScreen(
             }
         ) { padding ->
             if (isLoading) {
-                Column(
-                    modifier = Modifier
-                        .padding(padding)
-                        .fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .width(64.dp)
-                            .padding(padding),
-                        color = MaterialTheme.colorScheme.secondary,
-                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                    )
-                }
+                LoadingIndicator(padding = padding)
             } else if (participantList.isEmpty()) {
                 Column(
                     modifier = Modifier
@@ -199,6 +185,24 @@ fun ParticipantsHomeScreen(
                 }
             }
         }
+    }
+}
+@Composable
+fun LoadingIndicator(padding: PaddingValues) {
+    Column(
+        modifier = Modifier
+            .padding(padding)
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier
+                .width(64.dp)
+                .padding(padding),
+            color = MaterialTheme.colorScheme.secondary,
+            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+        )
     }
 }
 

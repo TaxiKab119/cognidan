@@ -10,7 +10,6 @@ import com.example.dancognitionapp.assessment.bart.db.BartRepository
 import com.example.dancognitionapp.assessment.nback.db.NBackRepository
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.time.LocalDateTime

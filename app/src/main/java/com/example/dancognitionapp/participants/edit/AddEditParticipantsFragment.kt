@@ -55,7 +55,7 @@ class AddEditParticipantsFragment: Fragment() {
             DanCognitionAppTheme {
                 if (isLoading) {
                     AlertDialog(
-                        onDismissRequest = { /*TODO*/ },
+                        onDismissRequest = { /*Not Dismissible*/ },
                     ) {
                         Text("Please wait...")
                     }

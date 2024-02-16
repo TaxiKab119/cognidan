@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.assessment.TrialDay
 import com.example.dancognitionapp.assessment.TrialTime
-import com.example.dancognitionapp.landing.DanCognitionTopAppBar
+import com.example.dancognitionapp.utils.widget.DanCognitionTopAppBar
 import com.example.dancognitionapp.participants.db.Participant
 import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 import timber.log.Timber

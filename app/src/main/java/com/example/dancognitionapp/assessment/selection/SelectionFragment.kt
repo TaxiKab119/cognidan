@@ -25,7 +25,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.dancognitionapp.AppViewModelProvider
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.assessment.AssessmentActivity
-import com.example.dancognitionapp.landing.DanCognitionTopAppBar
+import com.example.dancognitionapp.utils.widget.DanCognitionTopAppBar
 import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 import com.example.dancognitionapp.utils.widget.OptionCard
 import com.example.dancognitionapp.utils.widget.navigateTo

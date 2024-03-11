@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -48,6 +49,7 @@ fun DanCognitionTopAppBar(
 ) {
     var rotationState by remember { mutableStateOf(initialRotation) }
     var clickCounter by remember { mutableStateOf(0) }
+    val interactionSource = remember { MutableInteractionSource() }
 
     Timber.i("Rotation State: $rotationState")
 
@@ -65,7 +67,10 @@ fun DanCognitionTopAppBar(
                         .size(64.dp)
                         .padding(8.dp)
                         .graphicsLayer { rotationZ = rotation }
-                        .clickable {
+                        .clickable(
+                            indication = null,
+                            interactionSource = interactionSource,
+                        ) {
                             rotationState += 360f // Rotate by 360 degrees when clicked
                             clickCounter++
                             if (clickCounter >= 10) {

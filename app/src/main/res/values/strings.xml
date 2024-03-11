@@ -66,4 +66,5 @@
     <string name="participants_data_no_trials_message">You currently have no trials, time to do some research!</string>
     <string name="participants_data_delete_dialog_title">Are you sure you want to delete this participant\'s data?</string>
     <string name="participants_data_delete_dialog_content">If you click OK you will lose all information from the selected trial.</string>
+    <string name="confirm_trial_details">Confirm trial details</string>
 </resources>

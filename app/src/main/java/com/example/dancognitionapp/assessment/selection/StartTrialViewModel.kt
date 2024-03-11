@@ -1,7 +1,6 @@
 package com.example.dancognitionapp.assessment.selection
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.dancognitionapp.assessment.TrialDay
 import com.example.dancognitionapp.assessment.TrialTime
 import com.example.dancognitionapp.assessment.bart.db.BartRepository
@@ -12,7 +11,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import kotlin.properties.Delegates
 
 class StartTrialViewModel(
     private val bartRepository: BartRepository,

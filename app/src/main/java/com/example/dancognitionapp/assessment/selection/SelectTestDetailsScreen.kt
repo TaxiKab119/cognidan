@@ -101,6 +101,7 @@ fun SelectTestDetailsScreen(
                 participantList = participantList,
                 trialTimes = arrayOf(TrialTime.PRE_DIVE, TrialTime.DIVE, TrialTime.POST_DIVE),
                 trialDays = arrayOf(TrialDay.DAY_1, TrialDay.DAY_2),
+                uiState = uiState,
                 onSelectTrialDay = { trialDay -> onSelectTrialDay(trialDay) },
                 onSelectTrialTime = { trialTime -> onSelectTrialTime(trialTime) }
             ) { participant ->
@@ -115,6 +116,7 @@ fun SelectTrialDetailsContent(
     participantList: List<Participant>,
     trialTimes: Array<TrialTime>,
     trialDays: Array<TrialDay>,
+    uiState: TrialDetailsUiState,
     onSelectTrialTime: (TrialTime) -> Unit = {},
     onSelectTrialDay: (TrialDay) -> Unit = {},
     onSelectParticipant: (Participant) -> Unit = {},
@@ -128,7 +130,8 @@ fun SelectTrialDetailsContent(
         SelectionDropDownMenu(
             titleRes = R.string.selection_select_participant,
             menuOptions = participantList.map { it.name },
-            labelRes = R.string.participants_participant_name_label
+            labelRes = R.string.participants_participant_name_label,
+            selectedItem = uiState.selectedParticipant?.name ?: ""
         ) { participantName ->
             val selectedParticipant = participantList.find { it.name ==  participantName }
             Timber.i("Selected Participant = $selectedParticipant")
@@ -138,6 +141,7 @@ fun SelectTrialDetailsContent(
             titleRes = R.string.selection_select_trial_day,
             menuOptions = trialDays.map { it.name },
             labelRes = R.string.selection_trial_day_label,
+            selectedItem = uiState.selectedTrialDay?.name ?: ""
         ) { trialDayString ->
             val selectedTime = trialDays.find { it.name == trialDayString }
             Timber.i("Selected Trial Day = $selectedTime")
@@ -147,6 +151,7 @@ fun SelectTrialDetailsContent(
             titleRes = R.string.selection_select_trial_time,
             menuOptions = trialTimes.map { it.name },
             labelRes = R.string.selection_trial_time_label,
+            selectedItem = uiState.selectedTrialTime?.name ?: ""
         ) { trialTimeString ->
             val selectedTime = trialTimes.find { it.name == trialTimeString }
             Timber.i("Selected Trial Time = $selectedTime")
@@ -161,11 +166,10 @@ fun SelectionDropDownMenu(
     @StringRes titleRes: Int,
     @StringRes labelRes: Int,
     menuOptions: List<String>,
-    onSelectItem: (String) -> Unit = {}
+    selectedItem: String = "",
+    onSelectItem: (String) -> Unit = {},
 ) {
     var isExpanded by remember { mutableStateOf(false) }
-
-    var selectedItem by remember { mutableStateOf("") }
     Column(Modifier.padding(12.dp)) {
         Text(
             text = stringResource(id = titleRes),
@@ -200,7 +204,6 @@ fun SelectionDropDownMenu(
                             text = { Text(text = item) },
                             onClick = {
                                 onSelectItem(item)
-                                selectedItem = item
                                 isExpanded = false
                             }
                         )
@@ -306,7 +309,8 @@ fun SelectTestDetailsContentPreview() {
         SelectTrialDetailsContent(
             participantList = testParticipants,
             trialTimes = TrialTime.values(),
-            trialDays = TrialDay.values()
+            trialDays = TrialDay.values(),
+            uiState = TrialDetailsUiState()
         )
     }
 }

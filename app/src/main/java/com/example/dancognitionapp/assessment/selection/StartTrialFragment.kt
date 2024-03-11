@@ -24,9 +24,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -71,13 +74,14 @@ class StartTrialFragment: Fragment() {
                     selectedTrialTime = args.trialDetails?.selectedTrialTime,
                 )
             )
+            val trialExists by viewModel.startTrialScreenState.collectAsState()
             DanCognitionAppTheme {
                 StartTrialScreen(
                     modifier = Modifier.fillMaxSize(),
                     participant = args.trialDetails?.selectedParticipant ?: Participant.emptyParticipant,
                     trialDay = args.trialDetails?.selectedTrialDay?.name ?: "error",
                     trialTime = args.trialDetails?.selectedTrialTime?.name ?: "error",
-                    trialExistsStateFlow = viewModel.startTrialScreenState
+                    trialExists = trialExists
                 ) {
                     findNavController().navigate(action)
                 }
@@ -99,13 +103,12 @@ fun StartTrialScreen(
     participant: Participant,
     trialDay: String,
     trialTime: String,
-    trialExistsStateFlow: StateFlow<StartTrialScreenState>,
+    trialExists: StartTrialScreenState,
     onFabClick: () -> Unit
 ) {
-    val trialExists by trialExistsStateFlow.collectAsState()
     Timber.i("Screen Recomposed; Trial Exists: $trialExists")
     Scaffold(
-        topBar = { DanCognitionTopAppBar(headerResId = R.string.selection_trial_details_header) },
+        topBar = { DanCognitionTopAppBar(headerResId = R.string.confirm_trial_details) },
         floatingActionButton = {
             if (trialExists == StartTrialScreenState.NOT_EXIST) {
                 ExtendedFloatingActionButton(

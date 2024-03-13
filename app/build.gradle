@@ -53,6 +53,7 @@ android {
 
 dependencies {
 
+    testImplementation 'org.testng:testng:6.9.6'
     def nav_version = "2.6.0"
     def lifecycle_version = "2.6.1"
     def compose_version = "1.4.3"
@@ -89,12 +90,9 @@ dependencies {
     // db to csv
     implementation 'com.github.doyaaaaaken:kotlin-csv-jvm:1.9.2'
 
-    testImplementation 'junit:junit:4.13.2'
-
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
-    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'

@@ -53,17 +53,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.dancognitionapp.R
-import com.example.dancognitionapp.utils.widget.DanCognitionTopAppBar
 import com.example.dancognitionapp.participants.db.Participant
 import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
+import com.example.dancognitionapp.utils.widget.DanCognitionTopAppBar
 import kotlinx.coroutines.launch
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ParticipantsHomeScreen(
     participantList: List<Participant>,
     isLoading: Boolean,
+    onBackPress: () -> Unit,
     goToAddScreen: () -> Unit = {},
     goToParticipantData: (Participant) -> Unit = {},
     goToEditScreen: (Participant) -> Unit = {}
@@ -76,16 +76,18 @@ fun ParticipantsHomeScreen(
         bottomSheetState = rememberStandardBottomSheetState(
             initialValue = SheetValue.Hidden,
             skipHiddenState = false,
-            confirmValueChange =  {
-                when(it) {
+            confirmValueChange = {
+                when (it) {
                     SheetValue.Expanded -> {
                         isBottomSheetExpanded = true
                         true
                     }
+
                     SheetValue.Hidden -> {
                         isBottomSheetExpanded = false
                         true
                     }
+
                     else -> true
                 }
             }
@@ -115,12 +117,16 @@ fun ParticipantsHomeScreen(
     ) {
         val listState = rememberLazyListState()
         val fabExtended by remember { derivedStateOf { !listState.isScrollInProgress } }
-        val hideBottomSheet by remember { derivedStateOf { listState.isScrollInProgress }}
+        val hideBottomSheet by remember { derivedStateOf { listState.isScrollInProgress } }
         val haptic = LocalHapticFeedback.current
 
         Scaffold(
             topBar = {
-                DanCognitionTopAppBar(headerResId = R.string.landing_participant_manager)
+                DanCognitionTopAppBar(
+                    headerResId = R.string.landing_participant_manager,
+                    wantBackButton = true,
+                    onBackPress = { onBackPress() }
+                )
             },
             floatingActionButton = {
                 ExtendedFloatingActionButton(
@@ -130,7 +136,7 @@ fun ParticipantsHomeScreen(
                     },
                     containerColor = MaterialTheme.colorScheme.secondary,
                     icon = { Icon(imageVector = Icons.Default.Add, contentDescription = "Add") },
-                    text = { Text(text = "Add participant")}
+                    text = { Text(text = "Add participant") }
                 )
             }
         ) { padding ->
@@ -144,7 +150,10 @@ fun ParticipantsHomeScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text(text = "There are no participants yet.", modifier = Modifier.padding(padding))
+                    Text(
+                        text = "There are no participants yet.",
+                        modifier = Modifier.padding(padding)
+                    )
                 }
             } else {
                 LazyColumn(
@@ -187,6 +196,7 @@ fun ParticipantsHomeScreen(
         }
     }
 }
+
 @Composable
 fun LoadingIndicator(padding: PaddingValues) {
     Column(

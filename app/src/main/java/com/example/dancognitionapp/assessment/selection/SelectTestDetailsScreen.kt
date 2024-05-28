@@ -35,9 +35,9 @@ import androidx.compose.ui.unit.dp
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.assessment.TrialDay
 import com.example.dancognitionapp.assessment.TrialTime
-import com.example.dancognitionapp.utils.widget.DanCognitionTopAppBar
 import com.example.dancognitionapp.participants.db.Participant
 import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
+import com.example.dancognitionapp.utils.widget.DanCognitionTopAppBar
 import timber.log.Timber
 
 
@@ -47,6 +47,7 @@ fun SelectTestDetailsScreen(
     viewModel: TrialDetailsViewModel,
     uiState: TrialDetailsUiState,
     participantList: List<Participant>,
+    onBackPress: () -> Unit,
     onSelectTrialTime: (TrialTime) -> Unit = {},
     onSelectTrialDay: (TrialDay) -> Unit = {},
     onSelectParticipant: (Participant) -> Unit = {},
@@ -79,7 +80,12 @@ fun SelectTestDetailsScreen(
     ) {
         Scaffold(
             topBar = {
-                DanCognitionTopAppBar(headerResId = R.string.selection_trial_details_header)
+                DanCognitionTopAppBar(
+                    headerResId = R.string.selection_trial_details_header,
+                    wantBackButton = true
+                ) {
+                    onBackPress()
+                }
             },
             floatingActionButton = {
                 ExtendedFloatingActionButton(

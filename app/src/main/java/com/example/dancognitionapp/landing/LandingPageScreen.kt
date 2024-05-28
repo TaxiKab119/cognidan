@@ -24,7 +24,7 @@ enum class LandingDestination {
 fun LandingPageScreen(onClick: (LandingDestination) -> Unit = {}) {
     Scaffold(
         topBar = {
-            DanCognitionTopAppBar(headerResId = R.string.app_name)
+            DanCognitionTopAppBar(headerResId = R.string.app_name, wantBackButton = false) {}
         },
     ) {
         LandingPageContent(

@@ -24,12 +24,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -38,15 +35,14 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.dancognitionapp.AppViewModelProvider
 import com.example.dancognitionapp.R
-import com.example.dancognitionapp.utils.widget.DanCognitionTopAppBar
 import com.example.dancognitionapp.participants.db.Participant
 import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
+import com.example.dancognitionapp.utils.widget.DanCognitionTopAppBar
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class StartTrialFragment: Fragment() {
+class StartTrialFragment : Fragment() {
     private val args: StartTrialFragmentArgs by navArgs()
     val viewModel by viewModels<StartTrialViewModel> { AppViewModelProvider.danAppViewModelFactory() }
 
@@ -60,6 +56,7 @@ class StartTrialFragment: Fragment() {
             }
         }
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -78,10 +75,14 @@ class StartTrialFragment: Fragment() {
             DanCognitionAppTheme {
                 StartTrialScreen(
                     modifier = Modifier.fillMaxSize(),
-                    participant = args.trialDetails?.selectedParticipant ?: Participant.emptyParticipant,
+                    participant = args.trialDetails?.selectedParticipant
+                        ?: Participant.emptyParticipant,
                     trialDay = args.trialDetails?.selectedTrialDay?.name ?: "error",
                     trialTime = args.trialDetails?.selectedTrialTime?.name ?: "error",
-                    trialExists = trialExists
+                    trialExists = trialExists,
+                    onBackPress = {
+                        findNavController().popBackStack()
+                    }
                 ) {
                     findNavController().navigate(action)
                 }
@@ -91,7 +92,8 @@ class StartTrialFragment: Fragment() {
         return view
     }
 }
-enum class StartTrialScreenState{
+
+enum class StartTrialScreenState {
     EXISTS,
     NOT_EXIST,
     LOADING
@@ -104,11 +106,19 @@ fun StartTrialScreen(
     trialDay: String,
     trialTime: String,
     trialExists: StartTrialScreenState,
+    onBackPress: () -> Unit,
     onFabClick: () -> Unit
 ) {
     Timber.i("Screen Recomposed; Trial Exists: $trialExists")
     Scaffold(
-        topBar = { DanCognitionTopAppBar(headerResId = R.string.confirm_trial_details) },
+        topBar = {
+            DanCognitionTopAppBar(
+                headerResId = R.string.confirm_trial_details,
+                wantBackButton = true
+            ) {
+                onBackPress()
+            }
+        },
         floatingActionButton = {
             if (trialExists == StartTrialScreenState.NOT_EXIST) {
                 ExtendedFloatingActionButton(
@@ -127,7 +137,9 @@ fun StartTrialScreen(
         ) {
             when (trialExists) {
                 StartTrialScreenState.LOADING -> {
-                    Icon(imageVector = Icons.Default.Refresh, contentDescription = "Loading")}
+                    Icon(imageVector = Icons.Default.Refresh, contentDescription = "Loading")
+                }
+
                 else -> {
                     if (trialExists == StartTrialScreenState.EXISTS) {
                         Card(

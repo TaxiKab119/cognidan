@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.dancognitionapp.AppViewModelProvider
 import com.example.dancognitionapp.R
@@ -52,7 +53,10 @@ class ParticipantsTrialDataFragment: Fragment() {
                 val uiState by viewModel.uiState.collectAsState(context = lifecycleScope.coroutineContext)
                 ParticipantsTrialDataScreen(
                     uiState = uiState,
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    onBackPress = {
+                        findNavController().popBackStack()
+                    }
                 ) {
                     viewModel.shareSelectedOrAll(requireContext(), it)
                 }

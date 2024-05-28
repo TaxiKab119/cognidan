@@ -25,8 +25,8 @@ import androidx.navigation.fragment.findNavController
 import com.example.dancognitionapp.AppViewModelProvider
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.assessment.AssessmentActivity
-import com.example.dancognitionapp.utils.widget.DanCognitionTopAppBar
 import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
+import com.example.dancognitionapp.utils.widget.DanCognitionTopAppBar
 import com.example.dancognitionapp.utils.widget.OptionCard
 import com.example.dancognitionapp.utils.widget.navigateTo
 
@@ -42,7 +42,10 @@ class SelectionFragment: Fragment() {
             DanCognitionAppTheme {
                 if (isPractice) {
                     PracticeTestSelectScreen(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        onBackPress = {
+                            requireActivity().onBackPressedDispatcher.onBackPressed()
+                        }
                     ) { destination ->
                         findNavController().navigate(destination)
                     }
@@ -60,6 +63,7 @@ class SelectionFragment: Fragment() {
                         viewModel = viewModel,
                         participantList = uiState.participantList,
                         uiState = uiState,
+                        onBackPress = { requireActivity().onBackPressedDispatcher.onBackPressed() },
                         onSelectTrialTime = { viewModel.selectTrialTime(it) },
                         onSelectTrialDay = { viewModel.selectTrialDay(it) },
                         onSelectParticipant = { viewModel.selectParticipant(it) }
@@ -86,6 +90,7 @@ class SelectionFragment: Fragment() {
 @Composable
 fun PracticeTestSelectScreen(
     modifier: Modifier = Modifier,
+    onBackPress: () -> Unit,
     onClick: (Int) -> Unit = {}
 ) {
     Surface(
@@ -94,7 +99,12 @@ fun PracticeTestSelectScreen(
     ) {
         Scaffold(
             topBar = {
-                DanCognitionTopAppBar(headerResId = R.string.selection_title)
+                DanCognitionTopAppBar(
+                    headerResId = R.string.selection_title,
+                    wantBackButton = true
+                ) {
+                    onBackPress()
+                }
             },
         ) {
             PracticeSelectionPageContent(

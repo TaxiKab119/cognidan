@@ -15,13 +15,17 @@ import com.example.dancognitionapp.AppViewModelProvider
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 
-class ParticipantsHomeFragment: Fragment() {
+class ParticipantsHomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val viewModel: ParticipantsHomeViewModel by viewModels { AppViewModelProvider.danAppViewModelFactory(false) }
+        val viewModel: ParticipantsHomeViewModel by viewModels {
+            AppViewModelProvider.danAppViewModelFactory(
+                false
+            )
+        }
         val view = inflater.inflate(R.layout.fragment_compose_host, container, false)
         view.findViewById<ComposeView>(R.id.compose_root).setContent {
             DanCognitionAppTheme {
@@ -29,6 +33,9 @@ class ParticipantsHomeFragment: Fragment() {
                 ParticipantsHomeScreen(
                     participantList = uiState.participantList,
                     isLoading = uiState.isLoading,
+                    onBackPress = {
+                        requireActivity().onBackPressedDispatcher.onBackPressed()
+                    },
                     goToAddScreen = {
                         val action = ParticipantsHomeFragmentDirections
                             .actionParticipantsViewDestToAddModifyParticipantsViewDest()

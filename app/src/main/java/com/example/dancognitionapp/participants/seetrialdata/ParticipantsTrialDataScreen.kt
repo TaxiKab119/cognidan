@@ -44,11 +44,11 @@ import com.example.dancognitionapp.assessment.TrialDay
 import com.example.dancognitionapp.assessment.TrialTime
 import com.example.dancognitionapp.assessment.bart.db.BartEntity
 import com.example.dancognitionapp.assessment.nback.db.NBackEntity
-import com.example.dancognitionapp.utils.widget.DanCognitionTopAppBar
 import com.example.dancognitionapp.landing.DanMenuItem
 import com.example.dancognitionapp.participants.edit.ParticipantDialog
+import com.example.dancognitionapp.utils.widget.DanCognitionTopAppBar
 
-enum class TestType{
+enum class TestType {
     BART,
     NBACK
 }
@@ -71,16 +71,19 @@ data class TrialIdentifier(
         val emptyTrialId = TrialIdentifier(0, TestType.BART)
     }
 }
+
 @Composable
 fun ParticipantsTrialDataScreen(
     uiState: ParticipantsTrialDataUiState,
     viewModel: ParticipantsTrialDataViewModel,
     modifier: Modifier = Modifier,
+    onBackPress: () -> Unit = {},
     onShareClick: (String) -> Unit = {}
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
     var selectedTrialForDelete by remember { mutableStateOf(TrialIdentifier.emptyTrialId) }
-    val selectedTrialNumber: Int = uiState.selectedNBackTrialIds.size + uiState.selectedBartTrialIds.size
+    val selectedTrialNumber: Int =
+        uiState.selectedNBackTrialIds.size + uiState.selectedBartTrialIds.size
     if (showDeleteDialog) {
         ParticipantDialog(
             title = R.string.participants_data_delete_dialog_title,
@@ -98,17 +101,26 @@ fun ParticipantsTrialDataScreen(
                 wantMenuButton = true,
                 menuIcon = Icons.Default.Share,
                 menuItems = listOf(
-                    DanMenuItem("Download $selectedTrialNumber selected", R.drawable.baseline_download_24, "SELECTED"),
+                    DanMenuItem(
+                        "Download $selectedTrialNumber selected",
+                        R.drawable.baseline_download_24,
+                        "SELECTED"
+                    ),
                     DanMenuItem("Download all", R.drawable.baseline_done_all_24, "ALL"),
                 ),
+                onMenuItemClick = {
+                    onShareClick(it.key)
+                },
+                wantBackButton = true,
             ) {
-                onShareClick(it.key)
+                onBackPress()
             }
         },
     ) {
-        Column(modifier = modifier
-            .padding(it)
-            .verticalScroll(rememberScrollState())
+        Column(
+            modifier = modifier
+                .padding(it)
+                .verticalScroll(rememberScrollState())
         ) {
             ParticipantDataTopCard(
                 participantName = uiState.selectedParticipant.name,
@@ -151,6 +163,7 @@ fun ParticipantsTrialDataScreen(
 
     }
 }
+
 @Composable
 fun CollapsibleParticipantDataItemsGroups(
     title: String,
@@ -158,7 +171,7 @@ fun CollapsibleParticipantDataItemsGroups(
     uiState: ParticipantsTrialDataUiState,
     modifier: Modifier = Modifier,
     onDeleteClicked: (TrialIdentifier) -> Unit = {},
-    onCheckBoxClick: (TrialIdentifier ) -> Unit = {},
+    onCheckBoxClick: (TrialIdentifier) -> Unit = {},
 ) {
     var isExpanded by remember { mutableStateOf(false) }
 
@@ -199,6 +212,7 @@ fun CollapsibleParticipantDataItemsGroups(
         }
     }
 }
+
 @Composable
 fun ParticipantDataItem(
     participantDataFields: TrialDataFields,
@@ -210,9 +224,14 @@ fun ParticipantDataItem(
     val trialIdentifier: TrialIdentifier = participantDataFields.toTrialIdentifier()
     var isChecked by remember {
         mutableStateOf(
-            when(trialIdentifier.testType) {
-                TestType.BART -> { trialIdentifier.trialId in uiState.selectedBartTrialIds }
-                TestType.NBACK -> { trialIdentifier.trialId in uiState.selectedNBackTrialIds }
+            when (trialIdentifier.testType) {
+                TestType.BART -> {
+                    trialIdentifier.trialId in uiState.selectedBartTrialIds
+                }
+
+                TestType.NBACK -> {
+                    trialIdentifier.trialId in uiState.selectedNBackTrialIds
+                }
             }
         )
     }
@@ -302,12 +321,14 @@ fun ParticipantDataTopCard(
             Text(
                 text =
                 stringResource(
-                    id = R.string.participants_participant_name_label) + ": "
+                    id = R.string.participants_participant_name_label
+                ) + ": "
                         + participantName
             )
             Text(
                 text = stringResource(
-                    id = R.string.participants_participant_id_label) + ": "
+                    id = R.string.participants_participant_id_label
+                ) + ": "
                         + participantId
             )
             if (participantNotes != "") {

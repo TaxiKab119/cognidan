@@ -15,7 +15,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.dancognitionapp.AppViewModelProvider
 import com.example.dancognitionapp.R
-import com.example.dancognitionapp.assessment.AssessmentActivity
 import com.example.dancognitionapp.assessment.AssessmentFragment
 import com.example.dancognitionapp.assessment.TrialDay
 import com.example.dancognitionapp.assessment.TrialTime

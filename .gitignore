@@ -7,3 +7,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+keys.jks
+app/release

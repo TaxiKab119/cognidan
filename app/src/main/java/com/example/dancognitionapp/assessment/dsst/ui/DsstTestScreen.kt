@@ -27,11 +27,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,64 +36,36 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.dancognitionapp.R
+import com.example.dancognitionapp.assessment.dsst.ui.DsstIcons.ICONS
 import com.example.dancognitionapp.utils.LandscapePreview
 import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlin.random.Random
 
-
-val ICONS = listOf(
-    R.drawable.blur_linear_24px,
-    R.drawable.polymer_24px,
-    R.drawable.crossword_24px,
-    R.drawable.error_med_24px,
-    R.drawable.move_selection_up_24px,
-    R.drawable.rainy_light_24px,
-    R.drawable.tonality_24px,
-    R.drawable.tornado_24px,
-    R.drawable.subheader_24px
-)
 
 @Composable
-fun DsstTestScreen(modifier: Modifier = Modifier) {
-    var stimulus: Int by remember {
-        mutableStateOf(Random.nextInt(1, ICONS.size + 1))
-    }
+fun DsstTestScreenRoot(
+    viewModel: DsstScreenViewModel,
+    modifier: Modifier = Modifier
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    DsstTestScreenContent(
+        showIncorrectFeedback = uiState.showIncorrectFeedback,
+        showCorrectFeedback = uiState.showCorrectFeedback,
+        stimulus = uiState.stimulus,
+        onAction = viewModel::onAction,
+        bottomIcons = uiState.bottomIcons,
+        modifier = modifier
+    )
+}
 
-    var showCorrectFeedback by remember {
-        mutableStateOf(false)
-    }
-
-    var showIncorrectFeedback by remember {
-        mutableStateOf(false)
-    }
-    val bottomIcons by remember {
-        mutableStateOf(ICONS.shuffled())
-    }
-
-    val scope = rememberCoroutineScope()
-    var feedbackJob: Job? by remember { mutableStateOf(null) }
-
-    fun showFeedback(isCorrect: Boolean) {
-        feedbackJob?.cancel() // Cancel any existing job
-        if (isCorrect) {
-            showCorrectFeedback = true
-            showIncorrectFeedback = false
-        } else {
-            showIncorrectFeedback = true
-            showCorrectFeedback = false
-        }
-        feedbackJob = scope.launch {
-            delay(1000) // Adjust the delay as needed
-            showCorrectFeedback = false
-            showIncorrectFeedback = false
-        }
-    }
-
-
+@Composable
+fun DsstTestScreenContent(
+    showIncorrectFeedback: Boolean,
+    showCorrectFeedback: Boolean,
+    stimulus: Int,
+    @DrawableRes bottomIcons: List<Int>,
+    onAction: (DsstAction) -> Unit,
+    modifier: Modifier = Modifier
+) {
     Surface(modifier = modifier) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -116,22 +85,8 @@ fun DsstTestScreen(modifier: Modifier = Modifier) {
                 icons = bottomIcons,
                 modifier = Modifier.padding(bottom = 18.dp)
             ) {
-                if (showCorrectFeedback || showIncorrectFeedback) {
-                    showCorrectFeedback = false
-                    showIncorrectFeedback = false
-                }
-                if (it == ICONS[stimulus - 1]) {
-                    showFeedback(true)
-                } else {
-                    showFeedback(false)
-                }
-                var randInt = Random.nextInt(1, ICONS.size + 1)
-                while (stimulus == randInt) {
-                    randInt = Random.nextInt(1, ICONS.size + 1)
-                }
-                stimulus = randInt
+                onAction(DsstAction.KeyPressed(it))
             }
-
         }
     }
 }
@@ -141,7 +96,7 @@ fun MiddleRowDSST(
     stimulus: Int,
     modifier: Modifier = Modifier,
     showIncorrectFeedback: Boolean = false,
-    showCorrectFeeback: Boolean = false,
+    showCorrectFeedback: Boolean = false,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -154,7 +109,7 @@ fun MiddleRowDSST(
             FeedBackSquare(
                 feedbackText = "Correct",
                 color = Color(0xff89f08e),
-                showFeedback = showCorrectFeeback
+                showFeedback = showCorrectFeedback
             )
             FeedBackSquare(
                 feedbackText = "Incorrect",
@@ -274,6 +229,12 @@ fun KeysRow(
 @Composable
 private fun DsstTestScreenPreview() {
     DanCognitionAppTheme {
-        DsstTestScreen()
+        DsstTestScreenContent(
+            showIncorrectFeedback = false,
+            showCorrectFeedback = true,
+            stimulus = 3,
+            bottomIcons = ICONS.shuffled(),
+            {}
+        )
     }
 }

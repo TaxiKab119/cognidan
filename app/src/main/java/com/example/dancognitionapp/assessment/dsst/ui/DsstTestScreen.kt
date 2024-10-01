@@ -29,6 +29,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,7 +39,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.dancognitionapp.assessment.dsst.ui.DsstIcons.ICONS
+import com.example.dancognitionapp.assessment.dsst.ui.DsstIcons.DSST_ICONS
 import com.example.dancognitionapp.utils.LandscapePreview
 import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme
 
@@ -66,6 +69,9 @@ fun DsstTestScreenContent(
     onAction: (DsstAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // A flag to trigger the 'Tally Counter' Animation even when stimulus are the same back to back
+    var stimulusAnimationTrigger by remember { mutableStateOf(true) }
+
     Surface(modifier = modifier) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -76,7 +82,7 @@ fun DsstTestScreenContent(
         ) {
             KeysRow()
             // Stimuli Box
-            MiddleRowDSST(stimulus, Modifier, showIncorrectFeedback, showCorrectFeedback)
+            MiddleRowDSST(stimulus, stimulusAnimationTrigger, Modifier, showIncorrectFeedback, showCorrectFeedback)
             // Buttons to Press
             KeysRow(
                 spacing = 12.dp,
@@ -85,7 +91,8 @@ fun DsstTestScreenContent(
                 icons = bottomIcons,
                 modifier = Modifier.padding(bottom = 18.dp)
             ) {
-                onAction(DsstAction.KeyPressed(it))
+                onAction(DsstAction.KeyPressed(it, stimulus))
+                stimulusAnimationTrigger = !stimulusAnimationTrigger
             }
         }
     }
@@ -94,6 +101,7 @@ fun DsstTestScreenContent(
 @Composable
 fun MiddleRowDSST(
     stimulus: Int,
+    stimulusAnimationTrigger: Boolean,
     modifier: Modifier = Modifier,
     showIncorrectFeedback: Boolean = false,
     showCorrectFeedback: Boolean = false,
@@ -123,7 +131,7 @@ fun MiddleRowDSST(
                 .size(80.dp)
                 .border(2.dp, Color.Blue, RoundedCornerShape(2.dp))
         ) {
-            StimulusText(stimulus = stimulus)
+            StimulusText(stimulus, stimulusAnimationTrigger)
         }
         Spacer(modifier = Modifier.weight(1f))
     }
@@ -133,14 +141,16 @@ fun MiddleRowDSST(
 @Composable
 fun StimulusText(
     stimulus: Int,
+    stimulusAnimationTrigger: Boolean,
     modifier: Modifier = Modifier
 ) {
     AnimatedContent(
-        targetState = stimulus,
+        targetState = Pair(stimulus, stimulusAnimationTrigger),
         transitionSpec = {
             slideInVertically { height -> height } + fadeIn() with
                     slideOutVertically { height -> -height } + fadeOut()
-        }
+        },
+        label = "Tally Counter",
     ) {
         Text(
             text = "$stimulus",
@@ -180,7 +190,7 @@ fun KeysRow(
     modifier: Modifier = Modifier,
     isClickable: Boolean = false,
     showNumbers: Boolean = true,
-    @DrawableRes icons: List<Int> = ICONS,
+    @DrawableRes icons: List<Int> = DSST_ICONS,
     spacing: Dp = 1.dp,
     onButtonClick: (Int) -> Unit = {}
 ) {
@@ -233,8 +243,8 @@ private fun DsstTestScreenPreview() {
             showIncorrectFeedback = false,
             showCorrectFeedback = true,
             stimulus = 3,
-            bottomIcons = ICONS.shuffled(),
-            {}
+            bottomIcons = DSST_ICONS.shuffled(),
+            onAction = {},
         )
     }
 }

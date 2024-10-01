@@ -2,7 +2,7 @@ package com.example.dancognitionapp.assessment.dsst.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dancognitionapp.assessment.dsst.ui.DsstIcons.ICONS
+import com.example.dancognitionapp.assessment.dsst.ui.DsstIcons.DSST_ICONS
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,13 +11,13 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-class DsstScreenViewModel() : ViewModel() {
+class DsstScreenViewModel : ViewModel() {
 
     private val TEST_DURATION = 120_000 // 2 minutes
 
     private val _uiState = MutableStateFlow(
         DsstUiState(
-            bottomIcons = ICONS.shuffled(),
+            bottomIcons = DSST_ICONS.shuffled(),
             stimulus = getNewStimulus()
         )
     )
@@ -25,32 +25,28 @@ class DsstScreenViewModel() : ViewModel() {
 
 
     private fun getNewStimulus() : Int {
-        return Random.nextInt(1, ICONS.size + 1)
+        return Random.nextInt(1, DSST_ICONS.size + 1)
     }
 
     private fun updateStimulus() {
-        var newStimulus = getNewStimulus()
-        while (uiState.value.stimulus == newStimulus) {
-            newStimulus = getNewStimulus()
-        }
         _uiState.update {
             it.copy(
-                stimulus = newStimulus
+                stimulus = getNewStimulus()
             )
         }
     }
 
     fun onAction(action: DsstAction) {
         when (action) {
-            is DsstAction.KeyPressed -> handleKeyPressed(action.key)
+            is DsstAction.KeyPressed -> handleKeyPressed(action.key, action.currStimulus)
         }
     }
 
-    private fun handleKeyPressed(key: Int) {
+    private fun handleKeyPressed(key: Int, stimulus: Int) {
         if (uiState.value.showCorrectFeedback || uiState.value.showIncorrectFeedback) {
             clearFeedback()
         }
-        showFeedback(key == uiState.value.stimulus)
+        showFeedback(key == DSST_ICONS[stimulus - 1])
         updateStimulus()
     }
 

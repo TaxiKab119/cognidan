@@ -4,7 +4,7 @@ import com.example.dancognitionapp.R
 
 
 object DsstIcons {
-    val ICONS: List<Int> = listOf(
+    val DSST_ICONS: List<Int> = listOf(
         R.drawable.blur_linear_24px,
         R.drawable.polymer_24px,
         R.drawable.crossword_24px,

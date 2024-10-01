@@ -22,7 +22,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.fragment.findNavController
-import com.example.dancognitionapp.AppViewModelProvider
+import com.example.dancognitionapp.di.AppViewModelProvider
 import com.example.dancognitionapp.R
 import com.example.dancognitionapp.assessment.AssessmentActivity
 import com.example.dancognitionapp.utils.theme.DanCognitionAppTheme

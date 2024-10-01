@@ -1,4 +1,4 @@
-package com.example.dancognitionapp
+package com.example.dancognitionapp.di
 
 import android.app.Application
 import androidx.lifecycle.ViewModelProvider

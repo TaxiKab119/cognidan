@@ -1,15 +1,13 @@
 package com.example.dancognitionapp.di
 
 import android.content.Context
-import com.example.dancognitionapp.assessment.bart.db.BartDatabase
 import com.example.dancognitionapp.assessment.bart.db.BartRepository
 import com.example.dancognitionapp.assessment.bart.db.BartRepositoryImpl
-import com.example.dancognitionapp.assessment.nback.db.NBackDatabase
 import com.example.dancognitionapp.assessment.nback.db.NBackRepository
 import com.example.dancognitionapp.assessment.nback.db.NBackRepositoryImpl
 import com.example.dancognitionapp.participants.data.ParticipantRepository
 import com.example.dancognitionapp.participants.data.ParticipantRepositoryImpl
-import com.example.dancognitionapp.participants.db.ParticipantDatabase
+import com.example.dancognitionapp.participants.db.CogniDanDatabase
 
 /**
  * App container for Dependency injection
@@ -28,20 +26,20 @@ class AppDataContainer(private val context: Context) : AppContainer {
      * Implementation for [ParticipantRepository]
      */
     override val participantRepository: ParticipantRepository by lazy {
-        ParticipantRepositoryImpl(ParticipantDatabase.getDatabase(context).participantDao())
+        ParticipantRepositoryImpl(CogniDanDatabase.getDatabase(context).participantDao())
     }
 
     /**
      * Implementation for [BartRepository]
      */
     override val bartRepository: BartRepository by lazy {
-        BartRepositoryImpl(BartDatabase.getDatabase(context).bartDao())
+        BartRepositoryImpl(CogniDanDatabase.getDatabase(context).bartDao())
     }
 
     /**
      * Implementation for [NBackRepository]
      */
     override val nBackRepository: NBackRepository by lazy {
-        NBackRepositoryImpl(NBackDatabase.getDatabase(context).nBackDao())
+        NBackRepositoryImpl(CogniDanDatabase.getDatabase(context).nBackDao())
     }
 }

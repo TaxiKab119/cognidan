@@ -44,6 +44,19 @@
             app:argType="com.example.dancognitionapp.assessment.selection.TrialDetailsUiState"
             app:nullable="true"
             android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_bart_dest_to_dsstFragment"
+            app:destination="@id/dsst_dest" />
+    </fragment>
+    <fragment
+        android:id="@+id/dsst_dest"
+        android:name="com.example.dancognitionapp.assessment.dsst.ui.DsstFragment"
+        android:label="DsstFragment" >
+        <argument
+            android:name="trialDetails"
+            app:argType="com.example.dancognitionapp.assessment.selection.TrialDetailsUiState"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
 
 </navigation>

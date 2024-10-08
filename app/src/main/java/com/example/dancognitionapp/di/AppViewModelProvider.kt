@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.dancognitionapp.assessment.bart.db.PracticeBartRepository
 import com.example.dancognitionapp.assessment.bart.ui.BartViewModel
+import com.example.dancognitionapp.assessment.dsst.ui.DsstScreenViewModel
 import com.example.dancognitionapp.assessment.nback.db.PracticeNBackRepository
 import com.example.dancognitionapp.assessment.nback.ui.NBackViewModel
 import com.example.dancognitionapp.assessment.selection.StartTrialViewModel
@@ -64,6 +65,9 @@ object AppViewModelProvider {
                     PracticeNBackRepository()
                 }
             )
+        }
+        initializer {
+            DsstScreenViewModel(isPractice)
         }
     }
 }

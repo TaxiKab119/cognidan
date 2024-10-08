@@ -142,5 +142,13 @@ fun PracticeSelectionPageContent(
                     onClick(it)
                 }
         )
+        OptionCard(
+            titleId = R.string.dsst_screen_title,
+            modifier = Modifier
+                .weight(1f)
+                .navigateTo(R.id.dsst_dest) {
+                    onClick(it)
+                }
+        )
     }
 }

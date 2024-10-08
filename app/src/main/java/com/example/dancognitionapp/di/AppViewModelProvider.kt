@@ -59,7 +59,8 @@ object AppViewModelProvider {
         }
         initializer {
             NBackViewModel(
-                if (!isPractice) {
+                isPractice = isPractice,
+                nBackRepository = if (!isPractice) {
                     danCognitionApplication().container.nBackRepository
                 } else {
                     PracticeNBackRepository()

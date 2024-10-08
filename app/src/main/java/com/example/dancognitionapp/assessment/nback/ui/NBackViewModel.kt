@@ -22,7 +22,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class NBackViewModel(private val nBackRepository: NBackRepository): ViewModel() {
+class NBackViewModel(
+    private val nBackRepository: NBackRepository,
+    isPractice: Boolean,
+): ViewModel() {
     private val presentationOrders = mutableListOf(
         NBackGenerator(testType = NBackType.N_1).items,
         NBackGenerator(testType = NBackType.N_2).items,
@@ -30,12 +33,14 @@ class NBackViewModel(private val nBackRepository: NBackRepository): ViewModel() 
     )
     private var testType = NBackType.N_1
     private var lifetimePresentations = 0
-    private var maxLifetimePresentations = 6 // initialize to 6, which is 2 blocks, (assuming it is not practice, this is updated to 3 if it is practice)
     private var blockNumber = 1
+    // 6 = 2 blocks = Real Assessment; 3 = 1 Block = Practice
+    private var maxLifetimePresentations = if (isPractice) 3 else 6
 
     private val _uiState = MutableStateFlow(
         NBackUiState(
-            presentationList = presentationOrders[0]
+            presentationList = presentationOrders[0],
+            isPractice = isPractice
         )
     )
     val uiState: StateFlow<NBackUiState> = _uiState.asStateFlow()
@@ -45,15 +50,7 @@ class NBackViewModel(private val nBackRepository: NBackRepository): ViewModel() 
 
     private lateinit var currentNBackEntity: NBackEntity
 
-    fun initNBackTrial(participant: Participant, trialDay: TrialDay, trialTime: TrialTime, isPractice: Boolean) {
-        if (isPractice) {
-            maxLifetimePresentations = 3
-            _uiState.update {
-                it.copy(
-                    isPractice = true
-                )
-            }
-        }
+    fun initNBackTrial(participant: Participant, trialDay: TrialDay, trialTime: TrialTime) {
         // initialize a trial and add it to the database
         viewModelScope.launch(Dispatchers.IO) {
             currentNBackEntity = NBackEntity(

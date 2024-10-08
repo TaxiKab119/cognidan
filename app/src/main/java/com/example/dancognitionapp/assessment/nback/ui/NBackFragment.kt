@@ -80,7 +80,6 @@ class NBackFragment : AssessmentFragment() {
                 Participant.emptyParticipant,
                 TrialDay.DAY_1,
                 TrialTime.PRE_DIVE,
-                true
             )
             Timber.i("Practice NBack instantiated")
         } else {
@@ -90,7 +89,7 @@ class NBackFragment : AssessmentFragment() {
             val trialDay = args.trialDetails?.selectedTrialDay ?: TrialDay.DAY_1
             val trialTime = args.trialDetails?.selectedTrialTime ?: TrialTime.PRE_DIVE
             Timber.i("ParticipantId: $participant\nTrialDay: $trialDay\nTrialTime: $trialTime")
-            viewModel.initNBackTrial(participant, trialDay, trialTime, false)
+            viewModel.initNBackTrial(participant, trialDay, trialTime)
         }
     }
 }

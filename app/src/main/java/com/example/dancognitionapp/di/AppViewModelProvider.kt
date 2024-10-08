@@ -67,7 +67,7 @@ object AppViewModelProvider {
             )
         }
         initializer {
-            DsstScreenViewModel()
+            DsstScreenViewModel(isPractice)
         }
     }
 }

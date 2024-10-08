@@ -37,8 +37,10 @@
     <string name="nback_instructions_dialog_title">Click OK to start %1$d-Back</string>
 
     <string name="dsst_screen_title">DSST</string>
-    <string name="dsst_name_expanded">Balloon Analogue Risk Task</string>
-    <string name="dsst_test_instructions">These are the instructions for the DSST.</string>
+    <string name="dsst_name_expanded">Digit Symbol Substitution Test</string>
+    <string name="dsst_test_instructions1">This task is designed to measure how quickly you can match numbers to specific symbols. At the top of your screen you will see 9 symbols, each symbol matches to a number. On the bottom of the screen, you will see the same 9 symbols but in a scrambled order and without the matching number.</string>
+    <string name="dsst_test_instructions2">During the test, you will see a series of numbers appear in a blue box in the centre of the screen. Your job is to quickly find the correct symbol for each number based on the key at the top of the screen.</string>
+    <string name="dsst_test_instructions3">The test is timed, so try to go as fast as you can, but it\’s okay if you make mistakes – just keep matching as many as you can.</string>
 
     <string name="selection_title">Select test</string>
     <string name="selection_pre_dive">Pre-dive</string>

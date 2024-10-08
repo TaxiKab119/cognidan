@@ -7,8 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,7 +30,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -41,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.dancognitionapp.R
+import com.example.dancognitionapp.utils.widget.AssessmentInstructionsDialog
 import com.example.dancognitionapp.utils.widget.ResponsiveText
 
 enum class NBackFeedbackState {
@@ -245,69 +243,33 @@ fun NBackCustomDialog(
     onOkClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
-    // Create a transparent background layer that covers the entire screen
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.5f)),
-        contentAlignment = Alignment.Center
+    AssessmentInstructionsDialog(
+        assessmentTitle = null,
+        onCancelClick = onCancelClick,
+        onOkClick = onOkClick,
+        modifier = modifier,
+        showCancel = isPractice
     ) {
-        Box(
-            modifier = modifier
-                .wrapContentSize()
-                .fillMaxWidth(0.75f)
-                .padding(16.dp)
-                .clip(shape = MaterialTheme.shapes.medium)
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            Column(modifier = Modifier.padding(24.dp)) {
-                Text(
-                    text = stringResource(id = R.string.nback_instructions_dialog_title, nValue),
-                    style = MaterialTheme.typography.headlineMedium,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                ResponsiveText(
-                    text = context.resources.getQuantityString(R.plurals.nback_test_instructions, nValue, nValue),
-                    maxLines = 5,
-                    targetTextSize = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                if (isPractice) {
-                    Spacer(modifier = Modifier.height(12.dp))
-                    ResponsiveText(
-                        text = stringResource(R.string.nback_feedback_instructions),
-                        maxLines = 3,
-                        targetTextSize = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-                Row {
-                    Spacer(modifier = Modifier.weight(1f))
-                    if (isPractice) {
-                        TextButton(
-                            onClick = { onCancelClick() },
-                            modifier = Modifier.padding(8.dp),
-                            border = BorderStroke(width = 2.dp, MaterialTheme.colorScheme.outline)
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.cancel_button),
-                                modifier = Modifier.padding(6.dp),
-                            )
-                        }
-                    }
-                    TextButton(
-                        onClick = { onOkClick() },
-                        modifier = Modifier.padding(8.dp),
-                        border = BorderStroke(width = 2.dp, MaterialTheme.colorScheme.outline)
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.ok_button),
-                            modifier = Modifier.padding(6.dp),
-                        )
-                    }
-                }
-            }
+        Text(
+            text = stringResource(id = R.string.nback_instructions_dialog_title, nValue),
+            style = MaterialTheme.typography.headlineMedium,
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        ResponsiveText(
+            text = context.resources.getQuantityString(R.plurals.nback_test_instructions, nValue, nValue),
+            maxLines = 5,
+            targetTextSize = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        if (isPractice) {
+            Spacer(modifier = Modifier.height(12.dp))
+            ResponsiveText(
+                text = stringResource(R.string.nback_feedback_instructions),
+                maxLines = 3,
+                targetTextSize = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onBackground
+            )
         }
     }
 }

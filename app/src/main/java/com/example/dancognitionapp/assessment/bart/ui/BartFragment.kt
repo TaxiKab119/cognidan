@@ -48,6 +48,7 @@ class BartFragment: AssessmentFragment() {
                 val uiState: BartUiState by viewModel.uiState.collectAsState(lifecycleScope.coroutineContext)
                 if (!uiState.hasTestBegun) {
                     BartInstructionDialog(
+                        isPractice = isPractice,
                         onCancelClick = {
                             findNavController().popBackStack(R.id.selection_dest, false)
                         }
